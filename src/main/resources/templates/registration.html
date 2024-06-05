@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Регистрация</title>
+</head>
+<body>
+<div name="message"></div>
+<form th:action="@{/registration}" method="post">
+    <div><label> Имя пользователя: <input type="text" name="username"/> </label></div>
+    <div><label> Пароль: <input type="password" name="password"/> </label></div>
+    <div>
+        <label> Выберите роль:
+            <select name="role">
+                <option value="USER">Инженер ПТО</option>
+                <option value="DIRECTOR">Начальник ПТО</option>
+            </select>
+        </label>
+    </div>
+    <div><input type="submit" value="Зарегистрироваться"/></div>
+</form>
+<a href="/login">Уже есть аккаунт</a>
+</body>
+</html>

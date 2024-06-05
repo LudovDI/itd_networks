@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Журналы</title>
+    <link href="../static/staticFiles/bootstrap.css" th:href="@{/staticFiles/bootstrap.css}" rel="stylesheet"
+          type="text/css"/>
+</head>
+<body>
+<h1 id="headerText" hidden>Журналы</h1>
+<header th:insert="blocks/header :: header"></header>
+<a href="/excavation-log">Журнал земляных работ ЖЗР</a><br>
+<a href="/welding-pe-log">Журнал сварочных работ ЖСР ПЭ</a><br>
+<a href="/welding-st-log">Журнал сварочных работ ЖСР СТ</a><br>
+<a href="/anti-corrosion-log">Журнал антикоррозионных работ ЖАКЗ</a><br>
+<a href="/concrete-works-log">Журнал бетонных работ ЖБР</a><br>
+<a href="/general-works-log">Журнал общих работ ОЖР</a>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Реестр</title>
+    <link href="../static/staticFiles/bootstrap.css" th:href="@{/staticFiles/bootstrap.css}" rel="stylesheet"
+          type="text/css"/>
+</head>
+<body>
+<h1 id="headerText" hidden>Реестр</h1>
+<header th:insert="blocks/header :: header"></header>
+<form action="/registry" method="post">
+    <button type="submit" class="btn btn-success" th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}">Создать Реестр</button>
+</form>
+</body>
+</html>

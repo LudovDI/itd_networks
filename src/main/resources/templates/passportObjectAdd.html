@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Создание паспорта объекта</title>
+    <link href="../static/staticFiles/bootstrap.css" th:href="@{/staticFiles/bootstrap.css}" rel="stylesheet"
+          type="text/css"/>
+    <script src="../static/staticFiles/passportObject.js" th:src="@{/staticFiles/passportObject.js}"
+            type="text/javascript"></script>
+</head>
+<body>
+<h1 id="headerText" hidden>Создание паспорта объекта</h1>
+<header th:insert="blocks/header :: header"></header>
+<form action="/passport-object-add" method="post">
+    <div class="px-5 text-white">
+        <div class="d-flex flex-column mb-3">
+            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                <label class="w-auto">Наименование объекта капитального строительства</label>
+                <input class="w-50" type="text" name="nameObject">
+            </div>
+            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                <label class="w-auto">Адрес объекта</label>
+                <input class="w-50" type="text" name="addressObject">
+            </div>
+            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                <label class="w-auto">Шифр проекта</label>
+                <input class="w-50" type="text" name="projectCode">
+            </div>
+        </div>
+        <div class="row px-2 text-white d-flex justify-content-between">
+            <div class="col-6 d-flex flex-column mb-3">
+                <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                    <label class="w-auto">Застройщик, технический заказчик, лицо, ответственное за эксплуатацию здания,
+                        сооружения, или
+                        региональный оператор</label>
+                    <button type="button" id="btnDeveloper" onclick="expandDeveloper()">V
+                    </button>
+                </div>
+                <div class="row px-4" id="developer" hidden>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Наименование заказчика</label>
+                        <input type="text" name="nameDeveloper" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ОГРН заказчика</label>
+                        <input type="text" name="ogrnDeveloper" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ИНН заказчика</label>
+                        <input type="text" name="innDeveloper" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Адрес заказчика</label>
+                        <input type="text" name="addressDeveloper" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Телефон / факс заказчика</label>
+                        <input type="text" name="phoneDeveloper" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Наименование саморегулируемой организации заказчика</label>
+                        <input type="text" name="nameOrganizationDeveloper" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ОГРН саморегулируемой организации заказчика</label>
+                        <input type="text" name="ogrnOrganizationDeveloper" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ИНН саморегулируемой организации заказчика</label>
+                        <input type="text" name="innOrganizationDeveloper" class="form-control w-50">
+                    </div>
+                </div>
+                <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                    <label class="w-auto">Лицо, осуществляющее строительство, реконструкцию, капитальный ремонт</label>
+                    <button type="button" id="btnBuilder" onclick="expandBuilder()">V</button>
+                </div>
+                <div class="row px-4" id="builder" hidden>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Наименование подрядчика</label>
+                        <input type="text" name="nameBuilder" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ОГРН подрядчика</label>
+                        <input type="text" name="ogrnBuilder" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ИНН подрядчика</label>
+                        <input type="text" name="innBuilder" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Адрес подрядчика</label>
+                        <input type="text" name="addressBuilder" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Телефон / факс подрядчика</label>
+                        <input type="text" name="phoneBuilder" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Наименование саморегулируемой организации подрядчика</label>
+                        <input type="text" name="nameOrganizationBuilder" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ОГРН саморегулируемой организации подрядчика</label>
+                        <input type="text" name="ogrnOrganizationBuilder" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ИНН саморегулируемой организации подрядчика</label>
+                        <input type="text" name="innOrganizationBuilder" class="form-control w-50">
+                    </div>
+                </div>
+                <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                    <label class="w-auto">Лицо, осуществляющее подготовку проектной документации</label>
+                    <button type="button" id="btnPreparer" onclick="expandPreparer()">V</button>
+                </div>
+                <div class="row px-4" id="preparer" hidden>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Наименование проектировщика</label>
+                        <input type="text" name="namePreparer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ОГРН проектировщика</label>
+                        <input type="text" name="ogrnPreparer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ИНН проектировщика</label>
+                        <input type="text" name="innPreparer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Адрес проектировщика</label>
+                        <input type="text" name="addressPreparer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Телефон / факс проектировщика</label>
+                        <input type="text" name="phonePreparer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Наименование саморегулируемой организации проектировщика</label>
+                        <input type="text" name="nameOrganizationPreparer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ОГРН саморегулируемой организации проектировщика</label>
+                        <input type="text" name="ogrnOrganizationPreparer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ИНН саморегулируемой организации проектировщика</label>
+                        <input type="text" name="innOrganizationPreparer" class="form-control w-50">
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 d-flex flex-column mb-3">
+                <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                    <label class="w-auto">Приказ на представителя заказчика</label>
+                    <button type="button" id="btnCustomer" onclick="expandCustomer()">V</button>
+                </div>
+                <div class="row px-4" id="customer" hidden>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Должность представителя заказчика</label>
+                        <input type="text" name="postCustomer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Фамилия имя отчество представителя заказчика</label>
+                        <input type="text" name="fioCustomer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Идентификационный номер представителя заказчика в национальном реестре
+                            специалистов</label>
+                        <input type="text" name="idCustomer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Наименование распорядительного документа</label>
+                        <input type="text" name="nameCustomer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="w-auto">Номер распорядительного документа №</label>
+                        <input type="text" name="numberCustomer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Дата распорядительного документа</label>
+                        <input type="text" name="dataCustomer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Наименование организации представителя заказчика</label>
+                        <input type="text" name="nameOrganizationCustomer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ОГРН организации представителя заказчика</label>
+                        <input type="text" name="ogrnOrganizationCustomer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ИНН организации представителя заказчика</label>
+                        <input type="text" name="innOrganizationCustomer" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Адрес организации представителя заказчика</label>
+                        <input type="text" name="adrOrganizationCustomer" class="form-control w-50">
+                    </div>
+                </div>
+                <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                    <label class="w-auto">Приказ на представителя подрядчика</label>
+                    <button type="button" id="btnContractor" onclick="expandContractor()">V</button>
+                </div>
+                <div class="row px-4" id="contractor" hidden>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Должность представителя подрядчика</label>
+                        <input type="text" name="postContractor" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Фамилия имя отчество представителя подрядчика</label>
+                        <input type="text" name="fioContractor" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Идентификационный номер представителя подрядчика в национальном реестре
+                            специалистов</label>
+                        <input type="text" name="idContractor" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Наименование распорядительного документа</label>
+                        <input type="text" name="nameContractor" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Номер распорядительного документа №</label>
+                        <input type="text" name="numberContractor" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Дата распорядительного документа</label>
+                        <input type="text" name="dataContractor" class="form-control w-50">
+                    </div>
+                </div>
+                <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                    <label class="w-auto">Приказ на представителя подрядчика по вопросам строительного контроля </label>
+                    <button type="button" id="btnContractor2" onclick="expandContractor2()">V</button>
+                </div>
+                <div class="row px-4" id="contractor2" hidden>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Должность представителя подрядчика</label>
+                        <input type="text" name="postContractor2" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Фамилия имя отчество представителя подрядчика</label>
+                        <input type="text" name="fioContractor2" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Идентификационный номер представителя подрядчика в национальном реестре
+                            специалистов</label>
+                        <input type="text" name="idContractor2" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Наименование распорядительного документа</label>
+                        <input type="text" name="nameContractor2" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Номер распорядительного документа №</label>
+                        <input type="text" name="numberContractor2" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Дата распорядительного документа</label>
+                        <input type="text" name="dataContractor2" class="form-control w-50">
+                    </div>
+                </div>
+                <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                    <label class="w-auto">Приказ на представителя проектировщика</label>
+                    <button type="button" id="btnProjector" onclick="expandProjector()">V</button>
+                </div>
+                <div class="row px-4" id="projector" hidden>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Должность представителя проектировщика</label>
+                        <input type="text" name="postProjector" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="wcol-6">Фамилия имя отчество представителя проектировщика</label>
+                        <input type="text" name="fioProjector" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Идентификационный номер представителя проектировщика в национальном реестре
+                            специалистов</label>
+                        <input type="text" name="idProjector" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Наименование распорядительного документа</label>
+                        <input type="text" name="nameProjector" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Номер распорядительного документа №</label>
+                        <input type="text" name="numberProjector" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Дата распорядительного документа</label>
+                        <input type="text" name="dataProjector" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Наименование организации представителя проектировщика</label>
+                        <input type="text" name="nameOrganizationProjector" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ОГРН организации представителя проектировщика</label>
+                        <input type="text" name="ogrnOrganizationProjector" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ИНН организации представителя проектировщика</label>
+                        <input type="text" name="innOrganizationProjector" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Адрес организации представителя проектировщика</label>
+                        <input type="text" name="adrOrganizationProjector" class="form-control w-50">
+                    </div>
+                </div>
+                <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                    <label class="w-auto">Приказ на представителя иного лица</label>
+                    <button type="button" id="btnAnotherPerson" onclick="expandAnotherPerson()">V</button>
+                </div>
+                <div class="row px-4" id="anotherPerson" hidden>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Должность представителя иного лица</label>
+                        <input type="text" name="postAnotherPerson" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Фамилия имя отчество представителя иного лица</label>
+                        <input type="text" name="fioAnotherPerson" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Идентификационный номер представителя иного лица в национальном реестре
+                            специалистов</label>
+                        <input type="text" name="idAnotherPerson" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Наименование распорядительного документа</label>
+                        <input type="text" name="nameAnotherPerson" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Номер распорядительного документа №</label>
+                        <input type="text" name="numberAnotherPerson" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Дата распорядительного документа</label>
+                        <input type="text" name="dataAnotherPerson" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Наименование организации представителя иного лица</label>
+                        <input type="text" name="nameOrganizationAnotherPerson" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ОГРН организации представителя иного лица</label>
+                        <input type="text" name="ogrnOrganizationAnotherPerson" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">ИНН организации представителя иного лица</label>
+                        <input type="text" name="innOrganizationAnotherPerson" class="form-control w-50">
+                    </div>
+                    <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                        <label class="col-6">Адрес организации представителя иного лица</label>
+                        <input type="text" name="adrOrganizationAnotherPerson" class="form-control w-50">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="bg-success btn btn-succcess border-white mt-3 me-5">Сохранить</button>
+        </div>
+        <div class="d-flex justify-content-start">
+            <a href="/passport-object-table" role="button" class="bg-success btn btn-succcess border-white mt-3 ms-5">
+                Отмена
+            </a>
+        </div>
+    </div>
+</form>
+</body>
+</html>

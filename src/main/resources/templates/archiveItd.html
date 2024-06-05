@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Архивы ИТД</title>
+    <script src="../static/staticFiles/archiveItd.js" th:src="@{/staticFiles/archiveItd.js}" type="text/javascript"></script>
+    <link href="../static/staticFiles/bootstrap.css" th:href="@{/staticFiles/bootstrap.css}" rel="stylesheet"
+          type="text/css"/>
+</head>
+<body>
+<h1 id="headerText" hidden>Архивы ИТД</h1>
+<header th:insert="blocks/header :: header"></header>
+<div id="checkList">
+    <label>Проверьте, все ли документы были разработаны</label>
+    <div th:each="doc : ${documents}">
+        <input type="checkbox" th:value="${doc}" th:text="${doc}" onchange="changeCheckbox()"><br>
+    </div>
+</div>
+<div id="saveItd" hidden>
+    <label>Теперь вы можете распечатать все документы и сохранить ИТД в архив.</label>
+    <form action="/archive-itd" method="post">
+        <button type="submit">Сохранить ИТД в архив</button>
+    </form>
+</div>
+</body>
+</html>

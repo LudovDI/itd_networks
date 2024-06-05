@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Протоколы уплотнения</title>
+    <link href="../static/staticFiles/status.css" th:href="@{/staticFiles/status.css}" rel="stylesheet"
+          type="text/css"/>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link href="../static/staticFiles/bootstrap.css" th:href="@{/staticFiles/bootstrap.css}" rel="stylesheet"
+          type="text/css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="../static/staticFiles/updateStatus.js" th:src="@{/staticFiles/updateStatus.js}"
+            type="text/javascript"></script>
+</head>
+<body>
+<h1 id="headerText" hidden>Протоколы ГНБ</h1>
+<header th:insert="blocks/header :: header"></header>
+<div class="table-responsive">
+    <table class="table table-success table-striped table-hover table-bordered">
+        <tr class="text-center">
+            <th>Статус</th>
+            <th>Номер протокола ГНБ</th>
+            <th>Дата протокола ГНБ</th>
+            <th th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}">Действия</th>
+        </tr>
+        <tr th:each="el : ${protocolsGnbList}">
+            <td>
+                <form th:action="'/protocols-gnb-table/' + ${el.id} + '/update-status'" method="post">
+                    <select name="status" class="status-select" onchange="updateStatus(this.form)">
+                        <option value="Готов" th:selected="${el.status == 'Готов'}"
+                                data-image-url="/staticFiles/green.png"></option>
+                        <option value="В процессе" th:selected="${el.status == 'В процессе'}"
+                                data-image-url="/staticFiles/yellow.png"></option>
+                        <option value="Требует создания" th:selected="${el.status == 'Требует создания'}"
+                                data-image-url="/staticFiles/red.png"></option>
+                    </select>
+                </form>
+            </td>
+            <td th:text="${el.numberProtocolGnb}"></td>
+            <td th:text="${el.dataProtocolGnb}"></td>
+            <td th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}"
+                class="d-flex justify-content-start text-white">
+                <a th:href="'/protocols-gnb-table/' + ${el.id} + '/protocols-gnb-edit'" role="button"
+                   class="bg-primary btn-sm btn border-white">Редактировать</a>
+                <form th:action="'/protocols-gnb-table/' + ${el.id} + '/protocols-gnb-remove'" method="post">
+                    <button type="submit" class="bg-primary btn-sm btn border-white ms-2">Удалить</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="text-white">
+    <a th:href="@{/protocols-gnb-add}"
+       th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}" role="button"
+       class="bg-primary btn border-white mt-3 ms-5">Добавить протокол ГНБ</a>
+</div>
+</body>
+</html>

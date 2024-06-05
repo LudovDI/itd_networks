@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Журнал земляных работ ЖЗР</title>
+    <link href="../static/staticFiles/bootstrap.css" th:href="@{/staticFiles/bootstrap.css}" rel="stylesheet"
+          type="text/css"/>
+</head>
+<body>
+<h1 id="headerText" hidden>Журнал земляных работ ЖЗР</h1>
+<header th:insert="blocks/header :: header"></header>
+<form action="/excavation-log" method="post">
+    <label>Руководитель работ:</label>
+    <select id="NamePerformanceManager" name="NamePerformanceManager">
+        <option th:each="data : ${namePersons}" th:value="${data}"
+                th:text="${data}"></option>
+    </select>
+    <div th:each="aosr : ${aosrToLogList}">
+        <label th:text="'АОСР: вид работы - ' + ${aosr.typeOfWork} + '; дата начала работ - ' + ${aosr.startDate} + '; дата окончания работ: ' + ${aosr.endDate}"></label>
+    </div>
+    <button type="submit" class="btn btn-success" th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}">Создать ЖЗР</button>
+</form>
+<a href="/logs">Отмена</a>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование протокол ГНБ</title>
+    <link href="../static/staticFiles/bootstrap.css" th:href="@{/staticFiles/bootstrap.css}" rel="stylesheet"
+          type="text/css"/>
+</head>
+<body>
+<h1 id="headerText" hidden>Редактирование протокол ГНБ</h1>
+<header th:insert="blocks/header :: header"></header>
+<div th:each="el : ${protocolsGnbDataOptional}">
+    <form method="post">
+        <div class="row px-5 text-white d-flex justify-content-between">
+            <div class="col-6 d-flex flex-column bd-highlight mb-3">
+                <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                    <label class="w-auto">Номер протокола ГНБ</label>
+                    <input class="w-50" type="text" th:value="${el.numberProtocolGnb}" name="numberProtocolGnb">
+                </div>
+                <div class="d-flex justify-content-start">
+                    <a href="/protocols-gnb-table" role="button"
+                       class="bg-success btn btn-succcess border-white mt-3 ms-5">
+                        Отмена
+                    </a>
+                </div>
+            </div>
+            <div class="col-6 d-flex flex-column bd-highlight mb-3">
+                <div class=" m-2 p-2 bg-success d-flex justify-content-between">
+                    <label class="w-auto">Дата протокола ГНБ</label>
+                    <input class="w-50" type="text" th:value="${el.dataProtocolGnb}" name="dataProtocolGnb">
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="bg-success btn btn-succcess border-white mt-3 me-5">Обновить</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

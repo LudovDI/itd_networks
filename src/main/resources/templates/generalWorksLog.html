@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Журнал общих работ ОЖР</title>
+    <link href="../static/staticFiles/bootstrap.css" th:href="@{/staticFiles/bootstrap.css}" rel="stylesheet"
+          type="text/css"/>
+</head>
+<body>
+<h1 id="headerText" hidden>Журнал общих работ ОЖР</h1>
+<header th:insert="blocks/header :: header"></header>
+<form action="/general-works-log" method="post">
+    <button type="submit" class="btn btn-success" th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}">Создать ОЖР</button>
+</form>
+<a href="/logs">Отмена</a>
+</body>
+</html>

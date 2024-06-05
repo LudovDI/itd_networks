@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Создание акта освидетельствования скрытых работ</title>
+    <script src="../static/staticFiles/aosrAdd.js" th:src="@{/staticFiles/aosrAdd.js}" type="text/javascript"></script>
+    <link href="../static/staticFiles/bootstrap.css" th:href="@{/staticFiles/bootstrap.css}" rel="stylesheet"
+          type="text/css"/>
+</head>
+<body>
+<h1 id="headerText" hidden>Создание акта освидетельствования скрытых работ</h1>
+<header th:insert="blocks/header :: header"></header>
+<form action="/aosr-add" method="post">
+    <div class="row px-5 text-white d-flex justify-content-between">
+        <div class="col-6 d-flex flex-column bd-highlight mb-3">
+            <div class="m-2 p-2 bg-success d-flex flex-column bd-highlight">
+                <label>При выполнении работ применены:</label>
+                <div>
+                    <input class="w-50" type="text" id="searchInput" name="query"
+                           placeholder="Введите название материала">
+                    <input type="hidden" name="sourcePage" value="aosrAdd">
+                    <button type="submit" formaction="/search-materials" formmethod="get"
+                            class="btn btn-succcess border-white ms-5">Искать
+                    </button>
+                </div>
+                <div th:each="material : ${selectedMaterialsList}">
+                    <input type="hidden" name="selectedMaterials" th:value="${material.id}">
+                    <input type="checkbox" th:checked="true" disabled
+                           th:text="${material.nameMaterial} + ' - ' + ${material.accompanyingDocuments[0].name} + ' № ' + ${material.accompanyingDocuments[0].number} + ' от ' + ${material.accompanyingDocuments[0].date} + ' г.'">
+                    <button type="button" onclick="removeMaterial(this)"
+                            class="btn btn-succcess border-white mt-3 me-5">Удалить
+                    </button>
+                </div>
+                <div id="searchResults" th:if="${foundMaterialsList}">
+                    <div th:each="material : ${foundMaterialsList}">
+                        <input type="checkbox" name="selectedMaterials" th:value="${material.id}"
+                               th:text="${material.nameMaterial} + ' - ' + ${material.accompanyingDocuments[0].name} + ' № ' + ${material.accompanyingDocuments[0].number} + ' от ' + ${material.accompanyingDocuments[0].date} + ' г.'">
+                    </div>
+                </div>
+            </div>
+            <div class="m-2 p-2 bg-success flex-column">
+                <label>Работы выполнены по проектной документации:</label>
+                <div>
+                    <label>Количество разделов</label>
+                    <select class="w-25 mb-2" id="countProjectsSelect" name="countProjectsSelect"
+                            onchange="countProjects()">
+                        <option value="1">Один</option>
+                        <option value="2">Два</option>
+                    </select>
+                </div>
+                <div>
+                    <select class="w-25 ms-5 mb-2" id="projectSectionSelect" name="projectSectionSelect"
+                            onchange="updateDrawings()" hidden>
+                        <option th:value="${projDoc.projectSection1}"
+                                th:text="${projDoc.projectSection1}"></option>
+                        <option th:value="${projDoc.projectSection2}"
+                                th:text="${projDoc.projectSection2}"></option>
+                    </select>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div class="col-6 m-2 p-2 flex-column">
+                        <div class="ms-5" id="firstProjectSection" hidden>
+                            <label th:text="${projDoc.projectSection1}"></label>
+                        </div>
+                        <div id="drawingsList1" th:each="drawing : ${projDoc.drawingsForSection1}"
+                             style="display: none">
+                            <input type='checkbox' name='drawingCheckbox' th:value="${drawing.id}"
+                                   th:text="${drawing.drawing}">
+                        </div>
+                    </div>
+                    <div class="col-6 m-2 p-2 flex-column">
+                        <div class="ms-5" id="secondProjectSection" hidden>
+                            <label th:text="${projDoc.projectSection2}"></label>
+                        </div>
+                        <div id="drawingsList2" th:each="drawing : ${projDoc.drawingsForSection2}"
+                             style="display: none">
+                            <input type='checkbox' name='drawingCheckbox' th:value="${drawing.id}"
+                                   th:text="${drawing.drawing}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-start">
+                <a href="/aosr-table" role="button" class="bg-success btn btn-succcess border-white mt-3 ms-5">
+                    Отмена
+                </a>
+            </div>
+        </div>
+        <div class="col-6 d-flex flex-column bd-highlight mb-3">
+            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                <label class="w-50">К освидетельствованию предъявлены следующие работы:</label>
+                <select class="w-50" id="work1" name="work1" onchange="addSelect()">
+                    <option th:each="typeOfWork : ${typeOfWorkSet}" th:value="${typeOfWork}"
+                            th:text="${typeOfWork}"></option>
+                </select>
+            </div>
+            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                <label class="w-auto">Участки:</label>
+                <select class="w-50" id="execSchemSelect" name="execSchemSelect">
+                    <option th:each="data : ${executiveSchemesList}" th:value="${data.id}"
+                            th:text="${data.section}"></option>
+                </select>
+            </div>
+            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                <label class="w-auto">Протокол ГНБ:</label>
+                <select class="w-50" id="protocolGnbSelect" name="protocolGnbSelect">
+                    <option value="-1">---</option>
+                    <option th:each="protocol : ${protocolsGnbList}" th:value="${protocol.id}"
+                            th:text="'Протокол ГНБ № ' + ${protocol.numberProtocolGnb} + ' от ' + ${protocol.dataProtocolGnb} + ' г.'"></option>
+                </select>
+            </div>
+            <div class="m-2 p-2 bg-success d-flex flex-column bd-highlight">
+                <label class="w-auto">Акты ВиК:</label>
+                <div th:each="act : ${actsViCList}">
+                    <input class="mx-1" type='checkbox' th:value="${act.id}"
+                           th:text="'Акт ВиК № ' + ${act.numberActViC} + ' от ' + ${act.dataActViC} + ' г.'">
+                </div>
+            </div>
+            <div class="m-2 p-2 bg-success d-flex flex-column bd-highlight">
+                <label class="w-auto">Протокол уплотнения:</label>
+                <select class="w-50" id="sealingProtocolSelect" name="sealingProtocolSelect">
+                    <option value="-1">---</option>
+                    <option th:each="protocol : ${sealingProtocolsList}" th:value="${protocol.id}"
+                            th:text="'Протокол уплотнения № ' + ${protocol.numberSealingProtocols} + ' от ' + ${protocol.dataSealingProtocols} + ' г.'"></option>
+                </select>
+            </div>
+            <div class="m-2 p-2 bg-success d-flex flex-column bd-highlight">
+                <label>Даты:</label>
+                <div class="d-flex justify-content-end">
+                    <label class="w-auto px-2">начала работ</label>
+                    <label class="w-auto px-2">день:</label>
+                    <input type="text" class="w-25" name="dayStart">
+                </div>
+                <div class="d-flex justify-content-end">
+                    <label class="w-auto px-2">месяц:</label>
+                    <input type="text" class="w-25" name="monthStart">
+                </div>
+                <div class="d-flex justify-content-end mb-2">
+                    <label class="w-auto px-2">год: 20</label>
+                    <input type="text" class="w-25" name="yearStart">
+                </div>
+                <div class="d-flex justify-content-end">
+                    <label class="w-auto px-2">окончания работ</label>
+                    <label class="w-auto px-2">день:</label>
+                    <input type="text" class="w-25" name="dayEnd">
+                </div>
+                <div class="d-flex justify-content-end">
+                    <label class="w-auto px-2">месяц:</label>
+                    <input type="text" class="w-25" name="monthEnd">
+                </div>
+                <div class="d-flex justify-content-end">
+                    <label class="w-auto px-2">год: 20</label>
+                    <input type="text" class="w-25" name="yearEnd">
+                </div>
+            </div>
+            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                <label class="w-auto">Разрешается производство последующих работ: </label>
+                <select id="work2" name="work2"></select>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="bg-success btn btn-succcess border-white mt-3 me-5">Сохранить</button>
+    </div>
+</form>
+</body>
+</html>

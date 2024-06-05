@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование паспорта объекта</title>
+    <link href="../static/staticFiles/bootstrap.css" th:href="@{/staticFiles/bootstrap.css}" rel="stylesheet"
+          type="text/css"/>
+    <script src="../static/staticFiles/passportObject.js" th:src="@{/staticFiles/passportObject.js}"
+            type="text/javascript"></script>
+</head>
+<body>
+<h1 id="headerText" hidden>Редактирование паспорта объекта</h1>
+<header th:insert="blocks/header :: header"></header>
+<div th:each="el : ${passportObjectDataOptional}">
+    <form method="post">
+        <div class="px-5 text-white">
+            <div class="d-flex flex-column mb-3">
+                <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                    <label class="w-auto">Наименование объекта капитального строительства</label>
+                    <input type="text" th:value="${el.nameObject}" name="nameObject" class="w-50">
+                </div>
+                <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                    <label class="w-auto">Адрес объекта</label>
+                    <input type="text" th:value="${el.addressObject}" name="addressObject" class="w-50">
+                </div>
+                <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                    <label class="w-auto">Шифр проекта</label>
+                    <input type="text" th:value="${el.projectCode}" name="projectCode" class="w-50">
+                </div>
+                <div class="row px-2 text-white d-flex justify-content-between">
+                    <div class="col-6 d-flex flex-column mb-3">
+                        <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                            <label class="w-auto">Застройщик, технический заказчик, лицо, ответственное за эксплуатацию
+                                здания, сооружения, или региональный оператор</label>
+                            <button type="button" id="btnDeveloper" onclick="expandDeveloper()">V</button>
+                        </div>
+                        <div class="row px-4" id="developer" hidden>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Наименование заказчика</label>
+                                <input type="text" th:value="${el.nameDeveloper}" name="nameDeveloper" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ОГРН заказчика</label>
+                                <input type="text" th:value="${el.ogrnDeveloper}" name="ogrnDeveloper" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ИНН заказчика</label>
+                                <input type="text" th:value="${el.innDeveloper}" name="innDeveloper" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Адрес заказчика</label>
+                                <input type="text" th:value="${el.addressDeveloper}" name="addressDeveloper"
+                                       class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Телефон / факс заказчика</label>
+                                <input type="text" th:value="${el.phoneDeveloper}" name="phoneDeveloper" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Наименование саморегулируемой организации заказчика</label>
+                                <input type="text" th:value="${el.nameOrganizationDeveloper}"
+                                       name="nameOrganizationDeveloper" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ОГРН саморегулируемой организации заказчика</label>
+                                <input type="text" th:value="${el.ogrnOrganizationDeveloper}"
+                                       name="ogrnOrganizationDeveloper" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ИНН саморегулируемой организации заказчика</label>
+                                <input type="text" th:value="${el.innOrganizationDeveloper}"
+                                       name="innOrganizationDeveloper" class="w-50">
+                            </div>
+                        </div>
+                        <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                            <label class="w-auto">Лицо, осуществляющее строительство, реконструкцию, капитальный
+                                ремонт</label>
+                            <button type="button" id="btnBuilder" onclick="expandBuilder()">V</button>
+                        </div>
+                        <div class="row px-4" id="builder" hidden>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Наименование подрядчика</label>
+                                <input type="text" th:value="${el.nameBuilder}" name="nameBuilder" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ОГРН подрядчика</label>
+                                <input type="text" th:value="${el.ogrnBuilder}" name="ogrnBuilder" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ИНН подрядчика</label>
+                                <input type="text" th:value="${el.innBuilder}" name="innBuilder" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Адрес подрядчика</label>
+                                <input type="text" th:value="${el.addressBuilder}" name="addressBuilder" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Телефон / факс подрядчика</label>
+                                <input type="text" th:value="${el.phoneBuilder}" name="phoneBuilder" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Наименование саморегулируемой организации подрядчика</label>
+                                <input type="text" th:value="${el.nameOrganizationBuilder}"
+                                       name="nameOrganizationBuilder" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ОГРН саморегулируемой организации подрядчика</label>
+                                <input type="text" th:value="${el.ogrnOrganizationBuilder}"
+                                       name="ogrnOrganizationBuilder" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ИНН саморегулируемой организации подрядчика</label>
+                                <input type="text" th:value="${el.innOrganizationBuilder}" name="innOrganizationBuilder"
+                                       class="w-50">
+                            </div>
+                        </div>
+                        <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                            <label class="w-auto">Лицо, осуществляющее подготовку проектной документации</label>
+                            <button type="button" id="btnPreparer" onclick="expandPreparer()">V</button>
+                        </div>
+                        <div class="row px-4" id="preparer" hidden>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Наименование проектировщика</label>
+                                <input type="text" th:value="${el.namePreparer}" name="namePreparer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ОГРН проектировщика</label>
+                                <input type="text" th:value="${el.ogrnPreparer}" name="ogrnPreparer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ИНН проектировщика</label>
+                                <input type="text" th:value="${el.innPreparer}" name="innPreparer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Адрес проектировщика</label>
+                                <input type="text" th:value="${el.addressPreparer}" name="addressPreparer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Телефон / факс проектировщика</label>
+                                <input type="text" th:value="${el.phonePreparer}" name="phonePreparer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Наименование саморегулируемой организации проектировщика</label>
+                                <input type="text" th:value="${el.nameOrganizationPreparer}"
+                                       name="nameOrganizationPreparer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ОГРН саморегулируемой организации проектировщика</label>
+                                <input type="text" th:value="${el.ogrnOrganizationPreparer}"
+                                       name="ogrnOrganizationPreparer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ИНН саморегулируемой организации проектировщика</label>
+                                <input type="text" th:value="${el.innOrganizationPreparer}"
+                                       name="innOrganizationPreparer" class="w-50">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 d-flex flex-column mb-3">
+                        <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                            <label class="w-auto">Приказ на представителя заказчика</label>
+                            <button type="button" id="btnCustomer" onclick="expandCustomer()">V</button>
+                        </div>
+                        <div class="row px-4" id="customer" hidden>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Должность представителя заказчика</label>
+                                <input type="text" th:value="${el.postCustomer}" name="postCustomer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Фамилия имя отчество представителя заказчика</label>
+                                <input type="text" th:value="${el.fioCustomer}" name="fioCustomer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Идентификационный номер представителя заказчика в национальном
+                                    реестре специалистов</label>
+                                <input type="text" th:value="${el.idCustomer}" name="idCustomer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Наименование распорядительного документа</label>
+                                <input type="text" th:value="${el.nameCustomer}" name="nameCustomer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Номер распорядительного документа №</label>
+                                <input type="text" th:value="${el.numberCustomer}" name="numberCustomer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Дата распорядительного документа</label>
+                                <input type="text" th:value="${el.dataCustomer}" name="dataCustomer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Наименование организации представителя заказчика</label>
+                                <input type="text" th:value="${el.nameOrganizationCustomer}"
+                                       name="nameOrganizationCustomer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ОГРН организации представителя заказчика</label>
+                                <input type="text" th:value="${el.ogrnOrganizationCustomer}"
+                                       name="ogrnOrganizationCustomer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ИНН организации представителя заказчика</label>
+                                <input type="text" th:value="${el.innOrganizationCustomer}"
+                                       name="innOrganizationCustomer" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Адрес организации представителя заказчика</label>
+                                <input type="text" th:value="${el.adrOrganizationCustomer}"
+                                       name="adrOrganizationCustomer" class="w-50">
+                            </div>
+                        </div>
+                        <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                            <label class="w-auto">Приказ на представителя подрядчика</label>
+                            <button type="button" id="btnContractor" onclick="expandContractor()">V</button>
+                        </div>
+                        <div class="row px-4" id="contractor" hidden>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Должность представителя подрядчика</label>
+                                <input type="text" th:value="${el.postContractor}" name="postContractor" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Фамилия имя отчество представителя подрядчика</label>
+                                <input type="text" th:value="${el.fioContractor}" name="fioContractor" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Идентификационный номер представителя подрядчика в национальном
+                                    реестре специалистов</label>
+                                <input type="text" th:value="${el.idContractor}" name="idContractor" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Наименование распорядительного документа</label>
+                                <input type="text" th:value="${el.nameContractor}" name="nameContractor" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Номер распорядительного документа №</label>
+                                <input type="text" th:value="${el.numberContractor}" name="numberContractor"
+                                       class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Дата распорядительного документа</label>
+                                <input type="text" th:value="${el.dataContractor}" name="dataContractor" class="w-50">
+                            </div>
+                        </div>
+                        <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                            <label class="w-auto">Приказ на представителя подрядчика по вопросам строительного
+                                контроля </label>
+                            <button type="button" id="btnContractor2" onclick="expandContractor2()">V</button>
+                        </div>
+                        <div class="row px-4" id="contractor2" hidden>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Должность представителя подрядчика</label>
+                                <input type="text" th:value="${el.postContractor2}" name="postContractor2" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Фамилия имя отчество представителя подрядчика</label>
+                                <input type="text" th:value="${el.fioContractor2}" name="fioContractor2" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Идентификационный номер представителя подрядчика в национальном
+                                    реестре
+                                    специалистов</label>
+                                <input type="text" th:value="${el.idContractor2}" name="idContractor2" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Наименование распорядительного документа</label>
+                                <input type="text" th:value="${el.nameContractor2}" name="nameContractor2" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Номер распорядительного документа №</label>
+                                <input type="text" th:value="${el.numberContractor2}" name="numberContractor2"
+                                       class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Дата распорядительного документа</label>
+                                <input type="text" th:value="${el.dataContractor2}" name="dataContractor2" class="w-50">
+                            </div>
+                        </div>
+                        <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                            <label class="w-auto">Приказ на представителя проектировщика</label>
+                            <button type="button" id="btnProjector" onclick="expandProjector()">V</button>
+                        </div>
+                        <div class="row px-4" id="projector" hidden>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Должность представителя проектировщика</label>
+                                <input type="text" th:value="${el.postProjector}" name="postProjector" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Фамилия имя отчество представителя проектировщика</label>
+                                <input type="text" th:value="${el.fioProjector}" name="fioProjector" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Идентификационный номер представителя проектировщика в национальном
+                                    реестре специалистов</label>
+                                <input type="text" th:value="${el.idProjector}" name="idProjector" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Наименование распорядительного документа</label>
+                                <input type="text" th:value="${el.nameProjector}" name="nameProjector" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Номер распорядительного документа №</label>
+                                <input type="text" th:value="${el.numberProjector}" name="numberProjector" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Дата распорядительного документа</label>
+                                <input type="text" th:value="${el.dataProjector}" name="dataProjector" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Наименование организации представителя проектировщика</label>
+                                <input type="text" th:value="${el.nameOrganizationProjector}"
+                                       name="nameOrganizationProjector" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ОГРН организации представителя проектировщика</label>
+                                <input type="text" th:value="${el.ogrnOrganizationProjector}"
+                                       name="ogrnOrganizationProjector" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ИНН организации представителя проектировщика</label>
+                                <input type="text" th:value="${el.innOrganizationProjector}"
+                                       name="innOrganizationProjector" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Адрес организации представителя проектировщика</label>
+                                <input type="text" th:value="${el.adrOrganizationProjector}"
+                                       name="adrOrganizationProjector" class="w-50">
+                            </div>
+                        </div>
+                        <div class="mb-2 p-2 bg-success d-flex justify-content-between">
+                            <label class="w-auto">Приказ на представителя иного лица</label>
+                            <button type="button" id="btnAnotherPerson" onclick="expandAnotherPerson()">V</button>
+                        </div>
+                        <div class="row px-4" id="anotherPerson" hidden>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Должность представителя иного лица</label>
+                                <input type="text" th:value="${el.postAnotherPerson}" name="postAnotherPerson"
+                                       class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Фамилия имя отчество представителя иного лица</label>
+                                <input type="text" th:value="${el.fioAnotherPerson}" name="fioAnotherPerson"
+                                       class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Идентификационный номер представителя иного лица в национальном
+                                    реестре специалистов</label>
+                                <input type="text" th:value="${el.idAnotherPerson}" name="idAnotherPerson"
+                                       class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Наименование распорядительного документа</label>
+                                <input type="text" th:value="${el.nameAnotherPerson}" name="nameAnotherPerson"
+                                       class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Номер распорядительного документа №</label>
+                                <input type="text" th:value="${el.numberAnotherPerson}" name="numberAnotherPerson"
+                                       class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Дата распорядительного документа</label>
+                                <input type="text" th:value="${el.dataAnotherPerson}" name="dataAnotherPerson"
+                                       class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Наименование организации представителя иного лица</label>
+                                <input type="text" th:value="${el.nameOrganizationAnotherPerson}"
+                                       name="nameOrganizationAnotherPerson" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ОГРН организации представителя иного лица</label>
+                                <input type="text" th:value="${el.ogrnOrganizationAnotherPerson}"
+                                       name="ogrnOrganizationAnotherPerson" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">ИНН организации представителя иного лица</label>
+                                <input type="text" th:value="${el.innOrganizationAnotherPerson}"
+                                       name="innOrganizationAnotherPerson" class="w-50">
+                            </div>
+                            <div class="m-2 p-2 bg-success d-flex justify-content-between">
+                                <label class="col-6">Адрес организации представителя иного лица</label>
+                                <input type="text" th:value="${el.adrOrganizationAnotherPerson}"
+                                       name="adrOrganizationAnotherPerson" class="w-50">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="bg-success btn btn-succcess border-white mt-3 me-5">Обновить</button>
+                </div>
+                <div class="d-flex justify-content-start">
+                    <a href="/passport-object-table" role="button"
+                       class="bg-success btn btn-succcess border-white mt-3 ms-5">Отмена</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
