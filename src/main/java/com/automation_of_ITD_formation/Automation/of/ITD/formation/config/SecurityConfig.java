@@ -30,6 +30,7 @@ public class SecurityConfig {
                 )
                 .formLogin((form) -> form
                         .loginPage("/login")
+                        .defaultSuccessUrl("/index", true)
                         .permitAll()
                 )
                 .logout(LogoutConfigurer::permitAll)
