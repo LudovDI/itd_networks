@@ -4,17 +4,10 @@ import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.GenerateFileUtils;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.*;
 import java.text.Collator;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.GenerateFileUtils.*;
@@ -101,8 +92,8 @@ public class ArchiveItdController {
         if (userDetails == null) {
             return "redirect:/login";
         }
-        UserData user = userRepository.findByUsername(userDetails.getUsername());
-        Optional<UserDocumentsData> optionalDocuments = userDocumentsRepository.findByUserData(user);
+        Optional<UserData> user = userRepository.findByUsername(userDetails.getUsername());
+        Optional<UserDocumentsData> optionalDocuments = userDocumentsRepository.findByUserData(user.orElseThrow());
         if (optionalDocuments.isPresent()) {
             UserDocumentsData userDocumentsData = optionalDocuments.get();
             Set<String> documents = userDocumentsData.getDocuments();

@@ -9,15 +9,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class MainController {
@@ -41,24 +37,28 @@ public class MainController {
     @Transactional
     public String postIndex(@RequestParam(value = "itdCheckbox", required = false) List<String> itdCheckboxes,
                                   @AuthenticationPrincipal UserDetails userDetails) {
-        UserData user = userRepository.findByUsername(userDetails.getUsername());
-        Optional<UserDocumentsData> optionalDocuments = userDocumentsRepository.findByUserData(user);
+        Optional<UserData> user = userRepository.findByUsername(userDetails.getUsername());
+        Iterator<UserData> iterator = user.stream().iterator();
+        Optional<UserDocumentsData> optionalDocuments;
+        if (iterator.hasNext()) {
+            optionalDocuments = userDocumentsRepository.findByUserData(iterator.next());
+            UserDocumentsData userDocumentsData;
+            if (optionalDocuments.isPresent()) {
+                userDocumentsData = optionalDocuments.get();
+            } else {
+                userDocumentsData = new UserDocumentsData();
+                userDocumentsData.setUserData(iterator.next());
+            }
 
-        UserDocumentsData userDocumentsData;
-        if (optionalDocuments.isPresent()) {
-            userDocumentsData = optionalDocuments.get();
-        } else {
-            userDocumentsData = new UserDocumentsData();
-            userDocumentsData.setUserData(user);
+            Set<String> documents = new HashSet<>();
+            if (itdCheckboxes != null) {
+                documents.addAll(itdCheckboxes);
+            }
+            userDocumentsData.setDocuments(documents);
+
+            userDocumentsRepository.save(userDocumentsData);
         }
 
-        Set<String> documents = new HashSet<>();
-        if (itdCheckboxes != null) {
-            documents.addAll(itdCheckboxes);
-        }
-        userDocumentsData.setDocuments(documents);
-
-        userDocumentsRepository.save(userDocumentsData);
         return "redirect:/index";
     }
 }

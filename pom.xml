@@ -14,7 +14,7 @@
 	<name>Automation-of-ITD-formation</name>
 	<description>Web app for automating the formation of ITD during the construction of utility networks</description>
 	<properties>
-		<java.version>22</java.version>
+		<java.version>21</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
