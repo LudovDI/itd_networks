@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Добавление ИТД</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top" class="vsc-initialized">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            <div th:replace="fragments/topbar :: topbar"></div>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h2 mb-0 text-primary">Создание новой ИТД</h1>
+                    <button type="submit" form="itdForm" class="btn btn-md btn-primary">Сохранить</button>
+                </div>
+                <hr>
+                <!-- Buttons to toggle sections -->
+                <div class="mb-3">
+                    <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-general')">Общее</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-customer')">Заказчик</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-contractor')">Подрядчик</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-designer')">Проектировщик</button>
+                </div>
+
+                <!-- Form -->
+                <div class="col-lg-8">
+                    <form id="itdForm" action="/submit" method="post">
+
+                        <!-- General Information Section -->
+                        <div id="section-general" class="form-section mb-5">
+                            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                <h4 class="h4 mb-0 text-gray-800">Общие сведения об объекте</h4>
+                            </div>
+                            <div class="form-group row">
+                                <label for="objectName" class="col-sm-4">Наименование объекта:</label>
+                                <input type="text" id="objectName" name="objectName" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="objectAddress" class="col-sm-4">Адрес объекта:</label>
+                                <input type="text" id="objectAddress" name="objectAddress" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="objectCode" class="col-sm-4">Шифр объекта:</label>
+                                <input type="text" id="objectCode" name="objectCode" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="networkName" class="col-sm-4">Наименование сети:</label>
+                                <input type="text" id="networkName" name="networkName" required class="col-sm-8">
+                            </div>
+                        </div>
+
+                        <!-- Customer Section -->
+                        <div id="section-customer" class="form-section mb-5" style="display:none;">
+                            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                <h4 class="h4 mb-0 text-gray-800">Заказчик</h4>
+                            </div>
+                            <div class="form-group row">
+                                <label for="contractorName" class="col-sm-4">Наименование заказчика:</label>
+                                <input type="text" id="contractorName" name="contractorName" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="contractorOGRN" class="col-sm-4">ОГРН заказчика:</label>
+                                <input type="text" id="contractorOGRN" name="contractorOGRN" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="contractorINN" class="col-sm-4">ИНН заказчика:</label>
+                                <input type="text" id="contractorINN" name="contractorINN" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="contractorAddress" class="col-sm-4">Адрес заказчика:</label>
+                                <input type="text" id="contractorAddress" name="contractorAddress" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="contractorPhone" class="col-sm-4">Телефон/факс заказчика:</label>
+                                <input type="text" id="contractorPhone" name="contractorPhone" required class="col-sm-8">
+                            </div>
+                        </div>
+
+                        <!-- Contractor Section -->
+                        <div id="section-contractor" class="form-section mb-5" style="display:none;">
+                            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                <h4 class="h4 mb-0 text-gray-800">Подрядчик</h4>
+                            </div>
+                            <div class="form-group row">
+                                <label for="subcontractorName" class="col-sm-4">Наименование подрядчика:</label>
+                                <input type="text" id="subcontractorName" name="subcontractorName" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="subcontractorOGRN" class="col-sm-4">ОГРН подрядчика:</label>
+                                <input type="text" id="subcontractorOGRN" name="subcontractorOGRN" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="subcontractorINN" class="col-sm-4">ИНН подрядчика:</label>
+                                <input type="text" id="subcontractorINN" name="subcontractorINN" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="subcontractorAddress" class="col-sm-4">Адрес подрядчика:</label>
+                                <input type="text" id="subcontractorAddress" name="subcontractorAddress" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="subcontractorPhone" class="col-sm-4">Телефон/факс подрядчика:</label>
+                                <input type="text" id="subcontractorPhone" name="subcontractorPhone" required class="col-sm-8">
+                            </div>
+                        </div>
+
+                        <!-- Designer Section -->
+                        <div id="section-designer" class="form-section mb-5" style="display:none;">
+                            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                <h4 class="h4 mb-0 text-gray-800">Проектировщик</h4>
+                            </div>
+                            <div class="form-group row">
+                                <label for="designerName" class="col-sm-4">Наименование проектировщика:</label>
+                                <input type="text" id="designerName" name="designerName" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="designerOGRN" class="col-sm-4">ОГРН проектировщика:</label>
+                                <input type="text" id="designerOGRN" name="designerOGRN" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="designerINN" class="col-sm-4">ИНН проектировщика:</label>
+                                <input type="text" id="designerINN" name="designerINN" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="designerAddress" class="col-sm-4">Адрес проектировщика:</label>
+                                <input type="text" id="designerAddress" name="designerAddress" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="designerPhone" class="col-sm-4">Телефон/факс проектировщика:</label>
+                                <input type="text" id="designerPhone" name="designerPhone" required class="col-sm-8">
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <div th:replace="fragments/footer :: footer"></div>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- JavaScript для управления видимостью секций -->
+<script src="js/new_abd_toggle.js"></script>
+
+<!-- Bootstrap core JavaScript-->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="js/sb-admin-2.min.js"></script>
+
+</body>
+
+</html>
