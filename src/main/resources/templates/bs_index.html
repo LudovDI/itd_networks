@@ -67,7 +67,8 @@
                 <i class="fas fa-fw fa-table"></i>
                 <span>Объекты</span>
             </a>
-            <div id="collapseActivePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div id="collapseActivePages" class="collapse" aria-labelledby="headingPages"
+                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <a class="collapse-item" href="index.html">ИТД 1</a>
                 </div>
@@ -81,7 +82,8 @@
                 <i class="fas fa-fw fa-folder"></i>
                 <span>Архив</span>
             </a>
-            <div id="collapseArchivePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div id="collapseArchivePages" class="collapse" aria-labelledby="headingPages"
+                 data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <a class="collapse-item" href="index.html">ИТД 2</a>
                     <a class="collapse-item" href="index.html">ИТД 3</a>
@@ -166,7 +168,7 @@
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
-                            <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
+                            <img class="img-profile rounded-circle" src="img/undraw_profile.png">
                         </a>
                         <!-- Dropdown - User Information -->
                         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -202,9 +204,9 @@
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h3 mb-0 text-gray-800">Объекты</h1>
-                    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" type="button" onclick="btnClick()" id="btn"
-                            th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}">
-                        <i class="fas fa-plus fa-sm text-white-50 icon-margin-right"></i>Создать новую ИТД
+                    <a href="#" type="button" onclick="btnClick()" id="btn"
+                       class="d-none d-sm-inline-block btn btn-md btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-md text-white-50 icon-margin-right"></i>Создать новую ИТД
                     </a>
                 </div>
 
@@ -218,17 +220,26 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="row align-items-center">
-                                            <div class="col-xl-7 text-lg font-weight-bold text-primary text-uppercase mb-1">ИТД 1</div>
-                                            <div class="col-xl-5 h6 mb-0 font-weight-bold text-primary text-right">В работе</div>
+                                            <div class="col-xl-7 text-lg font-weight-bold text-primary text-uppercase mb-1">
+                                                ИТД 1
+                                            </div>
+                                            <div class="col-xl-5 h6 mb-0 font-weight-bold text-primary text-right">В
+                                                работе
+                                            </div>
                                         </div>
                                         <hr class="my-2">
                                         <div class="row">
-                                            <div class="col-xl-8 h6 mb-0 font-weight-bold text-gray-800">00444-038-НВ</div>
+                                            <div class="col-xl-8 h6 mb-0 font-weight-bold text-gray-800">00444-038-НВ
+                                            </div>
                                             <div class="col-xl-4 h6 mb-0 font-weight-bold text-gray-800">2024</div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-xl-8 text-md mb-0 font-weight-bold text-gray-800">Ответственный инженер ПТО: </div>
-                                            <div class="col-xl-4 text-md mb-0 font-weight-bold text-gray-800">Лудова О.М.</div>
+                                            <div class="col-xl-8 text-md mb-0 font-weight-bold text-gray-800">
+                                                Ответственный инженер ПТО:
+                                            </div>
+                                            <div class="col-xl-4 text-md mb-0 font-weight-bold text-gray-800">Лудова
+                                                О.М.
+                                            </div>
                                         </div>
 
                                     </div>
@@ -245,17 +256,26 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="row align-items-center">
-                                            <div class="col-xl-7 text-lg font-weight-bold text-success text-uppercase mb-1">ИТД 2</div>
-                                            <div class="col-xl-5 h6 mb-0 font-weight-bold text-success text-right">В архиве</div>
+                                            <div class="col-xl-7 text-lg font-weight-bold text-success text-uppercase mb-1">
+                                                ИТД 2
+                                            </div>
+                                            <div class="col-xl-5 h6 mb-0 font-weight-bold text-success text-right">В
+                                                архиве
+                                            </div>
                                         </div>
                                         <hr class="my-2">
                                         <div class="row">
-                                            <div class="col-xl-8 h6 mb-0 font-weight-bold text-gray-800">00444-038-НВ</div>
+                                            <div class="col-xl-8 h6 mb-0 font-weight-bold text-gray-800">00444-038-НВ
+                                            </div>
                                             <div class="col-xl-4 h6 mb-0 font-weight-bold text-gray-800">2024</div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-xl-8 text-md mb-0 font-weight-bold text-gray-800">Ответственный инженер ПТО: </div>
-                                            <div class="col-xl-4 text-md mb-0 font-weight-bold text-gray-800">Лудова О.М.</div>
+                                            <div class="col-xl-8 text-md mb-0 font-weight-bold text-gray-800">
+                                                Ответственный инженер ПТО:
+                                            </div>
+                                            <div class="col-xl-4 text-md mb-0 font-weight-bold text-gray-800">Лудова
+                                                О.М.
+                                            </div>
                                         </div>
 
                                     </div>
@@ -272,17 +292,26 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="row align-items-center">
-                                            <div class="col-xl-7 text-lg font-weight-bold text-warning text-uppercase mb-1">ИТД 3</div>
-                                            <div class="col-xl-5 h6 mb-0 font-weight-bold text-warning text-right">На проверке</div>
+                                            <div class="col-xl-7 text-lg font-weight-bold text-warning text-uppercase mb-1">
+                                                ИТД 3
+                                            </div>
+                                            <div class="col-xl-5 h6 mb-0 font-weight-bold text-warning text-right">На
+                                                проверке
+                                            </div>
                                         </div>
                                         <hr class="my-2">
                                         <div class="row">
-                                            <div class="col-xl-8 h6 mb-0 font-weight-bold text-gray-800">00444-038-НВ</div>
+                                            <div class="col-xl-8 h6 mb-0 font-weight-bold text-gray-800">00444-038-НВ
+                                            </div>
                                             <div class="col-xl-4 h6 mb-0 font-weight-bold text-gray-800">2024</div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-xl-8 text-md mb-0 font-weight-bold text-gray-800">Ответственный инженер ПТО: </div>
-                                            <div class="col-xl-4 text-md mb-0 font-weight-bold text-gray-800">Лудова О.М.</div>
+                                            <div class="col-xl-8 text-md mb-0 font-weight-bold text-gray-800">
+                                                Ответственный инженер ПТО:
+                                            </div>
+                                            <div class="col-xl-4 text-md mb-0 font-weight-bold text-gray-800">Лудова
+                                                О.М.
+                                            </div>
                                         </div>
 
                                     </div>
