@@ -28,6 +28,11 @@ public class MainController {
         return "index";
     }
 
+    @GetMapping("/bs_index")
+    public String bs_index() {
+        return "bs_index";
+    }
+
     @GetMapping("/logs")
     public String logs() {
         return "logs";
