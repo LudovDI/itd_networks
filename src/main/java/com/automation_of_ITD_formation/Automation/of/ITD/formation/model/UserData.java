@@ -2,6 +2,7 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -12,6 +13,9 @@ public class UserData {
 
     private String username, password;
     private boolean active;
+
+    @OneToMany(mappedBy = "userData", cascade = CascadeType.ALL)
+    private List<UserDocumentsData> userDocuments;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
@@ -56,5 +60,13 @@ public class UserData {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public List<UserDocumentsData> getUserDocuments() {
+        return userDocuments;
+    }
+
+    public void setUserDocuments(List<UserDocumentsData> userDocuments) {
+        this.userDocuments = userDocuments;
     }
 }

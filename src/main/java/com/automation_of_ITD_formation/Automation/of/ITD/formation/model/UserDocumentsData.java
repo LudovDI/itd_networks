@@ -10,7 +10,7 @@ public class UserDocumentsData {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private UserData userData;
 
@@ -45,6 +45,4 @@ public class UserDocumentsData {
 
     public UserDocumentsData() {
     }
-
-
 }

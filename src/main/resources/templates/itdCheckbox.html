@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet"
+          type="text/css"/>
+</head>
+<body>
+<h1 id="headerText" hidden>Создание ИТД</h1>
+<header th:insert="blocks/header :: header"></header>
+<div class="m-2 p-2 bg-success d-flex justify-content-between text-white">
+    <form action="/itd-checkbox" method="post">
+        <div class="m-2 p-2 bg-success d-flex justify-content-start">
+            <label class="w-auto">Отметьте, какие документы войдут в ИТД</label>
+        </div>
+        <div class="m-2 p-2 bg-success d-flex justify-content-start">
+            <label class="w-auto">Перечень ИТД</label>
+        </div>
+        <div class="m-2 p-2 bg-success d-flex justify-content-start">
+            <input class="mx-1" type="checkbox" name="itdCheckbox" value="Реестр ИТД">
+            <label>Реестр ИТД</label>
+        </div>
+        <div class="m-2 p-2 bg-success d-flex justify-content-start">
+            <input class="mx-1" type="checkbox" name="itdCheckbox" value="АОСР">
+            <label class="w-auto">АОСР</label>
+        </div>
+        <div class="m-2 p-2 bg-success d-flex justify-content-start">
+            <input class="mx-1" type="checkbox" name="itdCheckbox" value="ОЖР">
+            <label class="w-auto">ОЖР</label>
+        </div>
+        <div class="m-2 p-2 bg-success d-flex justify-content-start">
+            <input class="mx-1" type="checkbox" name="itdCheckbox" value="ЖЗР">
+            <label class="w-auto">ЖЗР</label>
+        </div>
+        <div class="m-2 p-2 bg-success d-flex justify-content-start">
+            <input class="mx-1" type="checkbox" name="itdCheckbox" value="ЖСР ПЭ">
+            <label class="w-auto">ЖСР ПЭ</label>
+        </div>
+        <div class="m-2 p-2 bg-success d-flex justify-content-start">
+            <input class="mx-1" type="checkbox" name="itdCheckbox" value="ЖСР СТ">
+            <label class="w-auto">ЖСР СТ</label>
+        </div>
+        <div class="m-2 p-2 bg-success d-flex justify-content-start">
+            <input class="mx-1" type="checkbox" name="itdCheckbox" value="ЖАКР">
+            <label class="w-auto">ЖАКР</label>
+        </div>
+        <div class="m-2 p-2 bg-success d-flex justify-content-start">
+            <input class="mx-1" type="checkbox" name="itdCheckbox" value="ЖБР">
+            <label class="w-auto">ЖБР</label>
+        </div>
+        <div class="text-white">
+            <button type="submit" class="btn btn-success border-white ms-5">Сохранить</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
