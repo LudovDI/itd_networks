@@ -109,6 +109,18 @@
                                 <label for="contractorPhone" class="col-sm-4">Телефон/факс заказчика:</label>
                                 <input type="text" id="contractorPhone" name="contractorPhone" required class="col-sm-8">
                             </div>
+                            <div class="form-group row">
+                                <label for="contractorPhone" class="col-sm-4">Наименование СРО заказчика:</label>
+                                <input type="text" id="contractorCPO" name="contractorPhone" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="contractorPhone" class="col-sm-4">ОГРН СРО заказчика:</label>
+                                <input type="text" id="contractorCPO_OGRN" name="contractorPhone" required class="col-sm-8">
+                            </div>
+                            <div class="form-group row">
+                                <label for="contractorPhone" class="col-sm-4">ИНН СРО заказчика:</label>
+                                <input type="text" id="contractorCPO_INN" name="contractorPhone" required class="col-sm-8">
+                            </div>
 
                             <!-- Контейнер для добавления новых полей для ответственных лиц -->
                             <div id="customerResponsiblesContainer">
@@ -116,15 +128,15 @@
                                     <h4 class="h4 mb-0 text-gray-800">Представитель заказчика №1</h4>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="responsiblePosition_1" class="col-sm-4">Должность представителя заказчика:</label>
+                                    <label for="customerResponsiblePosition_1" class="col-sm-4">Должность представителя заказчика:</label>
                                     <input type="text" id="customerResponsiblePosition_1" name="responsiblePositionPosition_1" required class="col-sm-8">
                                 </div>
                                 <div class="form-group row">
-                                    <label for="responsibleName_1" class="col-sm-4">ФИО представителя заказчика:</label>
+                                    <label for="customerResponsibleName_1" class="col-sm-4">ФИО представителя заказчика:</label>
                                     <input type="text" id="customerResponsibleName_1" name="customerResponsibleName_1" required class="col-sm-8">
                                 </div>
                                 <div class="form-group row">
-                                    <label for="responsibleID_1" class="col-sm-6">Идентификационный номер в национальном реестре специалистов:</label>
+                                    <label for="customerResponsibleID_1" class="col-sm-6">Идентификационный номер в национальном реестре специалистов:</label>
                                     <input type="text" id="customerResponsibleID_1" name="customerResponsibleID_1" required class="col-sm-6">
                                 </div>
                                 <div class="form-group row">
@@ -247,6 +259,10 @@
                                 <label for="designerPhone" class="col-sm-4">Телефон/факс проектировщика:</label>
                                 <input type="text" id="designerPhone" name="designerPhone" required class="col-sm-8">
                             </div>
+
+                            <div id="designerResponsiblesContainer"/>
+                            <!-- Кнопка добавления ответственного лица -->
+                            <button type="button" class="btn btn-primary mt-3" onclick="addDesignerResponsible()"><i class="fas fa-plus fa-md text-white-50 icon-margin-right"></i>Добавить ответственное лицо</button>
                         </div>
 
                     </form>
