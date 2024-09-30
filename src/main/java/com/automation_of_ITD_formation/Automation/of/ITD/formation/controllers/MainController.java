@@ -41,29 +41,25 @@ public class MainController {
     @PostMapping("/index")
     @Transactional
     public String postIndex(@RequestParam(value = "itdCheckbox", required = false) List<String> itdCheckboxes,
-                                  @AuthenticationPrincipal UserDetails userDetails) {
+                            @AuthenticationPrincipal UserDetails userDetails) {
         Optional<UserData> user = userRepository.findByUsername(userDetails.getUsername());
-        Iterator<UserData> iterator = user.stream().iterator();
-        Optional<UserDocumentsData> optionalDocuments;
-        if (iterator.hasNext()) {
-            optionalDocuments = userDocumentsRepository.findByUserData(iterator.next());
+        if (user.isPresent()) {
+            UserData userData = user.get();
+            Optional<UserDocumentsData> optionalDocuments = userDocumentsRepository.findByUserData(userData);
             UserDocumentsData userDocumentsData;
             if (optionalDocuments.isPresent()) {
                 userDocumentsData = optionalDocuments.get();
             } else {
                 userDocumentsData = new UserDocumentsData();
-                userDocumentsData.setUserData(iterator.next());
+                userDocumentsData.setUserData(userData);
             }
-
             Set<String> documents = new HashSet<>();
             if (itdCheckboxes != null) {
                 documents.addAll(itdCheckboxes);
             }
             userDocumentsData.setDocuments(documents);
-
             userDocumentsRepository.save(userDocumentsData);
         }
-
         return "redirect:/index";
     }
 }
