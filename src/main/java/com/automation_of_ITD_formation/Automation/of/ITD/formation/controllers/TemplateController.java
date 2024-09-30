@@ -15,4 +15,14 @@ public class TemplateController {
     public String materials() {
         return "materials_used";
     }
+
+    @GetMapping("/materials_add")
+    public String materialsAdd() {
+        return "materials_add";
+    }
+
+    @GetMapping("/materials_edit")
+    public String materialsEdit() {
+        return "materials_edit";
+    }
 }
