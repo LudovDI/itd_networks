@@ -46,236 +46,263 @@
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h2 mb-0 text-primary">Создание новой ИТД</h1>
-                    <button type="submit" form="itdForm" class="btn btn-md btn-primary">Сохранить</button>
+                    <button type="submit" form="itdForm" class="btn btn-success btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <span class="text">Сохранить</span>
+                    </button>
                 </div>
                 <hr>
-                <!-- Buttons to toggle sections -->
-                <div class="mb-3">
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-general')">Общее</button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-customer')">Заказчик</button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-contractor')">Подрядчик</button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-designer')">Проектировщик</button>
+
+                <div class="card shadow">
+                    <div class="card-header">
+                        <!-- Buttons to toggle sections -->
+                        <div>
+                            <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-general')">Общее</button>
+                            <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-customer')">Заказчик</button>
+                            <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-contractor')">Подрядчик</button>
+                            <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-designer')">Проектировщик</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Form -->
+                        <div class="col-lg-8">
+                            <form id="itdForm" action="/submit" method="post">
+
+                                <!-- General Information Section -->
+                                <div id="section-general" class="form-section">
+                                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                        <h4 class="h4 mb-0 text-gray-800">Общие сведения об объекте</h4>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="objectName" class="col-sm-4">Наименование объекта:</label>
+                                        <input type="text" id="objectName" name="objectName" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="objectAddress" class="col-sm-4">Адрес объекта:</label>
+                                        <input type="text" id="objectAddress" name="objectAddress" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="objectCode" class="col-sm-4">Шифр объекта:</label>
+                                        <input type="text" id="objectCode" name="objectCode" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="networkName" class="col-sm-4">Наименование сети:</label>
+                                        <input type="text" id="networkName" name="networkName" required class="col-sm-8">
+                                    </div>
+                                </div>
+
+                                <!-- Customer Section -->
+                                <div id="section-customer" class="form-section" style="display:none;">
+                                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                        <h4 class="h4 mb-0 text-gray-800">Заказчик</h4>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="contractorName" class="col-sm-4">Наименование заказчика:</label>
+                                        <input type="text" id="contractorName" name="contractorName" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="contractorOGRN" class="col-sm-4">ОГРН заказчика:</label>
+                                        <input type="text" id="contractorOGRN" name="contractorOGRN" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="contractorINN" class="col-sm-4">ИНН заказчика:</label>
+                                        <input type="text" id="contractorINN" name="contractorINN" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="contractorAddress" class="col-sm-4">Адрес заказчика:</label>
+                                        <input type="text" id="contractorAddress" name="contractorAddress" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="contractorPhone" class="col-sm-4">Телефон/факс заказчика:</label>
+                                        <input type="text" id="contractorPhone" name="contractorPhone" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="contractorPhone" class="col-sm-4">Наименование СРО заказчика:</label>
+                                        <input type="text" id="contractorCPO" name="contractorPhone" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="contractorPhone" class="col-sm-4">ОГРН СРО заказчика:</label>
+                                        <input type="text" id="contractorCPO_OGRN" name="contractorPhone" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="contractorPhone" class="col-sm-4">ИНН СРО заказчика:</label>
+                                        <input type="text" id="contractorCPO_INN" name="contractorPhone" required class="col-sm-8">
+                                    </div>
+
+                                    <!-- Контейнер для добавления новых полей для ответственных лиц -->
+                                    <div id="customerResponsiblesContainer">
+                                        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                            <h4 class="h4 mb-0 text-gray-800">Представитель заказчика №1</h4>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="customerResponsiblePosition_1" class="col-sm-4">Должность представителя заказчика:</label>
+                                            <input type="text" id="customerResponsiblePosition_1" name="responsiblePositionPosition_1" required class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="customerResponsibleName_1" class="col-sm-4">ФИО представителя заказчика:</label>
+                                            <input type="text" id="customerResponsibleName_1" name="customerResponsibleName_1" required class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="customerResponsibleID_1" class="col-sm-6">Идентификационный номер в национальном реестре специалистов:</label>
+                                            <input type="text" id="customerResponsibleID_1" name="customerResponsibleID_1" required class="col-sm-6">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="customerResponsibleDocument_1" class="col-sm-4">Распорядительный документ:</label>
+                                            <input type="text" id="customerResponsibleDocument_1" name="customerResponsibleDocument_1" required class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="customerResponsibleNumber_1" class="col-sm-4">Номер распорядительного документа:</label>
+                                            <input type="text" id="customerResponsibleNumber_1" name="customerResponsibleNumber_1" required class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="customerResponsibleDate_1" class="col-sm-4">Дата распорядительного документа:</label>
+                                            <input type="text" id="customerResponsibleDate_1" name="customerResponsibleDate_1" required class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="customerResponsibleCompany_1" class="col-sm-6">Юридическое лицо представителя заказчика:</label>
+                                            <input type="text" id="customerResponsibleCompany_1" name="customerResponsibleCompany_1" required class="col-sm-6">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="customerResponsibleOGRN_1" class="col-sm-4">ОГРН юридического лица:</label>
+                                            <input type="text" id="customerResponsibleOGRN_1" name="customerResponsibleOGRN_1" required class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="customerResponsibleINN_1" class="col-sm-4">ИНН юридического лица:</label>
+                                            <input type="text" id="customerResponsibleINN_1" name="customerResponsibleINN_1" required class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="customerResponsibleAddress_1" class="col-sm-4">Адрес юридического лица:</label>
+                                            <input type="text" id="customerResponsibleAddress_1" name="customerResponsibleAddress_1" required class="col-sm-8">
+                                        </div>
+                                    </div>
+
+                                    <!-- Кнопка добавления ответственного лица -->
+                                    <button type="button" class="btn btn-primary btn-icon-split mt-3" onclick="addCustomerResponsible()">
+                                <span class="icon text-white-50">
+                                    <i class="fas fa-plus"></i>
+                                </span>
+                                        <span class="text">Добавить ответственное лицо</span>
+                                    </button>
+                                </div>
+
+                                <!-- Contractor Section -->
+                                <div id="section-contractor" class="form-section" style="display:none;">
+                                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                        <h4 class="h4 mb-0 text-gray-800">Подрядчик</h4>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="subcontractorName" class="col-sm-4">Наименование подрядчика:</label>
+                                        <input type="text" id="subcontractorName" name="subcontractorName" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="subcontractorOGRN" class="col-sm-4">ОГРН подрядчика:</label>
+                                        <input type="text" id="subcontractorOGRN" name="subcontractorOGRN" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="subcontractorINN" class="col-sm-4">ИНН подрядчика:</label>
+                                        <input type="text" id="subcontractorINN" name="subcontractorINN" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="subcontractorAddress" class="col-sm-4">Адрес подрядчика:</label>
+                                        <input type="text" id="subcontractorAddress" name="subcontractorAddress" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="subcontractorPhone" class="col-sm-4">Телефон/факс подрядчика:</label>
+                                        <input type="text" id="subcontractorPhone" name="subcontractorPhone" required class="col-sm-8">
+                                    </div>
+
+                                    <!-- Контейнер для добавления новых полей для ответственных лиц -->
+                                    <div id="subcustomerResponsiblesContainer">
+                                        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                            <h4 class="h4 mb-0 text-gray-800">Представитель подрядчика №1</h4>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="subcustomerResponsiblePosition_1" class="col-sm-4">Должность представителя подрядчика:</label>
+                                            <input type="text" id="subcustomerResponsiblePosition_1" name="subcustomerResponsiblePosition_1" required class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="subcustomerResponsibleName_1" class="col-sm-4">ФИО представителя подрядчика:</label>
+                                            <input type="text" id="subcustomerResponsibleName_1" name="subcustomerResponsibleName_1" required class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="subcustomerResponsibleID_1" class="col-sm-6">Идентификационный номер в национальном реестре специалистов:</label>
+                                            <input type="text" id="subcustomerResponsibleID_1" name="subcustomerResponsibleID_1" required class="col-sm-6">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="subcustomerResponsibleDocument_1" class="col-sm-4">Распорядительный документ:</label>
+                                            <input type="text" id="subcustomerResponsibleDocument_1" name="subcustomerResponsibleDocument_1" required class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="subcustomerResponsibleNumber_1" class="col-sm-4">Номер распорядительного документа:</label>
+                                            <input type="text" id="subcustomerResponsibleNumber_1" name="subcustomerResponsibleNumber_1" required class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="subcustomerResponsibleDate_1" class="col-sm-4">Дата распорядительного документа:</label>
+                                            <input type="text" id="subcustomerResponsibleDate_1" name="subcustomerResponsibleDate_1" required class="col-sm-8">
+                                        </div>
+                                    </div>
+
+                                    <!-- Кнопка добавления ответственного лица -->
+                                    <button type="button" class="btn btn-primary btn-icon-split mt-3" onclick="addSubcustomerResponsible()">
+                                <span class="icon text-white-50">
+                                    <i class="fas fa-plus"></i>
+                                </span>
+                                        <span class="text">Добавить ответственное лицо</span>
+                                    </button>
+                                </div>
+
+                                <!-- Designer Section -->
+                                <div id="section-designer" class="form-section" style="display:none;">
+                                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                        <h4 class="h4 mb-0 text-gray-800">Проектировщик</h4>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="designerName" class="col-sm-4">Наименование проектировщика:</label>
+                                        <input type="text" id="designerName" name="designerName" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="designerOGRN" class="col-sm-4">ОГРН проектировщика:</label>
+                                        <input type="text" id="designerOGRN" name="designerOGRN" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="designerINN" class="col-sm-4">ИНН проектировщика:</label>
+                                        <input type="text" id="designerINN" name="designerINN" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="designerAddress" class="col-sm-4">Адрес проектировщика:</label>
+                                        <input type="text" id="designerAddress" name="designerAddress" required class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="designerPhone" class="col-sm-4">Телефон/факс проектировщика:</label>
+                                        <input type="text" id="designerPhone" name="designerPhone" required class="col-sm-8">
+                                    </div>
+
+                                    <div id="designerResponsiblesContainer"></div>
+                                    <!-- Кнопка добавления ответственного лица -->
+                                    <button type="button" class="btn btn-primary btn-icon-split mt-3" onclick="addDesignerResponsible()">
+                                <span class="icon text-white-50">
+                                    <i class="fas fa-plus"></i>
+                                </span>
+                                        <span class="text">Добавить ответственное лицо</span>
+                                    </button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Form -->
-                <div class="col-lg-8">
-                    <form id="itdForm" action="/submit" method="post">
-
-                        <!-- General Information Section -->
-                        <div id="section-general" class="form-section mb-5">
-                            <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                <h4 class="h4 mb-0 text-gray-800">Общие сведения об объекте</h4>
-                            </div>
-                            <div class="form-group row">
-                                <label for="objectName" class="col-sm-4">Наименование объекта:</label>
-                                <input type="text" id="objectName" name="objectName" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="objectAddress" class="col-sm-4">Адрес объекта:</label>
-                                <input type="text" id="objectAddress" name="objectAddress" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="objectCode" class="col-sm-4">Шифр объекта:</label>
-                                <input type="text" id="objectCode" name="objectCode" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="networkName" class="col-sm-4">Наименование сети:</label>
-                                <input type="text" id="networkName" name="networkName" required class="col-sm-8">
-                            </div>
-                        </div>
-
-                        <!-- Customer Section -->
-                        <div id="section-customer" class="form-section mb-5" style="display:none;">
-                            <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                <h4 class="h4 mb-0 text-gray-800">Заказчик</h4>
-                            </div>
-                            <div class="form-group row">
-                                <label for="contractorName" class="col-sm-4">Наименование заказчика:</label>
-                                <input type="text" id="contractorName" name="contractorName" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="contractorOGRN" class="col-sm-4">ОГРН заказчика:</label>
-                                <input type="text" id="contractorOGRN" name="contractorOGRN" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="contractorINN" class="col-sm-4">ИНН заказчика:</label>
-                                <input type="text" id="contractorINN" name="contractorINN" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="contractorAddress" class="col-sm-4">Адрес заказчика:</label>
-                                <input type="text" id="contractorAddress" name="contractorAddress" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="contractorPhone" class="col-sm-4">Телефон/факс заказчика:</label>
-                                <input type="text" id="contractorPhone" name="contractorPhone" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="contractorPhone" class="col-sm-4">Наименование СРО заказчика:</label>
-                                <input type="text" id="contractorCPO" name="contractorPhone" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="contractorPhone" class="col-sm-4">ОГРН СРО заказчика:</label>
-                                <input type="text" id="contractorCPO_OGRN" name="contractorPhone" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="contractorPhone" class="col-sm-4">ИНН СРО заказчика:</label>
-                                <input type="text" id="contractorCPO_INN" name="contractorPhone" required class="col-sm-8">
-                            </div>
-
-                            <!-- Контейнер для добавления новых полей для ответственных лиц -->
-                            <div id="customerResponsiblesContainer">
-                                <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                    <h4 class="h4 mb-0 text-gray-800">Представитель заказчика №1</h4>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="customerResponsiblePosition_1" class="col-sm-4">Должность представителя заказчика:</label>
-                                    <input type="text" id="customerResponsiblePosition_1" name="responsiblePositionPosition_1" required class="col-sm-8">
-                                </div>
-                                <div class="form-group row">
-                                    <label for="customerResponsibleName_1" class="col-sm-4">ФИО представителя заказчика:</label>
-                                    <input type="text" id="customerResponsibleName_1" name="customerResponsibleName_1" required class="col-sm-8">
-                                </div>
-                                <div class="form-group row">
-                                    <label for="customerResponsibleID_1" class="col-sm-6">Идентификационный номер в национальном реестре специалистов:</label>
-                                    <input type="text" id="customerResponsibleID_1" name="customerResponsibleID_1" required class="col-sm-6">
-                                </div>
-                                <div class="form-group row">
-                                    <label for="customerResponsibleDocument_1" class="col-sm-4">Распорядительный документ:</label>
-                                    <input type="text" id="customerResponsibleDocument_1" name="customerResponsibleDocument_1" required class="col-sm-8">
-                                </div>
-                                <div class="form-group row">
-                                    <label for="customerResponsibleNumber_1" class="col-sm-4">Номер распорядительного документа:</label>
-                                    <input type="text" id="customerResponsibleNumber_1" name="customerResponsibleNumber_1" required class="col-sm-8">
-                                </div>
-                                <div class="form-group row">
-                                    <label for="customerResponsibleDate_1" class="col-sm-4">Дата распорядительного документа:</label>
-                                    <input type="text" id="customerResponsibleDate_1" name="customerResponsibleDate_1" required class="col-sm-8">
-                                </div>
-                                <div class="form-group row">
-                                    <label for="customerResponsibleCompany_1" class="col-sm-6">Юридическое лицо представителя заказчика:</label>
-                                    <input type="text" id="customerResponsibleCompany_1" name="customerResponsibleCompany_1" required class="col-sm-6">
-                                </div>
-                                <div class="form-group row">
-                                    <label for="customerResponsibleOGRN_1" class="col-sm-4">ОГРН юридического лица:</label>
-                                    <input type="text" id="customerResponsibleOGRN_1" name="customerResponsibleOGRN_1" required class="col-sm-8">
-                                </div>
-                                <div class="form-group row">
-                                    <label for="customerResponsibleINN_1" class="col-sm-4">ИНН юридического лица:</label>
-                                    <input type="text" id="customerResponsibleINN_1" name="customerResponsibleINN_1" required class="col-sm-8">
-                                </div>
-                                <div class="form-group row">
-                                    <label for="customerResponsibleAddress_1" class="col-sm-4">Адрес юридического лица:</label>
-                                    <input type="text" id="customerResponsibleAddress_1" name="customerResponsibleAddress_1" required class="col-sm-8">
-                                </div>
-                            </div>
-
-                            <!-- Кнопка добавления ответственного лица -->
-                            <button type="button" class="btn btn-primary mt-3" onclick="addCustomerResponsible()"><i class="fas fa-plus fa-md text-white-50 icon-margin-right"></i>Добавить ответственное лицо</button>
-                        </div>
-
-                        <!-- Contractor Section -->
-                        <div id="section-contractor" class="form-section mb-5" style="display:none;">
-                            <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                <h4 class="h4 mb-0 text-gray-800">Подрядчик</h4>
-                            </div>
-                            <div class="form-group row">
-                                <label for="subcontractorName" class="col-sm-4">Наименование подрядчика:</label>
-                                <input type="text" id="subcontractorName" name="subcontractorName" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="subcontractorOGRN" class="col-sm-4">ОГРН подрядчика:</label>
-                                <input type="text" id="subcontractorOGRN" name="subcontractorOGRN" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="subcontractorINN" class="col-sm-4">ИНН подрядчика:</label>
-                                <input type="text" id="subcontractorINN" name="subcontractorINN" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="subcontractorAddress" class="col-sm-4">Адрес подрядчика:</label>
-                                <input type="text" id="subcontractorAddress" name="subcontractorAddress" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="subcontractorPhone" class="col-sm-4">Телефон/факс подрядчика:</label>
-                                <input type="text" id="subcontractorPhone" name="subcontractorPhone" required class="col-sm-8">
-                            </div>
-
-                            <!-- Контейнер для добавления новых полей для ответственных лиц -->
-                            <div id="subcustomerResponsiblesContainer">
-                                <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                    <h4 class="h4 mb-0 text-gray-800">Представитель подрядчика №1</h4>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="subcustomerResponsiblePosition_1" class="col-sm-4">Должность представителя подрядчика:</label>
-                                    <input type="text" id="subcustomerResponsiblePosition_1" name="subcustomerResponsiblePosition_1" required class="col-sm-8">
-                                </div>
-                                <div class="form-group row">
-                                    <label for="subcustomerResponsibleName_1" class="col-sm-4">ФИО представителя подрядчика:</label>
-                                    <input type="text" id="subcustomerResponsibleName_1" name="subcustomerResponsibleName_1" required class="col-sm-8">
-                                </div>
-                                <div class="form-group row">
-                                    <label for="subcustomerResponsibleID_1" class="col-sm-6">Идентификационный номер в национальном реестре специалистов:</label>
-                                    <input type="text" id="subcustomerResponsibleID_1" name="subcustomerResponsibleID_1" required class="col-sm-6">
-                                </div>
-                                <div class="form-group row">
-                                    <label for="subcustomerResponsibleDocument_1" class="col-sm-4">Распорядительный документ:</label>
-                                    <input type="text" id="subcustomerResponsibleDocument_1" name="subcustomerResponsibleDocument_1" required class="col-sm-8">
-                                </div>
-                                <div class="form-group row">
-                                    <label for="subcustomerResponsibleNumber_1" class="col-sm-4">Номер распорядительного документа:</label>
-                                    <input type="text" id="subcustomerResponsibleNumber_1" name="subcustomerResponsibleNumber_1" required class="col-sm-8">
-                                </div>
-                                <div class="form-group row">
-                                    <label for="subcustomerResponsibleDate_1" class="col-sm-4">Дата распорядительного документа:</label>
-                                    <input type="text" id="subcustomerResponsibleDate_1" name="subcustomerResponsibleDate_1" required class="col-sm-8">
-                                </div>
-                            </div>
-
-                            <!-- Кнопка добавления ответственного лица -->
-                            <button type="button" class="btn btn-primary mt-3" onclick="addSubcustomerResponsible()"><i class="fas fa-plus fa-md text-white-50 icon-margin-right"></i>Добавить ответственное лицо</button>
-                        </div>
-
-                        <!-- Designer Section -->
-                        <div id="section-designer" class="form-section mb-5" style="display:none;">
-                            <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                <h4 class="h4 mb-0 text-gray-800">Проектировщик</h4>
-                            </div>
-                            <div class="form-group row">
-                                <label for="designerName" class="col-sm-4">Наименование проектировщика:</label>
-                                <input type="text" id="designerName" name="designerName" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="designerOGRN" class="col-sm-4">ОГРН проектировщика:</label>
-                                <input type="text" id="designerOGRN" name="designerOGRN" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="designerINN" class="col-sm-4">ИНН проектировщика:</label>
-                                <input type="text" id="designerINN" name="designerINN" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="designerAddress" class="col-sm-4">Адрес проектировщика:</label>
-                                <input type="text" id="designerAddress" name="designerAddress" required class="col-sm-8">
-                            </div>
-                            <div class="form-group row">
-                                <label for="designerPhone" class="col-sm-4">Телефон/факс проектировщика:</label>
-                                <input type="text" id="designerPhone" name="designerPhone" required class="col-sm-8">
-                            </div>
-
-                            <div id="designerResponsiblesContainer"/>
-                            <!-- Кнопка добавления ответственного лица -->
-                            <button type="button" class="btn btn-primary mt-3" onclick="addDesignerResponsible()"><i class="fas fa-plus fa-md text-white-50 icon-margin-right"></i>Добавить ответственное лицо</button>
-                        </div>
-
-                    </form>
-                </div>
             </div>
             <!-- /.container-fluid -->
 
         </div>
         <!-- End of Main Content -->
 
-        <!-- Footer -->
-        <div th:replace="~{fragments/footer :: footer}"></div>
-        <!-- End of Footer -->
+    <!-- Footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <!-- End of Footer -->
 
     </div>
     <!-- End of Content Wrapper -->
