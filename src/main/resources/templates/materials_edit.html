@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Добавить материал</title>
+    <title>Редактировать материал</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -51,7 +51,7 @@
 
                 <div class="card shadow">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Добавление материала</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Редактировать материал</h6>
                     </div>
 
                     <form action="/materials-used-add" method="post">
@@ -113,27 +113,26 @@
                                     <span class="text">Отмена</span>
                                 </a>
 
-                                <button type="submit" class="btn btn-success btn-icon-split">
-                                    <span class="icon text-white-50">
+                                <button type="submit" class="btn btn-success btn-icon-split"><span class="icon text-white-50">
                                         <i class="fas fa-check"></i>
-                                    </span>
-                                    <span class="text">Сохранить</span>
+                                    </span><span class="text">Изменить</span>
                                 </button>
                             </div>
                         </div>
                     </form>
 
-                </div>
 
+
+                </div>
             </div>
             <!-- /.container-fluid -->
 
         </div>
         <!-- End of Main Content -->
 
-    <!-- Footer -->
-    <div th:replace="~{fragments/footer :: footer}"></div>
-    <!-- End of Footer -->
+        <!-- Footer -->
+        <div th:replace="~{fragments/footer :: footer}"></div>
+        <!-- End of Footer -->
 
     </div>
     <!-- End of Content Wrapper -->
