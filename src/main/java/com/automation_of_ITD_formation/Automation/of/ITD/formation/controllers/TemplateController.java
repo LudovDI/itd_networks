@@ -25,4 +25,19 @@ public class TemplateController {
     public String materialsEdit() {
         return "materials_edit";
     }
+
+    @GetMapping("/GNB_protocols")
+    public String GNBProtocols() {
+        return "GNB_protocols/GNB_protocols";
+    }
+
+    @GetMapping("/GNB_add")
+    public String GNBProtocolsAdd() {
+        return "GNB_protocols/GNB_add";
+    }
+
+    @GetMapping("/GNB_edit")
+    public String GNBProtocolsEdit() {
+        return "GNB_protocols/GNB_edit";
+    }
 }
