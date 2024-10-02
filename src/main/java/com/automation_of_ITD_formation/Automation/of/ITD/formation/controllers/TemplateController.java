@@ -95,4 +95,9 @@ public class TemplateController {
     public String aocpEdit() {
         return "AOCP/aocp_edit";
     }
+
+    @GetMapping("/itd_info")
+    public String itdInfo() {
+        return "itd_info/itd_info";
+    }
 }
