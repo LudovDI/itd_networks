@@ -80,4 +80,19 @@ public class TemplateController {
     public String compactionProtocolsEdit() {
         return "compaction_protocols/compaction_edit";
     }
+
+    @GetMapping("/aocp_table")
+    public String aocpTable() {
+        return "AOCP/aocp_table";
+    }
+
+    @GetMapping("/aocp_add")
+    public String aocpAdd() {
+        return "AOCP/aocp_add";
+    }
+
+    @GetMapping("/aocp_edit")
+    public String aocpEdit() {
+        return "AOCP/aocp_edit";
+    }
 }
