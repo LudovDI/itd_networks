@@ -148,7 +148,7 @@ public class AosrController {
         for (AosrData aosr : aosrList) {
             Set<String> mySet = new HashSet<>();
             for (DrawingsData drawing : aosr.getAosrToDrawings()) {
-                mySet.add(drawing.getProjectSection());
+                mySet.add(drawing.getProjDocToDrawings().getProjectSection());
             }
             projectSectionMap.put(aosr.getId(), mySet);
         }
@@ -233,11 +233,7 @@ public class AosrController {
             aosrData.setAosrToDrawings(drawings);
             if (drawings.stream().findFirst().isPresent()) {
                 DrawingsData drawingsData = drawings.stream().findFirst().get();
-                if (drawingsData.getProjectSection1() != null) {
-                    aosrData.setProjectDocumentationData(drawingsData.getProjectSection1());
-                } else {
-                    aosrData.setProjectDocumentationData(drawingsData.getProjectSection2());
-                }
+                aosrData.setProjectDocumentationData(drawingsData.getProjDocToDrawings());
             }
         }
         if (execSchemId != null) {
@@ -354,8 +350,8 @@ public class AosrController {
             Set<Long> drawingIds = aosrData.getAosrToDrawings().stream().map(DrawingsData::getId).collect(Collectors.toSet());
             List<String> myList = new ArrayList<>();
             for (DrawingsData drawing : aosrData.getAosrToDrawings()) {
-                if (!myList.contains(drawing.getProjectSection())) {
-                    myList.add(drawing.getProjectSection());
+                if (!myList.contains(drawing.getProjDocToDrawings().getProjectSection())) {
+                    myList.add(drawing.getProjDocToDrawings().getProjectSection());
                 }
             }
             String countProjects = (myList.size() == 2) ? "2" : "1";
@@ -433,7 +429,7 @@ public class AosrController {
             } else {
                 for (Long drawingId : drawingIds) {
                     DrawingsData drawing = drawingsRepository.findById(drawingId).orElseThrow();
-                    if (drawing.getProjectSection().equals(projectSectionSelect)) {
+                    if (drawing.getProjDocToDrawings().getProjectSection().equals(projectSectionSelect)) {
                         drawing.getDrawingsToAosr().add(aosrData);
                         aosrData.getAosrToDrawings().add(drawing);
                         drawingsRepository.save(drawing);

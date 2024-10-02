@@ -24,8 +24,6 @@
             <th>Сеть</th>
             <th>Раздел проекта</th>
             <th>Чертежи</th>
-            <th>Раздел проекта</th>
-            <th>Чертежи</th>
             <th th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}">Действия</th>
         </tr>
         <tr th:each="doc : ${projectDocumentationList}">
@@ -42,16 +40,9 @@
                 </form>
             </td>
             <td th:text="${doc.network}"></td>
-            <td th:text="${doc.projectSection1}"></td>
+            <td th:text="${doc.projectSection}"></td>
             <td>
-            <span th:each="drawing : ${doc.drawingsForSection1}">
-                <span th:text="${drawing.drawing}"></span>
-                <br>
-            </span>
-            </td>
-            <td th:text="${doc.projectSection2}"></td>
-            <td>
-            <span th:each="drawing : ${doc.drawingsForSection2}">
+            <span th:each="drawing : ${doc.drawingsList}">
                 <span th:text="${drawing.drawing}"></span>
                 <br>
             </span>
@@ -71,7 +62,7 @@
 <div class="text-white">
     <a th:href="@{/project-documentation-add}"
        th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}" role="button"
-       class="bg-primary btn border-white mt-3 ms-5">Добавить проектную документацию</a>
+       class="bg-primary btn border-white mt-3 ms-5">Добавить раздел</a>
 </div>
 </body>
 </html>

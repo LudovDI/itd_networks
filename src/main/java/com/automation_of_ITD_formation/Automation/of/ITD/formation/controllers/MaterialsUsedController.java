@@ -56,9 +56,11 @@ public class MaterialsUsedController {
                 int index = Integer.parseInt(key.substring(4));
                 String numberKey = "number" + index;
                 String dataKey = "date" + index;
+                String orgKey = "org" + index;
                 String number = formData.getOrDefault(numberKey, "");
                 String data = formData.getOrDefault(dataKey, "");
-                AccompanyingDocumentData accompanyingDocument = new AccompanyingDocumentData(value, number, data);
+                String org = formData.getOrDefault(orgKey, "");
+                AccompanyingDocumentData accompanyingDocument = new AccompanyingDocumentData(value, number, data, org);
                 accompanyingDocumentList.add(accompanyingDocument);
             }
         });
@@ -87,55 +89,50 @@ public class MaterialsUsedController {
                                           @RequestParam Map<String, String> formData) {
         MaterialsUsedData materialsUsedData = materialUsedRepository.findById(id).orElseThrow();
 
-        List<AccompanyingDocumentData> accompanyingDocumentList = materialsUsedData.getAccompanyingDocuments();
+        Set<Long> accDocIdsFromForm = new HashSet<>();
+        Map<Long, AccompanyingDocumentData> accompanyingDocumentsMap = new HashMap<>();
 
         formData.forEach((key, value) -> {
-            if (key.startsWith("name_")) {
-                Long accDocId = Long.parseLong(key.substring("name_".length()));
-                AccompanyingDocumentData accompanyingDocument = accompanyingDocumentRepository.findById(accDocId).orElse(null);
-                if (accompanyingDocument != null) {
-                    accompanyingDocument.setName(value);
-                } else {
-                    accompanyingDocument = new AccompanyingDocumentData();
-                    accompanyingDocument.setId(accDocId);
-                    accompanyingDocument.setName(value);
-                    accompanyingDocument.setMaterialsUsedData(materialsUsedData);
-                    accompanyingDocument.setNumber(formData.get("number_" + accDocId));
-                    accompanyingDocument.setDate(formData.get("date_" + accDocId));
-                    accompanyingDocumentList.add(accompanyingDocument);
+            Long accDocId = null;
+            if (key.startsWith("name") || key.startsWith("number") || key.startsWith("date") || key.startsWith("org")) {
+                String accDocIdStr = key.replaceAll("[^0-9]", "");
+                if (!accDocIdStr.isEmpty()) {
+                    accDocId = Long.parseLong(accDocIdStr);
                 }
-            } else if (key.startsWith("number_")) {
-                Long accDocId = Long.parseLong(key.substring("number_".length()));
-                accompanyingDocumentRepository.findById(accDocId).ifPresent(accompanyingDocument -> {
-                    accompanyingDocument.setNumber(value);
-                    accompanyingDocumentList.add(accompanyingDocument);
-
-                });
-            } else if (key.startsWith("date_")) {
-                Long accDocId = Long.parseLong(key.substring("date_".length()));
-                accompanyingDocumentRepository.findById(accDocId).ifPresent(accompanyingDocument -> {
-                    accompanyingDocument.setDate(value);
-                    accompanyingDocumentList.add(accompanyingDocument);
-                });
             }
+
+            if (accDocId == null) {
+                return;
+            }
+
+            AccompanyingDocumentData accompanyingDocument = accompanyingDocumentsMap.getOrDefault(accDocId,
+                    accompanyingDocumentRepository.findById(accDocId).orElse(new AccompanyingDocumentData()));
+
+            accDocIdsFromForm.add(accDocId);
+
+            if (key.startsWith("name")) {
+                accompanyingDocument.setName(value);
+            } else if (key.startsWith("number")) {
+                accompanyingDocument.setNumber(value);
+            } else if (key.startsWith("date")) {
+                accompanyingDocument.setDate(value);
+            } else if (key.startsWith("org")) {
+                accompanyingDocument.setOrg(value);
+            }
+
+            accompanyingDocument.setMaterialsUsedData(materialsUsedData);
+            accompanyingDocumentsMap.put(accDocId, accompanyingDocument);
+            materialsUsedData.getAccompanyingDocuments().add(accompanyingDocument);
         });
 
-        List<AccompanyingDocumentData> newDocuments = accompanyingDocumentList.stream()
-                .filter(doc -> doc.getId() == null)
-                .collect(Collectors.toList());
+        List<AccompanyingDocumentData> accDocsToRemove = materialsUsedData.getAccompanyingDocuments().stream()
+                .filter(accDoc -> accDoc.getId() != null && !accDocIdsFromForm.contains(accDoc.getId()))
+                .toList();
 
-        newDocuments.forEach(doc -> entityManager.persist(doc));
-
-        accompanyingDocumentRepository.saveAll(newDocuments);
-
-        List<AccompanyingDocumentData> documentsToRemove = new ArrayList<>();
-        accompanyingDocumentList.forEach(doc -> {
-            if (!formData.containsKey("name_" + doc.getId())) {
-                documentsToRemove.add(doc);
-            }
+        accDocsToRemove.forEach(accDoc -> {
+            materialsUsedData.getAccompanyingDocuments().remove(accDoc);
+            accompanyingDocumentRepository.delete(accDoc);
         });
-        accompanyingDocumentList.removeAll(documentsToRemove);
-        accompanyingDocumentRepository.deleteAll(documentsToRemove);
 
         materialsUsedData.setNameMaterial(nameMaterial);
         materialUsedRepository.save(materialsUsedData);

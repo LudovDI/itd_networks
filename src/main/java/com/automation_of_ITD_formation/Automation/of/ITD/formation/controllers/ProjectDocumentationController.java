@@ -3,7 +3,6 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.DrawingsRepository;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.ProjectDocumentationRepository;
-import com.google.common.collect.Lists;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,30 +44,20 @@ public class ProjectDocumentationController {
     }
 
     @PostMapping("/project-documentation-add")
-    public String postProjectDocumentationAdd(@RequestParam("projectSection1") String projectSection1,
-                                              @RequestParam("projectSection2") String projectSection2,
+    public String postProjectDocumentationAdd(@RequestParam("projectSection") String projectSection,
                                               @RequestParam("network") String network,
                                               @RequestParam Map<String, String> formData) {
-        ProjectDocumentationData projectDocumentationData = new ProjectDocumentationData(projectSection1, projectSection2, network);
-        List<DrawingsData> drawingsForSection1 = new ArrayList<>();
-        List<DrawingsData> drawingsForSection2 = new ArrayList<>();
+        ProjectDocumentationData projectDocumentationData = new ProjectDocumentationData(projectSection, network);
+        List<DrawingsData> drawingsForSection = new ArrayList<>();
         formData.forEach((key, value) -> {
-            if (key.startsWith("drawing1_")) {
-                DrawingsData drawings1 = new DrawingsData(value);
-                drawings1.setProjectSection(projectSection1);
-                drawingsForSection1.add(drawings1);
-            }
-            if (key.startsWith("drawing2_")) {
-                DrawingsData drawings2 = new DrawingsData(value);
-                drawings2.setProjectSection(projectSection2);
-                drawingsForSection2.add(drawings2);
+            if (key.startsWith("drawing")) {
+                DrawingsData drawings = new DrawingsData(value);
+                drawings.setProjDocToDrawings(projectDocumentationData);
+                drawingsForSection.add(drawings);
             }
         });
         projectDocumentationRepository.save(projectDocumentationData);
-        drawingsForSection1.forEach(drawingsData -> drawingsData.setProjectSection1(projectDocumentationData));
-        drawingsRepository.saveAll(drawingsForSection1);
-        drawingsForSection2.forEach(drawingsData -> drawingsData.setProjectSection2(projectDocumentationData));
-        drawingsRepository.saveAll(drawingsForSection2);
+        drawingsRepository.saveAll(drawingsForSection);
         return "redirect:/project-documentation-table";
     }
 
@@ -89,81 +78,47 @@ public class ProjectDocumentationController {
     @PostMapping("/project-documentation-table/{id}/project-documentation-edit")
     @Transactional
     public String postProjectDocumentationUpdate(@PathVariable(value = "id") long id,
-                                                 @RequestParam("projectSection1") String projectSection1,
-                                                 @RequestParam("projectSection2") String projectSection2,
+                                                 @RequestParam("projectSection") String projectSection,
                                                  @RequestParam("network") String network,
                                                  @RequestParam Map<String, String> formData) {
         ProjectDocumentationData projectDocumentationData = projectDocumentationRepository.findById(id).orElseThrow();
 
-        List<DrawingsData> drawingsForSection1 = projectDocumentationData.getDrawingsForSection1();
-        List<DrawingsData> drawingsForSection2 = projectDocumentationData.getDrawingsForSection2();
+        Set<Long> drawingIdsFromForm = new HashSet<>();
 
         formData.forEach((key, value) -> {
-            if (key.startsWith("drawing1_")) {
-                Long drawingId = Long.parseLong(key.substring("drawing1_".length()));
-                DrawingsData drawing = drawingsRepository.findById(drawingId).orElse(null);
-                if (drawing != null) {
-                    drawing.setDrawing(value);
-                    drawing.setProjectSection(projectSection1);
+            if (key.startsWith("drawing")) {
+                String drawingIdStr = key.substring("drawing".length());
+
+                DrawingsData drawing;
+                if (!drawingIdStr.isEmpty()) {
+                    Long drawingId = Long.parseLong(drawingIdStr);
+                    drawingIdsFromForm.add(drawingId);
+
+                    drawing = drawingsRepository.findById(drawingId).orElse(null);
+                    if (drawing == null) {
+                        drawing = new DrawingsData();
+                    }
                 } else {
                     drawing = new DrawingsData();
-                    drawing.setId(drawingId);
-                    drawing.setDrawing(value);
-                    drawing.setProjectSection(projectSection1);
-                    drawingsForSection1.add(drawing);
                 }
-            } else if (key.startsWith("drawing2_")) {
-                Long drawingId = Long.parseLong(key.substring("drawing2_".length()));
-                DrawingsData drawing = drawingsRepository.findById(drawingId).orElse(null);
-                if (drawing != null) {
-                    drawing.setDrawing(value);
-                    drawing.setProjectSection(projectSection2);
-                } else {
-                    drawing = new DrawingsData();
-                    drawing.setId(drawingId);
-                    drawing.setDrawing(value);
-                    drawing.setProjectSection(projectSection2);
-                    drawingsForSection2.add(drawing);
-                }
+
+                drawing.setDrawing(value);
+                drawing.setProjDocToDrawings(projectDocumentationData);
+                projectDocumentationData.getDrawingsList().add(drawing);
             }
         });
 
-        List<DrawingsData> newDocuments1 = drawingsForSection1.stream()
-                .filter(doc -> doc.getId() == null)
-                .collect(Collectors.toList());
+        List<DrawingsData> drawingsToRemove = projectDocumentationData.getDrawingsList().stream()
+                .filter(drawing -> drawing.getId() != null && !drawingIdsFromForm.contains(drawing.getId()))
+                .toList();
 
-        newDocuments1.forEach(doc -> entityManager.persist(doc));
-
-        List<DrawingsData> newDocuments2 = drawingsForSection2.stream()
-                .filter(doc -> doc.getId() == null)
-                .collect(Collectors.toList());
-
-        newDocuments2.forEach(doc -> entityManager.persist(doc));
-
-        drawingsRepository.saveAll(newDocuments1);
-
-        List<DrawingsData> documents1ToRemove = new ArrayList<>();
-        drawingsForSection1.forEach(doc -> {
-            if (!formData.containsKey("drawing1_" + doc.getId())) {
-                documents1ToRemove.add(doc);
-            }
+        drawingsToRemove.forEach(drawing -> {
+            projectDocumentationData.getDrawingsList().remove(drawing);
+            drawingsRepository.delete(drawing);
         });
-        drawingsForSection1.removeAll(documents1ToRemove);
-        drawingsRepository.deleteAll(documents1ToRemove);
 
-        drawingsRepository.saveAll(newDocuments2);
 
-        List<DrawingsData> documents2ToRemove = new ArrayList<>();
-        drawingsForSection2.forEach(doc -> {
-            if (!formData.containsKey("drawing2_" + doc.getId())) {
-                documents2ToRemove.add(doc);
-            }
-        });
-        drawingsForSection2.removeAll(documents2ToRemove);
-        drawingsRepository.deleteAll(documents2ToRemove);
-
-        projectDocumentationData.setProjectSection1(projectSection1);
-        projectDocumentationData.setProjectSection2(projectSection2);
+        projectDocumentationData.setProjectSection(projectSection);
         projectDocumentationData.setNetwork(network);
         projectDocumentationRepository.save(projectDocumentationData);
 
@@ -173,13 +128,9 @@ public class ProjectDocumentationController {
     @PostMapping("/project-documentation-table/{id}/project-documentation-remove")
     public String postProjectDocumentationDelete(@PathVariable(value = "id") long id, Model model) {
         ProjectDocumentationData projectDocumentationData = projectDocumentationRepository.findById(id).orElseThrow();
-        List<DrawingsData> drawings1ToDelete = projectDocumentationData.getDrawingsForSection1();
-        if (!drawings1ToDelete.isEmpty()) {
-            drawingsRepository.deleteAll(drawings1ToDelete);
-        }
-        List<DrawingsData> drawings2ToDelete = projectDocumentationData.getDrawingsForSection2();
-        if (!drawings2ToDelete.isEmpty()) {
-            drawingsRepository.deleteAll(drawings2ToDelete);
+        List<DrawingsData> drawingsToDelete = projectDocumentationData.getDrawingsList();
+        if (!drawingsToDelete.isEmpty()) {
+            drawingsRepository.deleteAll(drawingsToDelete);
         }
         projectDocumentationRepository.delete(projectDocumentationData);;
         return "redirect:/project-documentation-table";

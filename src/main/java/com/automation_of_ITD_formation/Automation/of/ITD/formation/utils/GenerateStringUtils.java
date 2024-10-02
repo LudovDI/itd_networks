@@ -133,10 +133,10 @@ public class GenerateStringUtils {
         if (!drawings.isEmpty()) {
             stringBuilder.append("чертеж ");
             for (DrawingsData drawing : drawings) {
-                if (drawing.getProjectSection().contains("Z22098-НВК")) {
-                    stringBuilder.append(drawing.getProjectSection()).append(drawing.getDrawing()).append(", ");
+                if (drawing.getProjDocToDrawings().getProjectSection().contains("Z22098-НВК")) {
+                    stringBuilder.append(drawing.getProjDocToDrawings().getProjectSection()).append(drawing.getDrawing()).append(", ");
                 } else {
-                    stringBuilder.append(drawing.getProjectSection()).append(" ").append(drawing.getDrawing()).append(", ");
+                    stringBuilder.append(drawing.getProjDocToDrawings().getProjectSection()).append(" ").append(drawing.getDrawing()).append(", ");
                 }
             }
             stringBuilder.append(passportObjectData.getNamePreparer());
@@ -188,8 +188,8 @@ public class GenerateStringUtils {
             stringBuilder.append(" проект ");
             StringBuilder projects = new StringBuilder();
             for (DrawingsData drawing : drawingsDataSet) {
-                if (!projects.toString().contains(drawing.getProjectSection())) {
-                    projects.append(drawing.getProjectSection()).append(", ");
+                if (!projects.toString().contains(drawing.getProjDocToDrawings().getProjectSection())) {
+                    projects.append(drawing.getProjDocToDrawings().getProjectSection()).append(", ");
                 }
             }
             projects.delete(projects.length() - 2, projects.length());

@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 public interface DrawingsRepository extends CrudRepository<DrawingsData, Long> {
-    List<DrawingsData> findByProjectSection(String projectSection);
 }
