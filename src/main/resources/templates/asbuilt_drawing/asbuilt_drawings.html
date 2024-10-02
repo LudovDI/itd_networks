@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Исполнительные схемы</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top" class="vsc-initialized">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h2 mb-0 text-primary">Исполнительные схемы</h1>
+
+                </div>
+                <hr>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered text-xm">
+                        <thead class="bg-gray-300">
+                        <tr class="text-center">
+                            <th rowspan="3">Статус</th>
+                            <th rowspan="3">Название исполнительной схемы</th>
+                            <th rowspan="3">Участок</th>
+                            <th colspan="6">Координаты зоны работ</th>
+                            <th colspan="8">Объем выполненных работ</th>
+                            <th colspan="2">Раздел проекта, номер чертежа, по которым выполнены работы</th>
+                            <th rowspan="3">Применяемые материалы</th>
+                            <th rowspan="3">
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="2">начальная координата</th>
+                            <th colspan="2">конечная координата</th>
+                            <th colspan="2">центр колодца</th>
+                            <th rowspan="2">Разработка грунта</th>
+                            <th rowspan="2">Песчаное основание</th>
+                            <th rowspan="2">Шурфовка</th>
+                            <th rowspan="2">Засыпка шурфовки</th>
+                            <th colspan="2">Засыпка</th>
+                            <th rowspan="2">Укладка трубопровода открытым способом</th>
+                            <th rowspan="2">Прокладка трубопровода методом ГНБ</th>
+                            <th rowspan="2">Раздел проекта</th>
+                            <th rowspan="2">Номера чертежей</th>
+                        </tr>
+                        <tr>
+                            <th>X</th>
+                            <th>Y</th>
+                            <th>X</th>
+                            <th>Y</th>
+                            <th>X</th>
+                            <th>Y</th>
+                            <th>песок</th>
+                            <th>грунт</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <a href="/asbuilt_drawing_add" class="btn btn-primary btn-icon-split mt-3">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-plus fa-md text-white-50"></i>
+                    </span>
+                    <span class="text">Добавить схему</span>
+                </a>
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <div th:replace="~{fragments/footer :: footer}"></div>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- JavaScript для управления видимостью секций -->
+<script src="js/new_abd_toggle.js"></script>
+
+<!-- Bootstrap core JavaScript-->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="js/sb-admin-2.min.js"></script>
+
+</body>
+
+</html>
