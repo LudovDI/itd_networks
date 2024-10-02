@@ -65,4 +65,19 @@ public class TemplateController {
     public String ViCActsEdit() {
         return "ViC_acts/ViC_edit";
     }
+
+    @GetMapping("/compaction_protocols")
+    public String compactionProtocols() {
+        return "compaction_protocols/compaction_protocols";
+    }
+
+    @GetMapping("/compaction_add")
+    public String compactionProtocolsAdd() {
+        return "compaction_protocols/compaction_add";
+    }
+
+    @GetMapping("/compaction_edit")
+    public String compactionProtocolsEdit() {
+        return "compaction_protocols/compaction_edit";
+    }
 }
