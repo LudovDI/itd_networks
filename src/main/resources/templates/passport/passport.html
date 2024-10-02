@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Добавление ИТД</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top" class="vsc-initialized">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar_extended :: sidebar_extended}"></div>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h2 mb-0 text-primary">Паспорт объекта</h1>
+                    <a href="/passport_edit" class="btn btn-primary btn-icon-split">
+            <span class="icon text-white-50">
+                <i class="fas fa-edit"></i>
+            </span>
+                        <span class="text">Редактировать</span>
+                    </a>
+                </div>
+                <hr>
+
+                <div class="card shadow">
+                    <div class="card-header">
+                        <!-- Section navigation (optional) -->
+                        <div>
+                            <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-general')">Общее</button>
+                            <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-customer')">Заказчик</button>
+                            <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-contractor')">Подрядчик</button>
+                            <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-designer')">Проектировщик</button>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <!-- General Information Section -->
+                        <div id="section-general" class="form-section">
+                            <h4 class="h4 mb-0 text-gray-800">Общие сведения об объекте</h4>
+                            <hr>
+                            <div class="form-group row">
+                                <label class="col-sm-4 font-weight-bold">Наименование объекта:</label>
+                                <div class="col-sm-8">
+                                    <p id="objectName">Мост через реку Неву</p>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 font-weight-bold">Адрес объекта:</label>
+                                <div class="col-sm-8">
+                                    <p id="objectAddress">г. Санкт-Петербург, набережная реки Невы, д. 14</p>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 font-weight-bold">Шифр объекта:</label>
+                                <div class="col-sm-8">
+                                    <p id="objectCode">0001-МОСТ</p>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 font-weight-bold">Наименование сети:</label>
+                                <div class="col-sm-8">
+                                    <p id="networkName">Электрическая сеть</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Customer Section -->
+                        <div id="section-customer" class="form-section" style="display:none;">
+                            <h4 class="h4 mb-0 text-gray-800">Заказчик</h4>
+                            <hr>
+                            <div class="form-group row">
+                                <label class="col-sm-4 font-weight-bold">Наименование заказчика:</label>
+                                <div class="col-sm-8">
+                                    <p id="contractorName">АО "СтройИнвест"</p>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 font-weight-bold">ОГРН заказчика:</label>
+                                <div class="col-sm-8">
+                                    <p id="contractorOGRN">1234567891234</p>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 font-weight-bold">ИНН заказчика:</label>
+                                <div class="col-sm-8">
+                                    <p id="contractorINN">1234567890</p>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 font-weight-bold">Адрес заказчика:</label>
+                                <div class="col-sm-8">
+                                    <p id="contractorAddress">г. Москва, ул. Ленина, д. 10</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contractor Section -->
+                        <div id="section-contractor" class="form-section" style="display:none;">
+                            <h4 class="h4 mb-0 text-gray-800">Подрядчик</h4>
+                            <hr>
+                            <div class="form-group row">
+                                <label class="col-sm-4 font-weight-bold">Наименование подрядчика:</label>
+                                <div class="col-sm-8">
+                                    <p id="subcontractorName">ООО "СтройГарант"</p>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 font-weight-bold">ОГРН подрядчика:</label>
+                                <div class="col-sm-8">
+                                    <p id="subcontractorOGRN">9876543211234</p>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 font-weight-bold">ИНН подрядчика:</label>
+                                <div class="col-sm-8">
+                                    <p id="subcontractorINN">9876543210</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Designer Section -->
+                        <div id="section-designer" class="form-section" style="display:none;">
+                            <h4 class="h4 mb-0 text-gray-800">Проектировщик</h4>
+                            <hr>
+                            <div class="form-group row">
+                                <label class="col-sm-4 font-weight-bold">Наименование проектировщика:</label>
+                                <div class="col-sm-8">
+                                    <p id="designerName">ООО "ПроектСтрой"</p>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 font-weight-bold">ОГРН проектировщика:</label>
+                                <div class="col-sm-8">
+                                    <p id="designerOGRN">5678901234567</p>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 font-weight-bold">ИНН проектировщика:</label>
+                                <div class="col-sm-8">
+                                    <p id="designerINN">5678901234</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <div th:replace="~{fragments/footer :: footer}"></div>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- JavaScript для управления видимостью секций -->
+<script src="js/new_abd_toggle.js"></script>
+
+<!-- Bootstrap core JavaScript-->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="js/sb-admin-2.min.js"></script>
+
+</body>
+
+</html>
