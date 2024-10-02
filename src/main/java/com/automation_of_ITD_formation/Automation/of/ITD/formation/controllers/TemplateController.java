@@ -96,6 +96,10 @@ public class TemplateController {
         return "AOCP/aocp_edit";
     }
 
+    @GetMapping("/itd_info")
+    public String itdInfo() {
+        return "itd_info/itd_info";
+      
     @GetMapping("/passport")
     public String passport() {
         return "passport/passport";
