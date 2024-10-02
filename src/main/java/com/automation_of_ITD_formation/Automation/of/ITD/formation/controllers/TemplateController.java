@@ -50,4 +50,19 @@ public class TemplateController {
     public String GNBProtocolsEdit() {
         return "GNB_protocols/GNB_edit";
     }
+
+    @GetMapping("/ViC_acts")
+    public String ViCActs() {
+        return "ViC_acts/ViC_acts";
+    }
+
+    @GetMapping("/ViC_add")
+    public String ViCActsAdd() {
+        return "ViC_acts/ViC_add";
+    }
+
+    @GetMapping("/ViC_edit")
+    public String ViCActsEdit() {
+        return "ViC_acts/ViC_edit";
+    }
 }
