@@ -1,61 +1,164 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Создание применяемого материала</title>
-    <link href="../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet"
-          type="text/css"/>
-    <script src="../static/js/materialUsedAdd.js" th:src="@{/js/materialUsedAdd.js}"
-            type="text/javascript"></script>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Добавить материал</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <script src="js/materialUsedAdd.js"></script>
+
 </head>
-<body>
-<h1 id="headerText" hidden>Создание применяемого материала</h1>
-<header th:insert="blocks/header :: header"></header>
-<form action="/materials-used-add" method="post" class="form-container">
-    <div class="row px-5 text-white d-flex justify-content-between">
-        <div class="col-6 d-flex flex-column bd-highlight mb-3">
-            <div class="m-2 p-2 bg-success d-flex justify-content-between">
-                <label class="w-auto">Наименование материала</label>
-                <input class="w-50" type="text" name="material">
-            </div>
-        </div>
-        <div class="col-6 d-flex flex-column mb-3">
-            <div class="bg-success m-2 p-2">
-                <label>Сопроводительный документ</label>
-            </div>
-            <div id="document-container">
-                <div class="m-2 p-2 d-flex bg-success justify-content-between">
-                    <div class="text-center">
-                        <label class="w-auto">Наименование</label><br>
-                        <input class="w-75" type="text" name="name1">
-                    </div>
-                    <div class="text-center">
-                        <label class="w-auto">Номер №</label><br>
-                        <input class="w-75" type="text" name="number1">
-                    </div>
-                    <div class="text-center">
-                        <label class="w-auto">Дата</label><br>
-                        <input class="w-75" type="text" name="date1">
-                    </div>
-                    <button type="button" onclick="removeAccDoc(this)"
-                            class="bg-success btn btn-succcess border-white mt-3 me-5">Удалить
-                    </button>
+
+<body id="page-top" class="vsc-initialized">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h2 mb-0 text-primary">Применяемые материалы</h1>
                 </div>
+                <hr>
+
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Добавление материала</h6>
+                    </div>
+
+                    <form action="/materials-used-add" method="post">
+                        <div class="card-body">
+                            <div class="row mb-4">
+                                <div class="col-lg-4 mb-3 pr-3">
+                                    <div class="mb-2">
+                                        <label/>
+                                    </div>
+                                    <div>
+                                        <label>Наименование материала</label>
+                                        <input type="text" name="material" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-lg-8 mb-3 pl-5">
+                                    <div>
+                                        <label class="h5">Сопроводительный документ</label>
+                                    </div>
+                                    <div id="document-container">
+                                        <div class="d-flex mb-3">
+                                            <div class="mr-5">
+                                                <label>Наименование</label><br>
+                                                <input type="text" name="name1" class="form-control" required>
+                                            </div>
+                                            <div class="mr-5">
+                                                <label>Номер №</label><br>
+                                                <input type="text" name="number1" class="form-control">
+                                            </div>
+                                            <div class="mr-5">
+                                                <label>Дата</label><br>
+                                                <input type="text" name="date1" class="form-control">
+                                            </div>
+                                            <div class="mr-5">
+                                                <label>Наименование организации</label><br>
+                                                <input type="text" name="org1" class="form-control">
+                                            </div>
+                                            <button type="button" id="removeButton" onclick="removeAccDoc(this)" class="btn btn-danger align-self-end">
+                                                <span class="icon text-white-50">
+                                                    <i class="fas fa-trash"></i>
+                                                </span>
+                                                <span class="text">Удалить</span>
+
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button type="button" onclick="addDocument()" class="btn btn-primary btn-icon-split">
+                                            <span class="icon text-white-50">
+                                                <i class="fas fa-plus"></i>
+                                            </span>
+                                            <span class="text">Добавить сопроводительный документ</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Кнопки Отмена и Сохранить -->
+                            <div class="d-flex justify-content-between mt-4 mt-0 mr-5 ml-5">
+                                <a href="/materials-used-table" role="button" class="btn btn-light btn-icon-split">
+                                    <span class="icon text-gray-600">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </span>
+                                    <span class="text">Отмена</span>
+                                </a>
+
+                                <button type="submit" class="btn btn-success btn-icon-split">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                    <span class="text">Сохранить</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+
             </div>
-            <div class="d-flex justify-content-end">
-                <button type="button" onclick="addDocument()"
-                        class="bg-success btn btn-succcess border-white mt-3 me-5">Добавить сопроводительный документ
-                </button>
-            </div>
+            <!-- /.container-fluid -->
+
         </div>
-        <div class="d-flex justify-content-start">
-            <a href="/materials-used-table" role="button"
-               class="bg-success btn btn-succcess border-white mt-3 ms-5">Отмена</a>
-        </div>
-        <div class="d-flex justify-content-end">
-            <button type="submit" class="bg-success btn btn-succcess border-white mt-3 me-5">Сохранить</button>
-        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <div th:replace="~{fragments/footer :: footer}"></div>
+        <!-- End of Footer -->
+
     </div>
-</form>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- JavaScript для управления видимостью секций -->
+<script src="js/new_abd_toggle.js"></script>
+
+<!-- Bootstrap core JavaScript-->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="js/sb-admin-2.min.js"></script>
+
 </body>
+
 </html>
