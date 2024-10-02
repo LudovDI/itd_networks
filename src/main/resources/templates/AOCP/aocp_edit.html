@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Редактирование акта ОСР</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top" class="vsc-initialized">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h2 mb-0 text-primary">Акты ОСР</h1>
+                </div>
+                <hr>
+
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Редактирование акта ОСР</h6>
+                    </div>
+
+                    <form method="post">
+                        <div class="card-body">
+                            <div class="row justify-content-between mb-2">
+                                <!-- Левая часть -->
+                                <div class="col-lg-5 mb-3 ml-4">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <label class="p-0">При выполнении работ применены:</label>
+                                            <div class="row">
+                                                <div class="col-lg-9">
+                                                    <input type="text" id="searchInput" name="query" placeholder="Введите название материала" class="form-control">
+                                                    <input type="hidden" name="sourcePage" value="aosrAdd">
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <button type="submit" formaction="/search-materials" formmethod="get" class="btn btn-primary">Искать</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <label class="p-0">Работы выполнены по проектной документации:</label>
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <label>Количество разделов</label>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <select class="form-control" id="countProjectsSelect" name="countProjectsSelect">
+                                                        <option value="1">Один</option>
+                                                        <option value="2">Два</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <label class="p-0">К освидетельствованию предъявлены следующие работы:</label>
+                                            <select id="work1" name="countProjectsSelect" class="form-control">
+                                                <option value="1">Бестраншейная прокладка методом ГНБ полиэтиленового трубопровода</option>
+                                                <option value="2">Бестраншейная прокладка методом ГНБ стального трубопровода</option>
+                                                <option value="3">Бестраншейная прокладка полиэтиленового трубопровода с протаскиванием в футляр методом ГНБ</option>
+                                                <option value="4">Бестраншейная прокладка стального трубопровода с протаскиванием в футляр методом ГНБ</option>
+                                                <option value="5">Герметизация мест прохода полиэтиленового трубопровода через стенки колодца</option>
+                                                <option value="6">Герметизация мест прохода стального через стенки колодца</option>
+                                                <option value="7">Демонтаж</option>
+                                                <option value="8">Заделка концов футляра</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <label class="p-0">Участки:</label>
+                                            <select id="execSchemSelect" name="execSchemSelect" class="form-control">
+                                                <option value="1">в районе т.А, т.А.1</option>
+                                                <option value="2">в районе УП7, УП8</option>
+                                                <option value="3">от УП7 до т.А</option>
+                                                <option value="4">от УП8 до т.А.1</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <label class="p-0">Протокол ГНБ:</label>
+                                            <select id="protocolGnbSelect" name="protocolGnbSelect" class="form-control">
+                                                <option value="1">Протокол ГНБ № 1 от 02.05.2024 г.</option>
+                                                <option value="2">Протокол ГНБ № 2 от 03.05.2024 г.</option>
+                                                <option value="3">Протокол ГНБ № 3 от 13.05.2024 г.</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Правая часть -->
+                                <div class="col-lg-6 mb-3 mr-4">
+
+                                    <div class="card mb-3">
+                                        <a href="#collapseCardExample" class="d-block card-header pr-3 pl-3 pt-3 collapsed" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseCardExample">
+                                            <h6 class="m-0 text-secondary">Акты ВиК:</h6>
+                                        </a>
+                                        <!-- Card Content - Collapse -->
+                                        <div class="collapse" id="collapseCardExample">
+                                            <div class="card-body">
+                                                <div>
+                                                    <input type="checkbox" name="drawingCheckbox" value="1">
+                                                    <span>Акт ВиК № VMC-0320-376 от 27.04.2024 г. </span>
+                                                </div>
+                                                <div>
+                                                    <input type="checkbox" name="drawingCheckbox" value="1">
+                                                    <span>Акт ВиК № VMC-0322-376 от 29.04.2024 г. </span>
+                                                </div>
+                                                <div>
+                                                    <input type="checkbox" name="drawingCheckbox" value="1">
+                                                    <span>Акт ВиК № VMC-0324-376 от 02.05.2024 г</span>
+                                                </div>
+                                                <div>
+                                                    <input type="checkbox" name="drawingCheckbox" value="1">
+                                                    <span>Акт ВиК № VMC-0328-376 от 08.05.2024 г. </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <label class="p-0">Протокол уплотнения:</label>
+                                            <select id="sealingProtocolSelect" name="sealingProtocolSelect" class="form-control">
+                                                <option value="1">---</option>
+                                                <option value="2">Протокол уплотнения № CL/CRM-0001-734 от 02.08.2024 г.</option>
+                                                <option value="3">Протокол уплотнения №  от  г.</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <h5 class="h5 mb-0">Даты:</h5>
+                                            <!-- Строки с датами: начало работ -->
+                                            <div class="form-group row">
+                                                <label class="col-lg-4 col-form-label">Начало работ:</label>
+                                                <div class="col-lg-8 d-flex justify-content-between align-items-center">
+                                                    <input type="text" name="dayStart" placeholder="день" class="form-control mr-2">
+                                                    <input type="text" name="monthStart" placeholder="месяц" class="form-control mr-2">
+                                                    <label class="text m-0">20</label>
+                                                    <input type="text" name="yearStart" placeholder="год" class="form-control">
+                                                </div>
+                                            </div>
+                                            <!-- Строки с датами: окончание работ -->
+                                            <div class="form-group row">
+                                                <label class="col-lg-4 col-form-label">Окончание работ:</label>
+                                                <div class="col-lg-8 d-flex justify-content-between align-items-center">
+                                                    <input type="text" name="dayEnd" placeholder="день" class="form-control mr-2">
+                                                    <input type="text" name="monthEnd" placeholder="месяц" class="form-control mr-2">
+                                                    <label class="text m-0">20</label>
+                                                    <input type="text" name="yearEnd" placeholder="год" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <label>Разрешается производство последующих работ:</label>
+                                            <select id="work2" name="work2" class="form-control">
+                                                <option value="1">Монтаж полиэтиленовых фасонных частей трубопровода</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Кнопки Отмена и Сохранить -->
+                            <div class="d-flex justify-content-between mt-4 mr-5 ml-5">
+                                <a href="aocp_table" role="button" class="btn btn-light btn-icon-split">
+                                    <span class="icon text-gray-600">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </span>
+                                    <span class="text">Отмена</span>
+                                </a>
+                                <button type="submit" class="btn btn-success btn-icon-split">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                    <span class="text">Обновить</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+
+                </div>
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <div th:replace="~{fragments/footer :: footer}"></div>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- JavaScript для управления видимостью секций -->
+<script src="js/new_abd_toggle.js"></script>
+
+<!-- Bootstrap core JavaScript-->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="js/sb-admin-2.min.js"></script>
+
+</body>
+
+</html>
