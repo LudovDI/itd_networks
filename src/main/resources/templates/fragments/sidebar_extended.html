@@ -1,0 +1,53 @@
+<div th:fragment="sidebar_extended" class="d-flex">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar_extended sidebar-dark accordion" id="accordionSidebar">
+
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="bs_index">
+            <div class="sidebar-brand-icon rotate-n-15">
+                <i class="fas fa-laugh-wink"></i>
+            </div>
+            <div class="sidebar-brand-text mx-3">ИТД Помощник</div>
+        </a>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
+
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item active">
+            <a class="nav-link" href="/bs_index">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Обзорная панель</span></a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">Объекты</div>
+
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseActivePages"
+               aria-expanded="true" aria-controls="collapsePages">
+                <span>ИТД 1</span>
+            </a>
+            <div id="collapseActivePages" class="collapse show" aria-labelledby="headingPages"
+                 data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="bs_index">Паспорт объекта</a>
+                    <a class="collapse-item" href="bs_index">Проектная документация</a>
+                    <a class="collapse-item" href="materials_used">Применяемые материалы</a>
+                    <a class="collapse-item" href="asbuilt_drawings">Исполнительные схемы</a>
+                    <a class="collapse-item" href="GNB_protocols">Протоколы ГНБ</a>
+                    <a class="collapse-item" href="ViC_acts">Акты ВиК</a>
+                    <a class="collapse-item" href="compaction_protocols">Протоклы уплотнения</a>
+                    <a class="collapse-item" href="aocp_table">АОСР</a>
+                </div>
+            </div>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+
+    </ul>
+</div>
