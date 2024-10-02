@@ -25,4 +25,19 @@ public class TemplateController {
     public String materialsEdit() {
         return "materials_edit";
     }
+
+    @GetMapping("/ViC_acts")
+    public String ViCActs() {
+        return "ViC_acts/ViC_acts";
+    }
+
+    @GetMapping("/ViC_add")
+    public String ViCActsAdd() {
+        return "ViC_acts/ViC_add";
+    }
+
+    @GetMapping("/ViC_edit")
+    public String ViCActsEdit() {
+        return "ViC_acts/ViC_edit";
+    }
 }
