@@ -76,7 +76,7 @@ public class ExecutiveSchemesController {
             Set<DrawingsData> drawings = new HashSet<>();
             for (Long drawingId : drawingIds) {
                 Optional<DrawingsData> drawingOptional = drawingsRepository.findById(drawingId);
-                if (drawingOptional.get().getProjectSection().equals(projectSection)) {
+                if (drawingOptional.get().getProjDocToDrawings().getProjectSection().equals(projectSection)) {
                     drawingOptional.ifPresent(drawings::add);
                 }
             }
@@ -161,7 +161,7 @@ public class ExecutiveSchemesController {
         if (drawingIds != null) {
             for (Long drawingId : drawingIds) {
                 DrawingsData drawing = drawingsRepository.findById(drawingId).orElseThrow();
-                if (drawing.getProjectSection().equals(projectSection)) {
+                if (drawing.getProjDocToDrawings().getProjectSection().equals(projectSection)) {
                     drawing.getDrawingsToExecSchemes().add(executiveSchemesData);
                     executiveSchemesData.getExecSchemesToDrawings().add(drawing);
                     drawingsRepository.save(drawing);

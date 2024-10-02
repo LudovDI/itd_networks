@@ -23,64 +23,35 @@
             <div class="col-6 d-flex flex-column bd-highlight mb-3">
                 <div class="m-2 p-2 bg-success d-flex justify-content-between">
                     <label class="w-auto">Раздел проекта</label>
-                    <input type="text" th:value="${el.projectSection1}" name="projectSection1" class="w-50">
+                    <input type="text" th:value="${el.projectSection}" name="projectSection" class="w-50">
                 </div>
             </div>
             <div class="col-6 d-flex flex-column bd-highlight mt-2">
                 <div class="p-2 bg-success d-flex justify-content-between">
                     <label>Перечень используемых чертежей раздела проекта</label>
-                    <div id="drawing-container1" class="col-6">
-                        <div th:each="drawing : ${drawingsList}"
-                             th:if="${drawing.projectSection == el.projectSection1}">
-                            <input type="text" th:value="${drawing.drawing}" name="drawing1"
+                    <div id="drawing-container" class="col-6">
+                        <div th:each="drawing : ${drawingsList}">
+                            <input type="text" th:value="${drawing.drawing}" th:name="'drawing' + ${drawing.id}"
                                    class="w-50 mt-2">
                             <button type="button" onclick="removeDrawing(this)"
-                                    class="bg-success btn btn-succcess border-white mt-3 me-5">Удалить
+                                    class="bg-success btn btn-success border-white mt-3 me-5">Удалить
                             </button>
                         </div>
                     </div>
                 </div>
                 <div class="d-flex justify-content-end">
-                    <button type="button" onclick="addDrawing1()"
-                            class="bg-success btn btn-succcess border-white mt-3 me-5">Добавить чертеж
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="px-1 text-white d-flex justify-content-between">
-            <div class="col-6 d-flex flex-column bd-highlight mb-3">
-                <div class="m-2 p-2 bg-success d-flex justify-content-between">
-                    <label class="w-auto">Раздел проекта</label>
-                    <input type="text" th:value="${el.projectSection2}" name="projectSection2" class="w-50">
-                </div>
-            </div>
-            <div class="col-6 d-flex flex-column bd-highlight mt-2">
-                <div class="p-2 bg-success d-flex justify-content-between">
-                    <label class="col-6">Перечень используемых чертежей раздела проекта</label>
-                    <div id="drawing-container2" class="col-6">
-                        <div th:each="drawing : ${drawingsList}"
-                             th:if="${drawing.projectSection == el.projectSection2}">
-                            <input type="text" th:value="${drawing.drawing}" th:name="'drawing2_' + ${drawing.id}"
-                                   class="w-50 mt-2">
-                            <button type="button" onclick="removeDrawing(this)"
-                                    class="bg-success btn btn-succcess border-white mt-3 me-5">Удалить
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-end">
-                    <button type="button" class="bg-success btn btn-succcess border-white mt-3 me-5"
-                            onclick="addDrawing2()">Добавить чертеж
+                    <button type="button" onclick="addDrawing()"
+                            class="bg-success btn btn-success border-white mt-3 me-5">Добавить чертеж
                     </button>
                 </div>
             </div>
         </div>
         <div class="d-flex justify-content-end">
-            <button type="submit" class="bg-success btn btn-succcess border-white mt-3 me-5">Обновить</button>
+            <button type="submit" class="bg-success btn btn-success border-white mt-3 me-5">Обновить</button>
         </div>
         <div class="d-flex justify-content-start">
             <a href="/project-documentation-table" role="button"
-               class="bg-success btn btn-succcess border-white mt-3 ms-5">
+               class="bg-success btn btn-success border-white mt-3 ms-5">
                 Отмена
             </a>
         </div>
