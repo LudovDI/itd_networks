@@ -35,4 +35,19 @@ public class TemplateController {
     public String asbuiltAdd() {
         return "asbuilt_drawing/asbuilt_drawing_add";
     }
+
+    @GetMapping("/GNB_protocols")
+    public String GNBProtocols() {
+        return "GNB_protocols/GNB_protocols";
+    }
+
+    @GetMapping("/GNB_add")
+    public String GNBProtocolsAdd() {
+        return "GNB_protocols/GNB_add";
+    }
+
+    @GetMapping("/GNB_edit")
+    public String GNBProtocolsEdit() {
+        return "GNB_protocols/GNB_edit";
+    }
 }
