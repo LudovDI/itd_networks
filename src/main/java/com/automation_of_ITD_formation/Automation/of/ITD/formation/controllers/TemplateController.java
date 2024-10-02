@@ -95,4 +95,14 @@ public class TemplateController {
     public String aocpEdit() {
         return "AOCP/aocp_edit";
     }
+
+    @GetMapping("/passport")
+    public String passport() {
+        return "passport/passport";
+    }
+
+    @GetMapping("/passport_edit")
+    public String passportEdit() {
+        return "passport/passport_edit";
+    }
 }
