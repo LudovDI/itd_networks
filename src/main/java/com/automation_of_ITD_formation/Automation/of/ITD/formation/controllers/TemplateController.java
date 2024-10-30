@@ -99,6 +99,7 @@ public class TemplateController {
     @GetMapping("/itd_info")
     public String itdInfo() {
         return "itd_info/itd_info";
+    }
       
     @GetMapping("/passport")
     public String passport() {
