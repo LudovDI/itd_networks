@@ -20,7 +20,7 @@
                            placeholder="Введите название материала">
                     <input type="hidden" name="sourcePage" value="aosrAdd">
                     <button type="submit" formaction="/search-materials" formmethod="get"
-                            class="btn btn-succcess border-white ms-5">Искать
+                            class="btn btn-success border-white ms-5">Искать
                     </button>
                 </div>
                 <div th:each="material : ${selectedMaterialsList}">
@@ -28,7 +28,7 @@
                     <input type="checkbox" th:checked="true" disabled
                            th:text="${material.nameMaterial} + ' - ' + ${material.accompanyingDocuments[0].name} + ' № ' + ${material.accompanyingDocuments[0].number} + ' от ' + ${material.accompanyingDocuments[0].date} + ' г.'">
                     <button type="button" onclick="removeMaterial(this)"
-                            class="btn btn-succcess border-white mt-3 me-5">Удалить
+                            class="btn btn-success border-white mt-3 me-5">Удалить
                     </button>
                 </div>
                 <div id="searchResults" th:if="${foundMaterialsList}">

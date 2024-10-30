@@ -31,11 +31,11 @@
                 <form th:action="'/project-documentation-table/' + ${doc.id} + '/update-status'" method="post">
                     <select name="status" class="status-select" onchange="updateStatus(this.form)">
                         <option value="Готов" th:selected="${doc.status == 'Готов'}"
-                                data-image-url="/staticFiles/green.png"></option>
+                                data-image-url="/images/green.png"></option>
                         <option value="В процессе" th:selected="${doc.status == 'В процессе'}"
-                                data-image-url="/staticFiles/yellow.png"></option>
+                                data-image-url="/images/yellow.png"></option>
                         <option value="Требует создания" th:selected="${doc.status == 'Требует создания'}"
-                                data-image-url="/staticFiles/red.png"></option>
+                                data-image-url="/images/red.png"></option>
                     </select>
                 </form>
             </td>

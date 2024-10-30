@@ -162,25 +162,25 @@ public class AosrController {
         return "aosrAdd";
     }
 
-    @GetMapping("/search-materials")
-    public String searchMaterials(@RequestParam("query") String query,
-                                  @RequestParam(name = "selectedMaterials", required = false) List<Long> selectedMaterialsIds,
-                                  @RequestParam(name = "sourcePage", required = false, defaultValue = "aosrAdd") String sourcePage,
-                                  Model model) {
-
-        List<MaterialsUsedData> foundMaterials = materialsUsedRepository.findByNameMaterialContainingIgnoreCase(query);
-        Iterable<MaterialsUsedData> selectedMaterials = new ArrayList<>();
-        if (selectedMaterialsIds != null) {
-            selectedMaterials = materialsUsedRepository.findAllById(selectedMaterialsIds);
-            foundMaterials = foundMaterials.stream()
-                    .filter(material -> !selectedMaterialsIds.contains(material.getId()))
-                    .collect(Collectors.toList());
-        }
-        model.addAttribute("foundMaterialsList", foundMaterials);
-        model.addAttribute("selectedMaterialsList", selectedMaterials);
-        populateModel(model);
-        return sourcePage;
-    }
+//    @GetMapping("/search-materials")
+//    public String searchMaterials(@RequestParam("query") String query,
+//                                  @RequestParam(name = "selectedMaterials", required = false) List<Long> selectedMaterialsIds,
+//                                  @RequestParam(name = "sourcePage", required = false, defaultValue = "aosrAdd") String sourcePage,
+//                                  Model model) {
+//
+//        List<MaterialsUsedData> foundMaterials = materialsUsedRepository.findByNameMaterialContainingIgnoreCase(query);
+//        Iterable<MaterialsUsedData> selectedMaterials = new ArrayList<>();
+//        if (selectedMaterialsIds != null) {
+//            selectedMaterials = materialsUsedRepository.findAllById(selectedMaterialsIds);
+//            foundMaterials = foundMaterials.stream()
+//                    .filter(material -> !selectedMaterialsIds.contains(material.getId()))
+//                    .collect(Collectors.toList());
+//        }
+//        model.addAttribute("foundMaterialsList", foundMaterials);
+//        model.addAttribute("selectedMaterialsList", selectedMaterials);
+//        populateModel(model);
+//        return sourcePage;
+//    }
 
     @PostMapping("/aosr-table/{id}/update-status")
     public String updateStatus(@PathVariable("id") Long id, @RequestParam("status") String status) {

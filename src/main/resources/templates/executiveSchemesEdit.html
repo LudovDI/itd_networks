@@ -1,194 +1,386 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Редактирование исполнительной схемы</title>
-    <link href="../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet"
-          type="text/css"/>
-    <script src="../static/js/executiveSchemesEdit.js" th:src="@{/js/executiveSchemesEdit.js}"
-            type="text/javascript"></script>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Редактировать исполнительную схему</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="../../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="../../css/sb-admin-2.min.css" rel="stylesheet">
+
 </head>
-<body>
-<h1 id="headerText" hidden>Редактирование исполнительной схемы</h1>
-<header th:insert="blocks/header :: header"></header>
-<div th:each="el : ${executiveSchemesData}">
-    <form method="post">
-        <div class="row px-5 text-white d-flex justify-content-between">
-            <div class="col-6 d-flex flex-column bd-highlight mb-3">
-                <div class="m-2 p-2 bg-success d-flex justify-content-between">
-                    <label class="w-auto">Название исполнительной схемы</label>
-                    <input type="text" class="w-50" th:value="${el.nameScheme}" name="nameScheme">
+
+<body id="page-top" class="vsc-initialized">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar_extended :: sidebar_extended}"></div>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h2 mb-0 text-primary">Исполнительные схемы</h1>
                 </div>
-                <div class="m-2 p-2 bg-success d-flex flex-column bd-highlight">
-                    <p>Координаты зоны работ:</p>
-                    <div class="d-flex justify-content-end">
-                        <label class="w-auto px-2">Начальная координата</label>
-                        <label class="w-auto px-2">X =</label>
-                        <input type="text" class="w-25" th:value="${el.startCoordinateX}" name="startCoordinateX">
+                <hr>
+
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Редактирование исполнительной схемы</h6>
                     </div>
-                    <div class="d-flex justify-content-end mb-2">
-                        <label class="w-auto px-2">Y =</label>
-                        <input type="text" class="w-25" th:value="${el.startCoordinateY}" name="startCoordinateY">
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <label class="w-auto px-2">Конечная координата</label>
-                        <label class="w-auto px-2">X =</label>
-                        <input type="text" class="w-25" th:value="${el.endCoordinateX}" name="endCoordinateX">
-                    </div>
-                    <div class="d-flex justify-content-end mb-2">
-                        <label class="w-auto px-2">Y =</label>
-                        <input type="text" class="w-25" th:value="${el.endCoordinateY}" name="endCoordinateY">
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <label class="w-auto px-2">Центр колодца</label>
-                        <label class="w-auto px-2">X =</label>
-                        <input type="text" class="w-25" th:value="${el.wellCenterX}" name="wellCenterX">
-                    </div>
-                    <div class="d-flex justify-content-end mb-2">
-                        <label class="w-auto px-2">Y =</label>
-                        <input type="text" class="w-25" th:value="${el.wellCenterY}" name="wellCenterY">
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <label class="w-auto px-2">Отметки выполненных работ:</label>
-                        <label class="w-auto px-2">начальная отметка</label>
-                        <input type="text" class="w-25" th:value="${el.startingPoint}" name="startingPoint">
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <label class="w-auto px-2">конечная отметка</label>
-                        <input type="text" class="w-25" th:value="${el.endingPoint}" name="endingPoint">
-                    </div>
-                </div>
-                <div class="m-2 p-2 bg-success d-flex flex-column bd-highlight">
-                    <div class=" m-2 p-2 bg-success d-flex justify-content-between">
-                        <label>Раздел проекта, номер чертежа, по которым выполнены работы</label><br>
-                        <select id="projectSectionSelect" name="projectSectionSelect" onchange="updateDrawings()">
-                            <option th:each="data : ${projectDocumentationList}"
-                                    th:value="${data.projectSection1}"
-                                    th:text="${data.projectSection1}"
-                                    th:selected="${data.projectSection1 == el.projectSection}"></option>
-                            <option th:each="data : ${projectDocumentationList}"
-                                    th:value="${data.projectSection2}"
-                                    th:text="${data.projectSection2}"
-                                    th:selected="${data.projectSection2 == el.projectSection}"></option>
-                        </select>
-                        <div id="drawingsList1" th:each="data : ${projectDocumentationList}">
-                            <table>
-                                <tr th:each="drawing : ${drawingsList}"
-                                    th:if="${drawing.projectSection == data.projectSection1}">
-                                    <td>
-                                        <input type='checkbox' name='drawingCheckbox' th:value="${drawing.id}"
-                                               th:checked="${drawingIds.contains(drawing.id)}"
-                                               th:text="${drawing.drawing}">
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div id="drawingsList2" th:each="data : ${projectDocumentationList}">
-                            <table>
-                                <tr th:each="drawing : ${drawingsList}"
-                                    th:if="${drawing.projectSection == data.projectSection2}">
-                                    <td>
-                                        <input type='checkbox' name='drawingCheckbox' th:value="${drawing.id}"
-                                               th:checked="${drawingIds.contains(drawing.id)}"
-                                               th:text="${drawing.drawing}">
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 d-flex flex-column bd-highlight mb-3">
-                <div class=" m-2 p-2 bg-success d-flex justify-content-between">
-                    <label class="w-auto">Участок</label>
-                    <input type="text" class="w-50" th:value="${el.section}" name="section">
-                </div>
-                <div class="m-2 p-2 bg-success d-flex flex-column bd-highlight">
-                    <p>Объем выполненных работ:</p>
-                    <div class="d-flex justify-content-end mb-1">
-                        <label class="w-auto px-2">Разработка грунта</label>
-                        <input type="text" class="w-25" th:value="${el.soilDevelopment}" name="soilDevelopment">
-                        <label class="w-auto px-2">м³</label>
-                    </div>
-                    <div class="d-flex justify-content-end mb-1">
-                        <label class="w-auto px-2">Песчаное основание</label>
-                        <input type="text" class="w-25" th:value="${el.sandyBase}" name="sandyBase">
-                        <label class="w-auto px-2">м³</label>
-                    </div>
-                    <div class="d-flex justify-content-end mb-1">
-                        <label class="w-auto px-2">Шурфовка</label>
-                        <input type="text" class="w-25" th:value="${el.shoofing}" name="shoofing">
-                        <label class="w-auto px-2">м³</label>
-                    </div>
-                    <div class="d-flex justify-content-end mb-1">
-                        <label class="w-auto px-2">Засыпка шурфовки</label>
-                        <input type="text" class="w-25" th:value="${el.backfillingShoofing}"
-                               name="backfillingShoofing">
-                        <label class="w-auto px-2">м³</label>
-                    </div>
-                    <div class="d-flex justify-content-end mb-1">
-                        <label class="w-auto px-2">Засыпка: песок</label>
-                        <input type="text" class="w-25" th:value="${el.sand}" name="sand">
-                        <label class="w-auto px-2">м³</label>
-                    </div>
-                    <div class="d-flex justify-content-end mb-1">
-                        <label class="w-auto px-2">грунт</label>
-                        <input type="text" class="w-25" th:value="${el.priming}" name="priming">
-                        <label class="w-auto px-2">м³</label>
-                    </div>
-                    <div class="d-flex justify-content-end mb-1">
-                        <label class="w-auto px-2">укладка трубопровода открытым способом</label>
-                        <input type="text" class="w-25" th:value="${el.layingPipeline}" name="layingPipeline">
-                        <label class="w-auto px-2 me-2">м</label>
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <label class="w-auto px-2">Прокладка трубопровода методом ГНБ</label>
-                        <input type="text" class="w-25" th:value="${el.layingPipelineGNB}" name="layingPipelineGNB">
-                        <label class="w-auto px-2 me-2">м</label>
-                    </div>
-                </div>
-                <div class="m-2 p-2 bg-success d-flex flex-column bd-highlight">
-                    <div class="d-flex d-flex justify-content-between">
-                        <label class="w-auto px-2">Применяемые материалы</label>
-                        <div id="select-container">
-                            <div th:if="${el.execSchemesToMaterials.isEmpty()}">
-                                <select id="material1" name="material" class="w-75">
-                                    <option th:value="-1">---</option>
-                                    <option th:each="data : ${materialsUsedList}"
-                                            th:value="${data.id}"
-                                            th:text="${data.nameMaterial} + ' - ' + ${data.accompanyingDocuments[0].name} + ' № ' + ${data.accompanyingDocuments[0].number} + ' от ' + ${data.accompanyingDocuments[0].date} + ' г.'"></option>
-                                </select>
-                                <button type="button" onclick="removeMaterial(this)"
-                                        class="btn btn-denger border-white">Удалить
+                    <div class="card-body" th:each="el : ${executiveSchemesData}">
+                        <form method="post" th:action="'/executive-schemes-table/' + ${el.id} + '/executive-schemes-edit'">
+                            <div class="row mb-4">
+                                <!-- Правая часть формы-->
+                                <div class="col-lg-7 mb-3 pr-2">
+                                    <div class="card mb-4">
+                                        <div class="card-body p-3 pr-5">
+                                            <div class="form-group row mb-0 align-items-center">
+                                                <label class="col-lg-5 text-center">Название исполнительной схемы</label>
+                                                <input class="col-lg-7 form-control" th:value="${el.nameScheme}" type="text" name="nameScheme">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h5 class="h5 mb-0">Координаты зоны работ</h5>
+                                        </div>
+                                        <div class="card-body p-3 pr-5">
+                                            <div class="form-group row align-items-center">
+                                                <div class="col-lg-4">
+                                                    <label>Минимальная координата</label>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <div>
+                                                        <label class="">X =</label>
+                                                        <input type="text" class="" name="startCoordinateX" th:value="${el.startCoordinateX}">
+                                                    </div>
+                                                    <div>
+                                                        <label class="">Y =</label>
+                                                        <input type="text" class="" name="startCoordinateY" th:value="${el.startCoordinateY}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row align-items-center">
+                                                <div class="col-lg-4">
+                                                    <label>Максимальная координата</label>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <div>
+                                                        <label class="">X =</label>
+                                                        <input type="text" class="" name="endCoordinateX" th:value="${el.endCoordinateX}">
+                                                    </div>
+                                                    <div>
+                                                        <label class="">Y =</label>
+                                                        <input type="text" class="" name="endCoordinateY" th:value="${el.endCoordinateY}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row align-items-center">
+                                                <div class="col-lg-4">
+                                                    <label>Центр колодца</label>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <div>
+                                                        <label class="">X =</label>
+                                                        <input type="text" class="" name="wellCenterX" th:value="${el.wellCenterX}">
+                                                    </div>
+                                                    <div>
+                                                        <label class="">Y =</label>
+                                                        <input type="text" class="" name="wellCenterY" th:value="${el.wellCenterY}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row align-items-center">
+                                                <div class="col-lg-4">
+                                                    <label>Отметки выполненных работ</label>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <div>
+                                                        <label class="">начальная отметка</label>
+                                                        <input type="text" class="" name="startingPoint" th:value="${el.startingPoint}">
+                                                    </div>
+                                                    <div>
+                                                        <label class="">конечная отметка</label>
+                                                        <input type="text" class="" name="endingPoint" th:value="${el.endingPoint}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-4">
+                                        <div class="card-body p-3 pr-5">
+                                            <div class="form-group row align-items-top mb-0">
+                                                <div class="col-lg-6">
+                                                    <label class="mt-1">Раздел проекта, номер чертежа, по которым выполнены работы</label>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-lg-6">
+                                                            <select class="btn btn-light dropdown-toggle"
+                                                                    id="projectSectionSelect"
+                                                                    name="projectSectionSelect">
+                                                                <option th:each="data : ${projectDocumentationList}"
+                                                                        th:value="${data.projectSection}"
+                                                                        th:text="${data.projectSection}"
+                                                                        th:selected="${data.projectSection == el.projectSection}"></option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                            <div class="card">
+                                                                <!-- Card Header - Accordion -->
+                                                                <a href="#collapseCardExample"
+                                                                   class="d-block card-header btn-light pr-3 pl-3 pt-3 collapsed"
+                                                                   data-toggle="collapse" role="button"
+                                                                   aria-expanded="false"
+                                                                   aria-controls="collapseCardExample">
+                                                                    <h6 class="m-0">Выбор чертежей</h6>
+                                                                </a>
+                                                                <!-- Card Content - Collapse -->
+                                                                <div class="collapse" id="collapseCardExample" style="">
+                                                                    <div class="card-body">
+                                                                        <div th:each="drawing : ${drawingsList}">
+                                                                            <input type="checkbox"
+                                                                                   th:name="'drawingCheckbox' + ${drawing.id}"
+                                                                                   th:value="${drawing.projDocToDrawings.projectSection}"
+                                                                                   th:checked="${drawingIds.contains(drawing.id)}">
+                                                                            <span th:text="${drawing.drawing}"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Левая часть формы-->
+                                <div class="col-lg-5 mb-3 pl-2">
+                                    <div class="card mb-4">
+                                        <div class="card-body p-3 pr-5">
+                                            <div class="form-group row mb-0 align-items-center">
+                                                <label class="col-lg-2 text-center">Участок</label>
+                                                <input class="col-lg-10 form-control" type="text" name="section" th:value="${el.section}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h5 class="h5 mb-0">Объем выполненных работ</h5>
+                                        </div>
+                                        <div class="card-body p-3 pr-5">
+                                            <div class="form-group row align-items-center">
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-5">
+                                                            <label class="">Разработка грунта</label>
+                                                        </div>
+                                                        <div class="col-lg-7">
+                                                            <input type="text" class="" name="soilDevelopment" th:value="${el.soilDevelopment}">
+                                                            <label class="">м³</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-5">
+                                                            <label class="">Песчаное основание</label>
+                                                        </div>
+                                                        <div class="col-lg-7">
+                                                            <input type="text" class="" name="sandyBase" th:value="${el.sandyBase}">
+                                                            <label class="">м³</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-5">
+                                                            <label class="">Шурфовка</label>
+                                                        </div>
+                                                        <div class="col-lg-7">
+                                                            <input type="text" class="" name="shoofing" th:value="${el.shoofing}">
+                                                            <label class="">м³</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-5">
+                                                            <label class="">Засыпка шурфовки</label>
+                                                        </div>
+                                                        <div class="col-lg-7">
+                                                            <input type="text" class="" name="backfillingShoofing" th:value="${el.backfillingShoofing}">
+                                                            <label class="">м³</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-5">
+                                                            <label class="">Засыпка: песок</label>
+                                                        </div>
+                                                        <div class="col-lg-7">
+                                                            <input type="text" class="" name="sand" th:value="${el.sand}">
+                                                            <label class="">м³</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-5">
+                                                            <label class="">Грунт</label>
+                                                        </div>
+                                                        <div class="col-lg-7">
+                                                            <input type="text" class="" name="priming" th:value="${el.priming}">
+                                                            <label class="">м³</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-5">
+                                                            <label class="">Укладка трубопровода открытым способом</label>                                                        </div>
+                                                        <div class="col-lg-7">
+                                                            <input type="text" class="" name="layingPipeline" th:value="${el.layingPipeline}">
+                                                            <label class="">м</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-5">
+                                                            <label class="">Прокладка трубопровода методом ГНБ</label>
+                                                        </div>
+                                                        <div class="col-lg-7">
+                                                            <input type="text" class="" name="layingPipelineGNB" th:value="${el.layingPipelineGNB}">
+                                                            <label class="">м</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-4">
+                                        <div class="card-body p-3 pr-5">
+                                            <div class="form-group row align-items-top mb-0">
+                                                <div class="col-lg-6">
+                                                    <label class="mt-1">Применяемые материалы</label>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-lg-6">
+                                                            <div>
+                                                                <input class="w-50" type="text" id="searchInput" name="query"
+                                                                       placeholder="Введите название материала">
+                                                                <input type="hidden" name="sourcePage" value="executiveSchemesEdit">
+                                                                <input type="hidden" name="id" th:value="${el.id}">
+                                                                <button type="submit" formaction="/search-materials" formmethod="get" onclick="saveInputData()"
+                                                                        class="btn btn-success border-white ms-5">Искать
+                                                                </button>
+                                                            </div>
+                                                            <div th:each="material : ${selectedMaterialsList}">
+                                                                <input type="hidden" name="material" th:value="${material.id}">
+                                                                <input type="checkbox" th:checked="true" disabled
+                                                                       th:text="${material.nameMaterial} + '. ' + ${material.accompanyingDocuments[0].name} + ' № ' + ${material.accompanyingDocuments[0].number} + ' от ' + ${material.accompanyingDocuments[0].date} + ' г.'">
+                                                                <button type="button" onclick="removeMaterial(this)"
+                                                                        class="btn btn-success border-white mt-3 me-5">Удалить
+                                                                </button>
+                                                            </div>
+                                                            <div id="searchResults" th:if="${foundMaterialsList}">
+                                                                <div th:each="material : ${foundMaterialsList}">
+                                                                    <input type="checkbox" name="material" th:value="${material.id}"
+                                                                           th:text="${material.nameMaterial} + ' - ' + ${material.accompanyingDocuments[0].name} + ' № ' + ${material.accompanyingDocuments[0].number} + ' от ' + ${material.accompanyingDocuments[0].date} + ' г.'">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Кнопки Отмена и Сохранить -->
+                            <div class="d-flex justify-content-between mt-4 mt-0 mr-5 ml-5">
+                                <a href="/executive-schemes-table" role="button" class="btn btn-light btn-icon-split" onclick="clearInputData()">
+                                    <span class="icon text-gray-600">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </span>
+                                    <span class="text">Отмена</span>
+                                </a>
+
+                                <button type="submit" class="btn btn-success btn-icon-split" onclick="clearInputData()">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                    <span class="text">Обновить</span>
                                 </button>
                             </div>
-                            <div th:each="material : ${el.execSchemesToMaterials}">
-                                <select id="material2" name="material" class="w-75">
-                                    <option th:value="-1">---</option>
-                                    <option th:each="data : ${materialsUsedList}"
-                                            th:value="${data.id}"
-                                            th:text="${data.nameMaterial} + ' - ' + ${data.accompanyingDocuments[0].name} + ' № ' + ${data.accompanyingDocuments[0].number} + ' от ' + ${data.accompanyingDocuments[0].date} + ' г.'"
-                                            th:selected="${data.nameMaterial == material.nameMaterial}"></option>
-                                </select>
-                                <button type="button" onclick="removeMaterial(this)"
-                                        class="btn btn-denger border-white">Удалить
-                                </button>
-                            </div>
-                        </div>
+                        </form>
                     </div>
-                    <div class="d-flex justify-content-end">
-                        <button type="button" onclick="addSelect()"
-                                class="btn btn-succcess border-white mt-3 me-5">Добавить материал
-                        </button>
-                    </div>
+
                 </div>
+
             </div>
+            <!-- /.container-fluid -->
+
         </div>
-        <div class="d-flex justify-content-end">
-            <button type="submit" class="bg-success btn btn-succcess border-white mt-3 me-5">Обновить</button>
-        </div>
-    </form>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <div th:replace="~{fragments/footer :: footer}"></div>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
 </div>
-<a href="/executive-schemes-table" role="button" class="bg-success btn btn-succcess border-white mt-3 ms-5">Отмена</a>
+<!-- End of Page Wrapper -->
+
+<!-- JavaScript для управления видимостью секций -->
+<script src="../../js/new_abd_toggle.js"></script>
+
+<!-- Bootstrap core JavaScript-->
+<script src="../../vendor/jquery/jquery.min.js"></script>
+<script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="../../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="../../js/sb-admin-2.min.js"></script>
+
+<script src="../../js/executiveSchemes.js"></script>
+
+
 </body>
+
 </html>

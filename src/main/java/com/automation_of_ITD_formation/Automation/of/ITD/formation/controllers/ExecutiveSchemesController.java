@@ -38,15 +38,50 @@ public class ExecutiveSchemesController {
         return "executiveSchemesTable";
     }
 
-    @GetMapping("/executive-schemes-add")
-    public String executivesSchemesAdd(Model model) {
+    private void populateModel(Model model) {
         Iterable<ProjectDocumentationData> projectDocumentationList = projectDocumentationRepository.findAll();
         Iterable<DrawingsData> drawingsList = drawingsRepository.findAll();
         Iterable<MaterialsUsedData> materialsUsedList = materialsUsedRepository.findAll();
         model.addAttribute("projectDocumentationList", projectDocumentationList);
         model.addAttribute("drawingsList", drawingsList);
         model.addAttribute("materialsUsedList", materialsUsedList);
+    }
+
+    @GetMapping("/executive-schemes-add")
+    public String executivesSchemesAdd(Model model) {
+        populateModel(model);
         return "executiveSchemesAdd";
+    }
+
+    @GetMapping("/search-materials")
+    public String searchMaterials(@RequestParam("query") String query,
+                                  @RequestParam(name = "selectedMaterials", required = false) List<Long> selectedMaterialsIds,
+                                  @RequestParam(name = "sourcePage", required = false, defaultValue = "executiveSchemesAdd") String sourcePage,
+                                  @RequestParam(name = "id", required = false) Long id,
+                                  Model model) {
+
+        if (id != null) {
+            Optional<ExecutiveSchemesData> executiveSchemesDataOptional = executiveSchemesRepository.findById(id);
+            if (executiveSchemesDataOptional.isPresent()) {
+                ExecutiveSchemesData executiveSchemesData = executiveSchemesDataOptional.get();
+                model.addAttribute("executiveSchemesData", executiveSchemesData);
+                Set<Long> drawingIds = executiveSchemesData.getExecSchemesToDrawings().stream().map(DrawingsData::getId).collect(Collectors.toSet());
+                model.addAttribute("drawingIds", drawingIds);
+            }
+        }
+
+        List<MaterialsUsedData> foundMaterials = materialsUsedRepository.findByNameMaterialContainingIgnoreCase(query);
+        Iterable<MaterialsUsedData> selectedMaterials = new ArrayList<>();
+        if (selectedMaterialsIds != null) {
+            selectedMaterials = materialsUsedRepository.findAllById(selectedMaterialsIds);
+            foundMaterials = foundMaterials.stream()
+                    .filter(material -> !selectedMaterialsIds.contains(material.getId()))
+                    .collect(Collectors.toList());
+        }
+        model.addAttribute("foundMaterialsList", foundMaterials);
+        model.addAttribute("selectedMaterialsList", selectedMaterials);
+        populateModel(model);
+        return sourcePage;
     }
 
     @PostMapping("/executive-schemes-add")
@@ -69,24 +104,27 @@ public class ExecutiveSchemesController {
                                           @RequestParam("projectSectionSelect") String projectSection,
                                           @RequestParam("startingPoint") String startingPoint,
                                           @RequestParam("endingPoint") String endingPoint,
-                                          @RequestParam(value = "drawingCheckbox", required = false) List<Long> drawingIds,
-                                          @RequestParam(value = "material", required = false) List<Long> materialIds) {
+                                          @RequestParam(value = "selectedMaterials", required = false) List<Long> materialIds,
+                                          @RequestParam Map<String, String> formData) {
         ExecutiveSchemesData executiveSchemesData = new ExecutiveSchemesData(nameScheme, section, startCoordinateX, startCoordinateY, endCoordinateX, endCoordinateY, wellCenterX, wellCenterY, soilDevelopment, sandyBase, shoofing, backfillingShoofing, sand, priming, layingPipeline, layingPipelineGNB, projectSection, startingPoint, endingPoint);
-        if (drawingIds != null) {
-            Set<DrawingsData> drawings = new HashSet<>();
-            for (Long drawingId : drawingIds) {
+
+        Set<DrawingsData> drawings = new HashSet<>();
+        formData.forEach((key, value) -> {
+            if (key.startsWith("drawingCheckbox")) {
+                Long drawingId = Long.parseLong(key.substring("drawingCheckbox".length()));
                 Optional<DrawingsData> drawingOptional = drawingsRepository.findById(drawingId);
                 if (drawingOptional.get().getProjDocToDrawings().getProjectSection().equals(projectSection)) {
                     drawingOptional.ifPresent(drawings::add);
                 }
             }
-            executiveSchemesData.setExecSchemesToDrawings(drawings);
-            for (DrawingsData drawing : drawings) {
-                Set<ExecutiveSchemesData> execSchemes = drawing.getDrawingsToExecSchemes();
-                execSchemes.add(executiveSchemesData);
-                drawing.setDrawingsToExecSchemes(execSchemes);
-            }
+        });
+        executiveSchemesData.setExecSchemesToDrawings(drawings);
+        for (DrawingsData drawing : drawings) {
+            Set<ExecutiveSchemesData> execSchemes = drawing.getDrawingsToExecSchemes();
+            execSchemes.add(executiveSchemesData);
+            drawing.setDrawingsToExecSchemes(execSchemes);
         }
+
         if (materialIds != null) {
             Set<MaterialsUsedData> materialsUsed = new HashSet<>();
             for (Long materialId : materialIds) {
@@ -116,13 +154,10 @@ public class ExecutiveSchemesController {
             Set<Long> drawingIds = executiveSchemesData.getExecSchemesToDrawings().stream().map(DrawingsData::getId).collect(Collectors.toSet());
             model.addAttribute("drawingIds", drawingIds);
             model.addAttribute("executiveSchemesData", executiveSchemesData);
+            List<MaterialsUsedData> selectedMaterials = executiveSchemesData.getExecSchemesToMaterials().stream().toList();
+            model.addAttribute("selectedMaterialsList", selectedMaterials);
         }
-        Iterable<ProjectDocumentationData> projectDocumentationList = projectDocumentationRepository.findAll();
-        Iterable<MaterialsUsedData> materialsUsedList = materialsUsedRepository.findAll();
-        Iterable<DrawingsData> drawingsList = drawingsRepository.findAll();
-        model.addAttribute("projectDocumentationList", projectDocumentationList);
-        model.addAttribute("materialsUsedList", materialsUsedList);
-        model.addAttribute("drawingsList", drawingsList);
+        populateModel(model);
         return "executiveSchemesEdit";
     }
 
@@ -148,8 +183,8 @@ public class ExecutiveSchemesController {
                                              @RequestParam("projectSectionSelect") String projectSection,
                                              @RequestParam("startingPoint") String startingPoint,
                                              @RequestParam("endingPoint") String endingPoint,
-                                             @RequestParam(value = "drawingCheckbox", required = false) List<Long> drawingIds,
-                                             @RequestParam(value = "material", required = false) List<Long> materialIds) {
+                                             @RequestParam(value = "material", required = false) List<Long> materialIds,
+                                             @RequestParam Map<String, String> formData) {
         ExecutiveSchemesData executiveSchemesData = executiveSchemesRepository.findById(id).orElseThrow();
 
         for (DrawingsData drawing : executiveSchemesData.getExecSchemesToDrawings()) {
@@ -158,8 +193,9 @@ public class ExecutiveSchemesController {
         }
         executiveSchemesData.getExecSchemesToDrawings().clear();
 
-        if (drawingIds != null) {
-            for (Long drawingId : drawingIds) {
+        formData.forEach((key, value) -> {
+            if (key.startsWith("drawingCheckbox")) {
+                Long drawingId = Long.parseLong(key.substring("drawingCheckbox".length()));
                 DrawingsData drawing = drawingsRepository.findById(drawingId).orElseThrow();
                 if (drawing.getProjDocToDrawings().getProjectSection().equals(projectSection)) {
                     drawing.getDrawingsToExecSchemes().add(executiveSchemesData);
@@ -167,7 +203,7 @@ public class ExecutiveSchemesController {
                     drawingsRepository.save(drawing);
                 }
             }
-        }
+        });
 
         for (MaterialsUsedData material : executiveSchemesData.getExecSchemesToMaterials()) {
             material.getMaterialsToExecSchemes().remove(executiveSchemesData);
