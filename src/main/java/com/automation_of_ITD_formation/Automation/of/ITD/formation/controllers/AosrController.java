@@ -2,7 +2,7 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.*;
-import com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.GenerateFileUtils;
+//import com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.GenerateFileUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -530,8 +530,8 @@ public class AosrController {
         try {
             int indexAosr = 1;
             for (AosrData aosrData : aosrList) {
-                File tempFile = GenerateFileUtils.generateAosrFile(aosrData, indexAosr, spMap, monthMap);
-                tempFiles.add(tempFile);
+//                File tempFile = GenerateFileUtils.generateAosrFile(aosrData, indexAosr, spMap, monthMap);
+//                tempFiles.add(tempFile);
                 indexAosr++;
             }
 

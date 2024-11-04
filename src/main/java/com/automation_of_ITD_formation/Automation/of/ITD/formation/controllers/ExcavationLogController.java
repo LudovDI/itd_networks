@@ -3,7 +3,7 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.AosrRepository;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.ExcavationLogRepository;
-import com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.GenerateFileUtils;
+//import com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.GenerateFileUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.xwpf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,21 +68,21 @@ public class ExcavationLogController {
         if (iterator.hasNext()) {
             AosrData firstElement = iterator.next();
             PassportObjectData passportObjectData = firstElement.getPassportObjectData();
-            if (passportObjectData.getFioContractor() != null) {
-                namePersons.add(passportObjectData.getFioContractor());
-            }
-            if (passportObjectData.getFioContractor2() != null) {
-                namePersons.add(passportObjectData.getFioContractor2());
-            }
-            if (passportObjectData.getFioCustomer() != null) {
-                namePersons.add(passportObjectData.getFioCustomer());
-            }
-            if (passportObjectData.getFioProjector() != null) {
-                namePersons.add(passportObjectData.getFioProjector());
-            }
-            if (passportObjectData.getFioAnotherPerson() != null) {
-                namePersons.add(passportObjectData.getFioAnotherPerson());
-            }
+//            if (passportObjectData.getFioContractor() != null) {
+//                namePersons.add(passportObjectData.getFioContractor());
+//            }
+//            if (passportObjectData.getFioContractor2() != null) {
+//                namePersons.add(passportObjectData.getFioContractor2());
+//            }
+//            if (passportObjectData.getFioCustomer() != null) {
+//                namePersons.add(passportObjectData.getFioCustomer());
+//            }
+//            if (passportObjectData.getFioProjector() != null) {
+//                namePersons.add(passportObjectData.getFioProjector());
+//            }
+//            if (passportObjectData.getFioAnotherPerson() != null) {
+//                namePersons.add(passportObjectData.getFioAnotherPerson());
+//            }
         }
 
         model.addAttribute("namePersons", namePersons);
@@ -115,16 +115,16 @@ public class ExcavationLogController {
         excavationLogData.setAosrs(new HashSet<>(aosrToLogList));
         excavationLogRepository.save(excavationLogData);
         try {
-            File excavationLogFile = GenerateFileUtils.generateExcavationLogFile(monthMap, namePerformanceManager, aosrToLogList);
-
-            response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-            response.setHeader("Content-Disposition", "attachment; filename=ExcavationLog.docx");
-            response.setHeader("Content-Length", String.valueOf(excavationLogFile.length()));
-
-            InputStream in = new FileInputStream(excavationLogFile);
-            FileCopyUtils.copy(in, response.getOutputStream());
-            response.flushBuffer();
-            excavationLogFile.delete();
+//            File excavationLogFile = GenerateFileUtils.generateExcavationLogFile(monthMap, namePerformanceManager, aosrToLogList);
+//
+//            response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+//            response.setHeader("Content-Disposition", "attachment; filename=ExcavationLog.docx");
+//            response.setHeader("Content-Length", String.valueOf(excavationLogFile.length()));
+//
+//            InputStream in = new FileInputStream(excavationLogFile);
+//            FileCopyUtils.copy(in, response.getOutputStream());
+//            response.flushBuffer();
+//            excavationLogFile.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
