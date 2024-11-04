@@ -1,9 +1,7 @@
 package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 
-import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.ActsViCData;
-import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.MaterialsUsedData;
-import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.PassportObjectData;
-import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.PassportObjectRepository;
+import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
+import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,14 +10,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class PassportObjectController {
 
     @Autowired
     private PassportObjectRepository passportObjectRepository;
+    @Autowired
+    private AnotherPersonResponsibleRepository anotherPersonResponsibleRepository;
+    @Autowired
+    private CustomerResponsibleRepository customerResponsibleRepository;
+    @Autowired
+    private DesignerResponsibleRepository designerResponsibleRepository;
+    @Autowired
+    private SubcustomerResponsibleRepository subcustomerResponsibleRepository;
+    @Autowired
+    private SubcustomerResponsible2Repository subcustomerResponsible2Repository;
 
     @GetMapping("/passport-object-table")
     public String passportObjectTable(Model model) {
@@ -35,77 +42,156 @@ public class PassportObjectController {
 
     @PostMapping("/passport-object-add")
     public String postPassportObjectAdd(@RequestParam("nameObject") String nameObject,
-                                     @RequestParam("addressObject") String addressObject,
-                                     @RequestParam("projectCode") String projectCode,
-                                     @RequestParam("nameDeveloper") String nameDeveloper,
-                                     @RequestParam("ogrnDeveloper") String ogrnDeveloper,
-                                     @RequestParam("innDeveloper") String innDeveloper,
-                                     @RequestParam("addressDeveloper") String addressDeveloper,
-                                     @RequestParam("phoneDeveloper") String phoneDeveloper,
-                                     @RequestParam("nameOrganizationDeveloper") String nameOrganizationDeveloper,
-                                     @RequestParam("ogrnOrganizationDeveloper") String ogrnOrganizationDeveloper,
-                                     @RequestParam("innOrganizationDeveloper") String innOrganizationDeveloper,
-                                     @RequestParam("nameBuilder") String nameBuilder,
-                                     @RequestParam("ogrnBuilder") String ogrnBuilder,
-                                     @RequestParam("innBuilder") String innBuilder,
-                                     @RequestParam("addressBuilder") String addressBuilder,
-                                     @RequestParam("phoneBuilder") String phoneBuilder,
-                                     @RequestParam("nameOrganizationBuilder") String nameOrganizationBuilder,
-                                     @RequestParam("ogrnOrganizationBuilder") String ogrnOrganizationBuilder,
-                                     @RequestParam("innOrganizationBuilder") String innOrganizationBuilder,
-                                     @RequestParam("namePreparer") String namePreparer,
-                                     @RequestParam("ogrnPreparer") String ogrnPreparer,
-                                     @RequestParam("innPreparer") String innPreparer,
-                                     @RequestParam("addressPreparer") String addressPreparer,
-                                     @RequestParam("phonePreparer") String phonePreparer,
-                                     @RequestParam("nameOrganizationPreparer") String nameOrganizationPreparer,
-                                     @RequestParam("ogrnOrganizationPreparer") String ogrnOrganizationPreparer,
-                                     @RequestParam("innOrganizationPreparer") String innOrganizationPreparer,
-                                     @RequestParam("postCustomer") String postCustomer,
-                                     @RequestParam("fioCustomer") String fioCustomer,
-                                     @RequestParam("idCustomer") String idCustomer,
-                                     @RequestParam("nameCustomer") String nameCustomer,
-                                     @RequestParam("numberCustomer") String numberCustomer,
-                                     @RequestParam("dataCustomer") String dataCustomer,
-                                     @RequestParam("nameOrganizationCustomer") String nameOrganizationCustomer,
-                                     @RequestParam("ogrnOrganizationCustomer") String ogrnOrganizationCustomer,
-                                     @RequestParam("innOrganizationCustomer") String innOrganizationCustomer,
-                                     @RequestParam("adrOrganizationCustomer") String adrOrganizationCustomer,
-                                     @RequestParam("postContractor") String postContractor,
-                                     @RequestParam("fioContractor") String fioContractor,
-                                     @RequestParam("idContractor") String idContractor,
-                                     @RequestParam("nameContractor") String nameContractor,
-                                     @RequestParam("numberContractor") String numberContractor,
-                                     @RequestParam("dataContractor") String dataContractor,
-                                     @RequestParam("postContractor2") String postContractor2,
-                                     @RequestParam("fioContractor2") String fioContractor2,
-                                     @RequestParam("idContractor2") String idContractor2,
-                                     @RequestParam("nameContractor2") String nameContractor2,
-                                     @RequestParam("numberContractor2") String numberContractor2,
-                                     @RequestParam("dataContractor2") String dataContractor2,
-                                     @RequestParam("postProjector") String postProjector,
-                                     @RequestParam("fioProjector") String fioProjector,
-                                     @RequestParam("idProjector") String idProjector,
-                                     @RequestParam("nameProjector") String nameProjector,
-                                     @RequestParam("numberProjector") String numberProjector,
-                                     @RequestParam("dataProjector") String dataProjector,
-                                     @RequestParam("nameOrganizationProjector") String nameOrganizationProjector,
-                                     @RequestParam("ogrnOrganizationProjector") String ogrnOrganizationProjector,
-                                     @RequestParam("innOrganizationProjector") String innOrganizationProjector,
-                                     @RequestParam("adrOrganizationProjector") String adrOrganizationProjector,
-                                     @RequestParam("postAnotherPerson") String postAnotherPerson,
-                                     @RequestParam("fioAnotherPerson") String fioAnotherPerson,
-                                     @RequestParam("idAnotherPerson") String idAnotherPerson,
-                                     @RequestParam("nameAnotherPerson") String nameAnotherPerson,
-                                     @RequestParam("numberAnotherPerson") String numberAnotherPerson,
-                                     @RequestParam("dataAnotherPerson") String dataAnotherPerson,
-                                     @RequestParam("nameOrganizationAnotherPerson") String nameOrganizationAnotherPerson,
-                                     @RequestParam("ogrnOrganizationAnotherPerson") String ogrnOrganizationAnotherPerson,
-                                     @RequestParam("innOrganizationAnotherPerson") String innOrganizationAnotherPerson,
-                                     @RequestParam("adrOrganizationAnotherPerson") String adrOrganizationAnotherPerson) {
-        PassportObjectData passportObjectData = new PassportObjectData(nameObject, addressObject, projectCode, nameDeveloper, ogrnDeveloper, innDeveloper, addressDeveloper, phoneDeveloper, nameOrganizationDeveloper, ogrnOrganizationDeveloper, innOrganizationDeveloper, nameBuilder, ogrnBuilder, innBuilder, addressBuilder, phoneBuilder, nameOrganizationBuilder, ogrnOrganizationBuilder, innOrganizationBuilder, namePreparer, ogrnPreparer, innPreparer, addressPreparer, phonePreparer, nameOrganizationPreparer, ogrnOrganizationPreparer, innOrganizationPreparer,  postCustomer, fioCustomer, idCustomer, nameCustomer,  numberCustomer, dataCustomer, nameOrganizationCustomer, ogrnOrganizationCustomer, innOrganizationCustomer, adrOrganizationCustomer, postContractor, fioContractor, idContractor, nameContractor, numberContractor, dataContractor, postContractor2, fioContractor2, idContractor2, nameContractor2, numberContractor2, dataContractor2, postProjector, fioProjector, idProjector, nameProjector, numberProjector, dataProjector, nameOrganizationProjector, ogrnOrganizationProjector, innOrganizationProjector, adrOrganizationProjector, postAnotherPerson, fioAnotherPerson, idAnotherPerson, nameAnotherPerson, numberAnotherPerson, dataAnotherPerson, nameOrganizationAnotherPerson, ogrnOrganizationAnotherPerson, innOrganizationAnotherPerson, adrOrganizationAnotherPerson);
+                                        @RequestParam("addressObject") String addressObject,
+                                        @RequestParam("projectCode") String projectCode,
+                                        @RequestParam("nameCustomer") String nameCustomer,
+                                        @RequestParam("ogrnCustomer") String ogrnCustomer,
+                                        @RequestParam("innCustomer") String innCustomer,
+                                        @RequestParam("addressCustomer") String addressCustomer,
+                                        @RequestParam("phoneCustomer") String phoneCustomer,
+                                        @RequestParam("nameOrganizationCustomer") String nameOrganizationCustomer,
+                                        @RequestParam("ogrnOrganizationCustomer") String ogrnOrganizationCustomer,
+                                        @RequestParam("innOrganizationCustomer") String innOrganizationCustomer,
+                                        @RequestParam("nameContractor") String nameContractor,
+                                        @RequestParam("ogrnContractor") String ogrnContractor,
+                                        @RequestParam("innContractor") String innContractor,
+                                        @RequestParam("addressContractor") String addressContractor,
+                                        @RequestParam("phoneContractor") String phoneContractor,
+                                        @RequestParam("nameOrganizationContractor") String nameOrganizationContractor,
+                                        @RequestParam("ogrnOrganizationContractor") String ogrnOrganizationContractor,
+                                        @RequestParam("innOrganizationContractor") String innOrganizationContractor,
+                                        @RequestParam("nameDesigner") String nameDesigner,
+                                        @RequestParam("ogrnDesigner") String ogrnDesigner,
+                                        @RequestParam("innDesigner") String innDesigner,
+                                        @RequestParam("addressDesigner") String addressDesigner,
+                                        @RequestParam("phoneDesigner") String phoneDesigner,
+                                        @RequestParam("nameOrganizationDesigner") String nameOrganizationDesigner,
+                                        @RequestParam("ogrnOrganizationDesigner") String ogrnOrganizationDesigner,
+                                        @RequestParam("innOrganizationDesigner") String innOrganizationDesigner,
+                                        @RequestParam Map<String, String> formData) {
+        PassportObjectData passportObjectData = new PassportObjectData(nameObject, addressObject,projectCode, nameCustomer,
+                ogrnCustomer, innCustomer, addressCustomer, phoneCustomer, nameOrganizationCustomer, ogrnOrganizationCustomer,
+                innOrganizationCustomer, nameContractor, ogrnContractor, innContractor, addressContractor, phoneContractor,
+                nameOrganizationContractor, ogrnOrganizationContractor, innOrganizationContractor, nameDesigner, ogrnDesigner,
+                innDesigner, addressDesigner, phoneDesigner, nameOrganizationDesigner, ogrnOrganizationDesigner,
+                innOrganizationDesigner);
+        List<AnotherPersonResponsibleData> anotherPersonResponsibleList = new ArrayList<>();
+        List<CustomerResponsibleData> customerResponsibleList = new ArrayList<>();
+        List<DesignerResponsibleData> designerResponsibleList = new ArrayList<>();
+        List<SubcustomerResponsibleData> subcustomerResponsibleList = new ArrayList<>();
+        List<SubcustomerResponsible2Data> subcustomerResponsible2List = new ArrayList<>();
+        formData.forEach((key, value) -> {
+            if (key.startsWith("customerResponsiblePosition_")) {
+                int index = Integer.parseInt(key.substring(28));
+                String nameKey = "customerResponsibleName_" + index;
+                String idKey = "customerResponsibleIdNumber_" + index;
+                String nameDocumentKey = "customerResponsibleNameDocument_" + index;
+                String numberDocumentKey = "customerResponsibleNumberDocument_" + index;
+                String dateDocumentKey = "customerResponsibleDateDocument_" + index;
+                String nameCompanyKey = "customerResponsibleNameCompany_" + index;
+                String ogrnCompanyKey = "customerResponsibleOgrnCompany_" + index;
+                String innCompanyKey = "customerResponsibleInnCompany_" + index;
+                String adrCompanyKey = "customerResponsibleAdrCompany_" + index;
+                String name = formData.getOrDefault(nameKey, "");
+                String id = formData.getOrDefault(idKey, "");
+                String nameDocument = formData.getOrDefault(nameDocumentKey, "");
+                String numberDocument = formData.getOrDefault(numberDocumentKey, "");
+                String dateDocument = formData.getOrDefault(dateDocumentKey, "");
+                String nameCompany = formData.getOrDefault(nameCompanyKey, "");
+                String ogrnCompany = formData.getOrDefault(ogrnCompanyKey, "");
+                String innCompany = formData.getOrDefault(innCompanyKey, "");
+                String adrCompany = formData.getOrDefault(adrCompanyKey, "");
+                CustomerResponsibleData customerResponsibleData = new CustomerResponsibleData(value, name, id, nameDocument, numberDocument, dateDocument, nameCompany, ogrnCompany, innCompany, adrCompany);
+                customerResponsibleList.add(customerResponsibleData);
+            }
+            if (key.startsWith("subcustomerResponsiblePosition_")) {
+                int index = Integer.parseInt(key.substring(31));
+                String nameKey = "subcustomerResponsibleName_" + index;
+                String idKey = "subcustomerResponsibleIdNumber_" + index;
+                String nameDocumentKey = "subcustomerResponsibleNameDocument_" + index;
+                String numberDocumentKey = "subcustomerResponsibleNumberDocument_" + index;
+                String dateDocumentKey = "subcustomerResponsibleDateDocument_" + index;
+                String name = formData.getOrDefault(nameKey, "");
+                String id = formData.getOrDefault(idKey, "");
+                String nameDocument = formData.getOrDefault(nameDocumentKey, "");
+                String numberDocument = formData.getOrDefault(numberDocumentKey, "");
+                String dateDocument = formData.getOrDefault(dateDocumentKey, "");
+                SubcustomerResponsibleData subcustomerResponsibleData = new SubcustomerResponsibleData(value, name, id, nameDocument, numberDocument, dateDocument);
+                subcustomerResponsibleList.add(subcustomerResponsibleData);
+            }
+            if (key.startsWith("subcustomerResponsible2Position_")) {
+                int index = Integer.parseInt(key.substring(32));
+                String nameKey = "subcustomerResponsible2Name_" + index;
+                String idKey = "subcustomerResponsible2IdNumber_" + index;
+                String nameDocumentKey = "subcustomerResponsible2NameDocument_" + index;
+                String numberDocumentKey = "subcustomerResponsible2NumberDocument_" + index;
+                String dateDocumentKey = "subcustomerResponsible2DateDocument_" + index;
+                String name = formData.getOrDefault(nameKey, "");
+                String id = formData.getOrDefault(idKey, "");
+                String nameDocument = formData.getOrDefault(nameDocumentKey, "");
+                String numberDocument = formData.getOrDefault(numberDocumentKey, "");
+                String dateDocument = formData.getOrDefault(dateDocumentKey, "");
+                SubcustomerResponsible2Data subcustomerResponsible2Data = new SubcustomerResponsible2Data(value, name, id, nameDocument, numberDocument, dateDocument);
+                subcustomerResponsible2List.add(subcustomerResponsible2Data);
+            }
+            if (key.startsWith("designerResponsiblePosition_")) {
+                int index = Integer.parseInt(key.substring(28));
+                String nameKey = "designerResponsibleName_" + index;
+                String idKey = "designerResponsibleIdNumber_" + index;
+                String nameDocumentKey = "designerResponsibleNameDocument_" + index;
+                String numberDocumentKey = "designerResponsibleNumberDocument_" + index;
+                String dateDocumentKey = "designerResponsibleDateDocument_" + index;
+                String nameCompanyKey = "designerResponsibleNameCompany_" + index;
+                String ogrnCompanyKey = "designerResponsibleOgrnCompany_" + index;
+                String innCompanyKey = "designerResponsibleInnCompany_" + index;
+                String adrCompanyKey = "designerResponsibleAdrCompany_" + index;
+                String name = formData.getOrDefault(nameKey, "");
+                String id = formData.getOrDefault(idKey, "");
+                String nameDocument = formData.getOrDefault(nameDocumentKey, "");
+                String numberDocument = formData.getOrDefault(numberDocumentKey, "");
+                String dateDocument = formData.getOrDefault(dateDocumentKey, "");
+                String nameCompany = formData.getOrDefault(nameCompanyKey, "");
+                String ogrnCompany = formData.getOrDefault(ogrnCompanyKey, "");
+                String innCompany = formData.getOrDefault(innCompanyKey, "");
+                String adrCompany = formData.getOrDefault(adrCompanyKey, "");
+                DesignerResponsibleData designerResponsibleData = new DesignerResponsibleData(value, name, id, nameDocument, numberDocument, dateDocument, nameCompany, ogrnCompany, innCompany, adrCompany);
+                designerResponsibleList.add(designerResponsibleData);
+            }
+            if (key.startsWith("anotherPersonPosition_")) {
+                int index = Integer.parseInt(key.substring(22));
+                String nameKey = "anotherPersonName_" + index;
+                String idKey = "anotherPersonIdNumber_" + index;
+                String nameDocumentKey = "anotherPersonNameDocument_" + index;
+                String numberDocumentKey = "anotherPersonNumberDocument_" + index;
+                String dateDocumentKey = "anotherPersonDateDocument_" + index;
+                String nameCompanyKey = "anotherPersonNameCompany_" + index;
+                String ogrnCompanyKey = "anotherPersonOgrnCompany_" + index;
+                String innCompanyKey = "anotherPersonInnCompany_" + index;
+                String adrCompanyKey = "anotherPersonAdrCompany_" + index;
+                String name = formData.getOrDefault(nameKey, "");
+                String id = formData.getOrDefault(idKey, "");
+                String nameDocument = formData.getOrDefault(nameDocumentKey, "");
+                String numberDocument = formData.getOrDefault(numberDocumentKey, "");
+                String dateDocument = formData.getOrDefault(dateDocumentKey, "");
+                String nameCompany = formData.getOrDefault(nameCompanyKey, "");
+                String ogrnCompany = formData.getOrDefault(ogrnCompanyKey, "");
+                String innCompany = formData.getOrDefault(innCompanyKey, "");
+                String adrCompany = formData.getOrDefault(adrCompanyKey, "");
+                AnotherPersonResponsibleData anotherPersonResponsibleData = new AnotherPersonResponsibleData(value, name, id, nameDocument, numberDocument, dateDocument, nameCompany, ogrnCompany, innCompany, adrCompany);
+                anotherPersonResponsibleList.add(anotherPersonResponsibleData);
+            }
+        });
         passportObjectRepository.save(passportObjectData);
-
+        customerResponsibleList.forEach(customerResponsibleData -> customerResponsibleData.setPassportObjectData(passportObjectData));
+        customerResponsibleRepository.saveAll(customerResponsibleList);
+        subcustomerResponsibleList.forEach(subcustomerResponsibleData -> subcustomerResponsibleData.setPassportObjectData(passportObjectData));
+        subcustomerResponsibleRepository.saveAll(subcustomerResponsibleList);
+        subcustomerResponsible2List.forEach(subcustomerResponsible2Data -> subcustomerResponsible2Data.setPassportObjectData(passportObjectData));
+        subcustomerResponsible2Repository.saveAll(subcustomerResponsible2List);
+        designerResponsibleList.forEach(designerResponsibleData -> designerResponsibleData.setPassportObjectData(passportObjectData));
+        designerResponsibleRepository.saveAll(designerResponsibleList);
+        anotherPersonResponsibleList.forEach(anotherPersonResponsibleData -> anotherPersonResponsibleData.setPassportObjectData(passportObjectData));
+        anotherPersonResponsibleRepository.saveAll(anotherPersonResponsibleList);
         return "redirect:/passport-object-table";
     }
 
@@ -114,10 +200,15 @@ public class PassportObjectController {
         if (!passportObjectRepository.existsById(id)) {
             return "redirect:/passport-object-table";
         }
-
         Optional<PassportObjectData> passportObjectDataOptional = passportObjectRepository.findById(id);
         ArrayList<PassportObjectData> res = new ArrayList<>();
         passportObjectDataOptional.ifPresent(res::add);
+        PassportObjectData passportObjectData = res.getFirst();
+        model.addAttribute("anotherPersonResponsibles", passportObjectData.getAnotherPersonResponsibleData());
+        model.addAttribute("customerResponsibles", passportObjectData.getCustomerResponsibleData());
+        model.addAttribute("designerResponsibles", passportObjectData.getDesignerResponsibleData());
+        model.addAttribute("subcustomerResponsibles", passportObjectData.getSubcustomerResponsibleData());
+        model.addAttribute("subcustomerResponsibles2", passportObjectData.getSubcustomerResponsible2Data());
         model.addAttribute("passportObjectDataOptional", res);
         return "passportObjectEdit";
     }
@@ -127,142 +218,331 @@ public class PassportObjectController {
                                            @RequestParam("nameObject") String nameObject,
                                            @RequestParam("addressObject") String addressObject,
                                            @RequestParam("projectCode") String projectCode,
-                                           @RequestParam("nameDeveloper") String nameDeveloper,
-                                           @RequestParam("ogrnDeveloper") String ogrnDeveloper,
-                                           @RequestParam("innDeveloper") String innDeveloper,
-                                           @RequestParam("addressDeveloper") String addressDeveloper,
-                                           @RequestParam("phoneDeveloper") String phoneDeveloper,
-                                           @RequestParam("nameOrganizationDeveloper") String nameOrganizationDeveloper,
-                                           @RequestParam("ogrnOrganizationDeveloper") String ogrnOrganizationDeveloper,
-                                           @RequestParam("innOrganizationDeveloper") String innOrganizationDeveloper,
-                                           @RequestParam("nameBuilder") String nameBuilder,
-                                           @RequestParam("ogrnBuilder") String ogrnBuilder,
-                                           @RequestParam("innBuilder") String innBuilder,
-                                           @RequestParam("addressBuilder") String addressBuilder,
-                                           @RequestParam("phoneBuilder") String phoneBuilder,
-                                           @RequestParam("nameOrganizationBuilder") String nameOrganizationBuilder,
-                                           @RequestParam("ogrnOrganizationBuilder") String ogrnOrganizationBuilder,
-                                           @RequestParam("innOrganizationBuilder") String innOrganizationBuilder,
-                                           @RequestParam("namePreparer") String namePreparer,
-                                           @RequestParam("ogrnPreparer") String ogrnPreparer,
-                                           @RequestParam("innPreparer") String innPreparer,
-                                           @RequestParam("addressPreparer") String addressPreparer,
-                                           @RequestParam("phonePreparer") String phonePreparer,
-                                           @RequestParam("nameOrganizationPreparer") String nameOrganizationPreparer,
-                                           @RequestParam("ogrnOrganizationPreparer") String ogrnOrganizationPreparer,
-                                           @RequestParam("innOrganizationPreparer") String innOrganizationPreparer,
-                                           @RequestParam("postCustomer") String postCustomer,
-                                           @RequestParam("fioCustomer") String fioCustomer,
-                                           @RequestParam("idCustomer") String idCustomer,
                                            @RequestParam("nameCustomer") String nameCustomer,
-                                           @RequestParam("numberCustomer") String numberCustomer,
-                                           @RequestParam("dataCustomer") String dataCustomer,
+                                           @RequestParam("ogrnCustomer") String ogrnCustomer,
+                                           @RequestParam("innCustomer") String innCustomer,
+                                           @RequestParam("addressCustomer") String addressCustomer,
+                                           @RequestParam("phoneCustomer") String phoneCustomer,
                                            @RequestParam("nameOrganizationCustomer") String nameOrganizationCustomer,
                                            @RequestParam("ogrnOrganizationCustomer") String ogrnOrganizationCustomer,
                                            @RequestParam("innOrganizationCustomer") String innOrganizationCustomer,
-                                           @RequestParam("adrOrganizationCustomer") String adrOrganizationCustomer,
-                                           @RequestParam("postContractor") String postContractor,
-                                           @RequestParam("fioContractor") String fioContractor,
-                                           @RequestParam("idContractor") String idContractor,
                                            @RequestParam("nameContractor") String nameContractor,
-                                           @RequestParam("numberContractor") String numberContractor,
-                                           @RequestParam("dataContractor") String dataContractor,
-                                           @RequestParam("postContractor2") String postContractor2,
-                                           @RequestParam("fioContractor2") String fioContractor2,
-                                           @RequestParam("idContractor2") String idContractor2,
-                                           @RequestParam("nameContractor2") String nameContractor2,
-                                           @RequestParam("numberContractor2") String numberContractor2,
-                                           @RequestParam("dataContractor2") String dataContractor2,
-                                           @RequestParam("postProjector") String postProjector,
-                                           @RequestParam("fioProjector") String fioProjector,
-                                           @RequestParam("idProjector") String idProjector,
-                                           @RequestParam("nameProjector") String nameProjector,
-                                           @RequestParam("numberProjector") String numberProjector,
-                                           @RequestParam("dataProjector") String dataProjector,
-                                           @RequestParam("nameOrganizationProjector") String nameOrganizationProjector,
-                                           @RequestParam("ogrnOrganizationProjector") String ogrnOrganizationProjector,
-                                           @RequestParam("innOrganizationProjector") String innOrganizationProjector,
-                                           @RequestParam("adrOrganizationProjector") String adrOrganizationProjector,
-                                           @RequestParam("postAnotherPerson") String postAnotherPerson,
-                                           @RequestParam("fioAnotherPerson") String fioAnotherPerson,
-                                           @RequestParam("idAnotherPerson") String idAnotherPerson,
-                                           @RequestParam("nameAnotherPerson") String nameAnotherPerson,
-                                           @RequestParam("numberAnotherPerson") String numberAnotherPerson,
-                                           @RequestParam("dataAnotherPerson") String dataAnotherPerson,
-                                           @RequestParam("nameOrganizationAnotherPerson") String nameOrganizationAnotherPerson,
-                                           @RequestParam("ogrnOrganizationAnotherPerson") String ogrnOrganizationAnotherPerson,
-                                           @RequestParam("innOrganizationAnotherPerson") String innOrganizationAnotherPerson,
-                                           @RequestParam("adrOrganizationAnotherPerson") String adrOrganizationAnotherPerson) {
+                                           @RequestParam("ogrnContractor") String ogrnContractor,
+                                           @RequestParam("innContractor") String innContractor,
+                                           @RequestParam("addressContractor") String addressContractor,
+                                           @RequestParam("phoneContractor") String phoneContractor,
+                                           @RequestParam("nameOrganizationContractor") String nameOrganizationContractor,
+                                           @RequestParam("ogrnOrganizationContractor") String ogrnOrganizationContractor,
+                                           @RequestParam("innOrganizationContractor") String innOrganizationContractor,
+                                           @RequestParam("nameDesigner") String nameDesigner,
+                                           @RequestParam("ogrnDesigner") String ogrnDesigner,
+                                           @RequestParam("innDesigner") String innDesigner,
+                                           @RequestParam("addressDesigner") String addressDesigner,
+                                           @RequestParam("phoneDesigner") String phoneDesigner,
+                                           @RequestParam("nameOrganizationDesigner") String nameOrganizationDesigner,
+                                           @RequestParam("ogrnOrganizationDesigner") String ogrnOrganizationDesigner,
+                                           @RequestParam("innOrganizationDesigner") String innOrganizationDesigner,
+                                           @RequestParam Map<String, String> formData) {
         PassportObjectData passportObjectData = passportObjectRepository.findById(id).orElseThrow();
+
+        Set<Long> anotherPersonResIdsFromForm = new HashSet<>();
+        Set<Long> customerResIdsFromForm = new HashSet<>();
+        Set<Long> designerResIdsFromForm = new HashSet<>();
+        Set<Long> subcustomerResIdsFromForm = new HashSet<>();
+        Set<Long> subcustomerRes2IdsFromForm = new HashSet<>();
+
+        formData.forEach((key, value) -> {
+            if (key.startsWith("customerResponsiblePosition_")) {
+                String customerResIdStr = key.substring("customerResponsiblePosition_".length());
+
+                CustomerResponsibleData customerRes;
+                if (!customerResIdStr.isEmpty()) {
+                    Long customerResId = Long.parseLong(customerResIdStr);
+                    customerResIdsFromForm.add(customerResId);
+
+                    customerRes = customerResponsibleRepository.findById(customerResId).orElse(null);
+                    if (customerRes == null) {
+                        customerRes = new CustomerResponsibleData();
+                    }
+                } else {
+                    customerRes = new CustomerResponsibleData();
+                }
+                int index = Integer.parseInt(key.substring(28));
+                String nameKey = "customerResponsibleName_" + index;
+                String idKey = "customerResponsibleIdNumber_" + index;
+                String nameDocumentKey = "customerResponsibleNameDocument_" + index;
+                String numberDocumentKey = "customerResponsibleNumberDocument_" + index;
+                String dateDocumentKey = "customerResponsibleDateDocument_" + index;
+                String nameCompanyKey = "customerResponsibleNameCompany_" + index;
+                String ogrnCompanyKey = "customerResponsibleOgrnCompany_" + index;
+                String innCompanyKey = "customerResponsibleInnCompany_" + index;
+                String adrCompanyKey = "customerResponsibleAdrCompany_" + index;
+                String name = formData.getOrDefault(nameKey, "");
+                String idNum = formData.getOrDefault(idKey, "");
+                String nameDocument = formData.getOrDefault(nameDocumentKey, "");
+                String numberDocument = formData.getOrDefault(numberDocumentKey, "");
+                String dateDocument = formData.getOrDefault(dateDocumentKey, "");
+                String nameCompany = formData.getOrDefault(nameCompanyKey, "");
+                String ogrnCompany = formData.getOrDefault(ogrnCompanyKey, "");
+                String innCompany = formData.getOrDefault(innCompanyKey, "");
+                String adrCompany = formData.getOrDefault(adrCompanyKey, "");
+                customerRes.setPosition(value);
+                customerRes.setName(name);
+                customerRes.setIdNumber(idNum);
+                customerRes.setNameDocument(nameDocument);
+                customerRes.setNumberDocument(numberDocument);
+                customerRes.setDateDocument(dateDocument);
+                customerRes.setNameCompany(nameCompany);
+                customerRes.setOgrnCompany(ogrnCompany);
+                customerRes.setInnCompany(innCompany);
+                customerRes.setAdrCompany(adrCompany);
+
+                customerRes.setPassportObjectData(passportObjectData);
+                passportObjectData.getCustomerResponsibleData().add(customerRes);
+            }
+            if (key.startsWith("subcustomerResponsiblePosition_")) {
+                String subcustomerResIdStr = key.substring("subcustomerResponsiblePosition_".length());
+
+                SubcustomerResponsibleData subcustomerRes;
+                if (!subcustomerResIdStr.isEmpty()) {
+                    Long subcustomerResId = Long.parseLong(subcustomerResIdStr);
+                    subcustomerResIdsFromForm.add(subcustomerResId);
+
+                    subcustomerRes = subcustomerResponsibleRepository.findById(subcustomerResId).orElse(null);
+                    if (subcustomerRes == null) {
+                        subcustomerRes = new SubcustomerResponsibleData();
+                    }
+                } else {
+                    subcustomerRes = new SubcustomerResponsibleData();
+                }
+                int index = Integer.parseInt(key.substring(31));
+                String nameKey = "subcustomerResponsibleName_" + index;
+                String idKey = "subcustomerResponsibleIdNumber_" + index;
+                String nameDocumentKey = "subcustomerResponsibleNameDocument_" + index;
+                String numberDocumentKey = "subcustomerResponsibleNumberDocument_" + index;
+                String dateDocumentKey = "subcustomerResponsibleDateDocument_" + index;
+                String name = formData.getOrDefault(nameKey, "");
+                String idNum = formData.getOrDefault(idKey, "");
+                String nameDocument = formData.getOrDefault(nameDocumentKey, "");
+                String numberDocument = formData.getOrDefault(numberDocumentKey, "");
+                String dateDocument = formData.getOrDefault(dateDocumentKey, "");
+                subcustomerRes.setPosition(value);
+                subcustomerRes.setName(name);
+                subcustomerRes.setIdNumber(idNum);
+                subcustomerRes.setNameDocument(nameDocument);
+                subcustomerRes.setNumberDocument(numberDocument);
+                subcustomerRes.setDateDocument(dateDocument);
+
+                subcustomerRes.setPassportObjectData(passportObjectData);
+                passportObjectData.getSubcustomerResponsibleData().add(subcustomerRes);
+            }
+            if (key.startsWith("subcustomerResponsible2Position_")) {
+                String subcustomerRes2IdStr = key.substring("subcustomerResponsible2Position_".length());
+
+                SubcustomerResponsible2Data subcustomerRes2;
+                if (!subcustomerRes2IdStr.isEmpty()) {
+                    Long subcustomerRes2Id = Long.parseLong(subcustomerRes2IdStr);
+                    subcustomerRes2IdsFromForm.add(subcustomerRes2Id);
+
+                    subcustomerRes2 = subcustomerResponsible2Repository.findById(subcustomerRes2Id).orElse(null);
+                    if (subcustomerRes2 == null) {
+                        subcustomerRes2 = new SubcustomerResponsible2Data();
+                    }
+                } else {
+                    subcustomerRes2 = new SubcustomerResponsible2Data();
+                }
+                int index = Integer.parseInt(key.substring(32));
+                String nameKey = "subcustomerResponsible2Name_" + index;
+                String idKey = "subcustomerResponsible2IdNumber_" + index;
+                String nameDocumentKey = "subcustomerResponsible2NameDocument_" + index;
+                String numberDocumentKey = "subcustomerResponsible2NumberDocument_" + index;
+                String dateDocumentKey = "subcustomerResponsible2DateDocument_" + index;
+                String name = formData.getOrDefault(nameKey, "");
+                String idNum = formData.getOrDefault(idKey, "");
+                String nameDocument = formData.getOrDefault(nameDocumentKey, "");
+                String numberDocument = formData.getOrDefault(numberDocumentKey, "");
+                String dateDocument = formData.getOrDefault(dateDocumentKey, "");
+                subcustomerRes2.setPosition(value);
+                subcustomerRes2.setName(name);
+                subcustomerRes2.setIdNumber(idNum);
+                subcustomerRes2.setNameDocument(nameDocument);
+                subcustomerRes2.setNumberDocument(numberDocument);
+                subcustomerRes2.setDateDocument(dateDocument);
+
+                subcustomerRes2.setPassportObjectData(passportObjectData);
+                passportObjectData.getSubcustomerResponsible2Data().add(subcustomerRes2);
+            }
+            if (key.startsWith("designerResponsiblePosition_")) {
+                String designerResIdStr = key.substring("designerResponsiblePosition_".length());
+
+                DesignerResponsibleData designerRes;
+                if (!designerResIdStr.isEmpty()) {
+                    Long designerResId = Long.parseLong(designerResIdStr);
+                    designerResIdsFromForm.add(designerResId);
+
+                    designerRes = designerResponsibleRepository.findById(designerResId).orElse(null);
+                    if (designerRes == null) {
+                        designerRes = new DesignerResponsibleData();
+                    }
+                } else {
+                    designerRes = new DesignerResponsibleData();
+                }
+                int index = Integer.parseInt(key.substring(28));
+                String nameKey = "designerResponsibleName_" + index;
+                String idKey = "designerResponsibleIdNumber_" + index;
+                String nameDocumentKey = "designerResponsibleNameDocument_" + index;
+                String numberDocumentKey = "designerResponsibleNumberDocument_" + index;
+                String dateDocumentKey = "designerResponsibleDateDocument_" + index;
+                String nameCompanyKey = "designerResponsibleNameCompany_" + index;
+                String ogrnCompanyKey = "designerResponsibleOgrnCompany_" + index;
+                String innCompanyKey = "designerResponsibleInnCompany_" + index;
+                String adrCompanyKey = "designerResponsibleAdrCompany_" + index;
+                String name = formData.getOrDefault(nameKey, "");
+                String idNum = formData.getOrDefault(idKey, "");
+                String nameDocument = formData.getOrDefault(nameDocumentKey, "");
+                String numberDocument = formData.getOrDefault(numberDocumentKey, "");
+                String dateDocument = formData.getOrDefault(dateDocumentKey, "");
+                String nameCompany = formData.getOrDefault(nameCompanyKey, "");
+                String ogrnCompany = formData.getOrDefault(ogrnCompanyKey, "");
+                String innCompany = formData.getOrDefault(innCompanyKey, "");
+                String adrCompany = formData.getOrDefault(adrCompanyKey, "");
+                designerRes.setPosition(value);
+                designerRes.setName(name);
+                designerRes.setIdNumber(idNum);
+                designerRes.setNameDocument(nameDocument);
+                designerRes.setNumberDocument(numberDocument);
+                designerRes.setDateDocument(dateDocument);
+                designerRes.setNameCompany(nameCompany);
+                designerRes.setOgrnCompany(ogrnCompany);
+                designerRes.setInnCompany(innCompany);
+                designerRes.setAdrCompany(adrCompany);
+
+                designerRes.setPassportObjectData(passportObjectData);
+                passportObjectData.getDesignerResponsibleData().add(designerRes);
+            }
+            if (key.startsWith("anotherPersonPosition_")) {
+                String anotherPersonResIdStr = key.substring("anotherPersonPosition_".length());
+
+                AnotherPersonResponsibleData anotherPersonRes;
+                if (!anotherPersonResIdStr.isEmpty()) {
+                    Long anotherPersonResId = Long.parseLong(anotherPersonResIdStr);
+                    anotherPersonResIdsFromForm.add(anotherPersonResId);
+
+                    anotherPersonRes = anotherPersonResponsibleRepository.findById(anotherPersonResId).orElse(null);
+                    if (anotherPersonRes == null) {
+                        anotherPersonRes = new AnotherPersonResponsibleData();
+                    }
+                } else {
+                    anotherPersonRes = new AnotherPersonResponsibleData();
+                }
+                int index = Integer.parseInt(key.substring(22));
+                String nameKey = "anotherPersonName_" + index;
+                String idKey = "anotherPersonIdNumber_" + index;
+                String nameDocumentKey = "anotherPersonNameDocument_" + index;
+                String numberDocumentKey = "anotherPersonNumberDocument_" + index;
+                String dateDocumentKey = "anotherPersonDateDocument_" + index;
+                String nameCompanyKey = "anotherPersonNameCompany_" + index;
+                String ogrnCompanyKey = "anotherPersonOgrnCompany_" + index;
+                String innCompanyKey = "anotherPersonInnCompany_" + index;
+                String adrCompanyKey = "anotherPersonAdrCompany_" + index;
+                String name = formData.getOrDefault(nameKey, "");
+                String idNum = formData.getOrDefault(idKey, "");
+                String nameDocument = formData.getOrDefault(nameDocumentKey, "");
+                String numberDocument = formData.getOrDefault(numberDocumentKey, "");
+                String dateDocument = formData.getOrDefault(dateDocumentKey, "");
+                String nameCompany = formData.getOrDefault(nameCompanyKey, "");
+                String ogrnCompany = formData.getOrDefault(ogrnCompanyKey, "");
+                String innCompany = formData.getOrDefault(innCompanyKey, "");
+                String adrCompany = formData.getOrDefault(adrCompanyKey, "");
+                anotherPersonRes.setPosition(value);
+                anotherPersonRes.setName(name);
+                anotherPersonRes.setIdNumber(idNum);
+                anotherPersonRes.setNameDocument(nameDocument);
+                anotherPersonRes.setNumberDocument(numberDocument);
+                anotherPersonRes.setDateDocument(dateDocument);
+                anotherPersonRes.setNameCompany(nameCompany);
+                anotherPersonRes.setOgrnCompany(ogrnCompany);
+                anotherPersonRes.setInnCompany(innCompany);
+                anotherPersonRes.setAdrCompany(adrCompany);
+
+                anotherPersonRes.setPassportObjectData(passportObjectData);
+                passportObjectData.getAnotherPersonResponsibleData().add(anotherPersonRes);
+            }
+        });
+
+        List<CustomerResponsibleData> customersToRemove = passportObjectData.getCustomerResponsibleData().stream()
+                .filter(customerRes -> customerRes.getId() != null && !customerResIdsFromForm.contains(customerRes.getId()))
+                .toList();
+
+        customersToRemove.forEach(customerRes -> {
+            passportObjectData.getCustomerResponsibleData().remove(customerRes);
+            customerResponsibleRepository.delete(customerRes);
+        });
+
+        List<SubcustomerResponsibleData> subcustomersToRemove = passportObjectData.getSubcustomerResponsibleData().stream()
+                .filter(subcustomerRes -> subcustomerRes.getId() != null && !subcustomerResIdsFromForm.contains(subcustomerRes.getId()))
+                .toList();
+
+        subcustomersToRemove.forEach(subcustomerRes -> {
+            passportObjectData.getSubcustomerResponsibleData().remove(subcustomerRes);
+            subcustomerResponsibleRepository.delete(subcustomerRes);
+        });
+
+        List<SubcustomerResponsible2Data> subcustomers2ToRemove = passportObjectData.getSubcustomerResponsible2Data().stream()
+                .filter(subcustomerRes2 -> subcustomerRes2.getId() != null && !subcustomerRes2IdsFromForm.contains(subcustomerRes2.getId()))
+                .toList();
+
+        subcustomers2ToRemove.forEach(subcustomerRes2 -> {
+            passportObjectData.getSubcustomerResponsible2Data().remove(subcustomerRes2);
+            subcustomerResponsible2Repository.delete(subcustomerRes2);
+        });
+
+        List<DesignerResponsibleData> designerToRemove = passportObjectData.getDesignerResponsibleData().stream()
+                .filter(designerRes -> designerRes.getId() != null && !designerResIdsFromForm.contains(designerRes.getId()))
+                .toList();
+
+        designerToRemove.forEach(designerRes -> {
+            passportObjectData.getDesignerResponsibleData().remove(designerRes);
+            designerResponsibleRepository.delete(designerRes);
+        });
+
+        List<AnotherPersonResponsibleData> anotherPersonToRemove = passportObjectData.getAnotherPersonResponsibleData().stream()
+                .filter(anotherPersonRes -> anotherPersonRes.getId() != null && !anotherPersonResIdsFromForm.contains(anotherPersonRes.getId()))
+                .toList();
+
+        anotherPersonToRemove.forEach(anotherPersonRes -> {
+            passportObjectData.getAnotherPersonResponsibleData().remove(anotherPersonRes);
+            anotherPersonResponsibleRepository.delete(anotherPersonRes);
+        });
+
         passportObjectData.setNameObject(nameObject);
         passportObjectData.setAddressObject(addressObject);
         passportObjectData.setProjectCode(projectCode);
-        passportObjectData.setNameDeveloper(nameDeveloper);
-        passportObjectData.setOgrnDeveloper(ogrnDeveloper);
-        passportObjectData.setInnDeveloper(innDeveloper);
-        passportObjectData.setAddressDeveloper(addressDeveloper);
-        passportObjectData.setPhoneDeveloper(phoneDeveloper);
-        passportObjectData.setNameOrganizationDeveloper(nameOrganizationDeveloper);
-        passportObjectData.setOgrnOrganizationDeveloper(ogrnOrganizationDeveloper);
-        passportObjectData.setInnOrganizationDeveloper(innOrganizationDeveloper);
-        passportObjectData.setNameBuilder(nameBuilder);
-        passportObjectData.setOgrnBuilder(ogrnBuilder);
-        passportObjectData.setInnBuilder(innBuilder);
-        passportObjectData.setAddressBuilder(addressBuilder);
-        passportObjectData.setPhoneBuilder(phoneBuilder);
-        passportObjectData.setNameOrganizationBuilder(nameOrganizationBuilder);
-        passportObjectData.setOgrnOrganizationBuilder(ogrnOrganizationBuilder);
-        passportObjectData.setInnOrganizationBuilder(innOrganizationBuilder);
-        passportObjectData.setNamePreparer(namePreparer);
-        passportObjectData.setOgrnPreparer(ogrnPreparer);
-        passportObjectData.setInnPreparer(innPreparer);
-        passportObjectData.setAddressPreparer(addressPreparer);
-        passportObjectData.setPhonePreparer(phonePreparer);
-        passportObjectData.setNameOrganizationPreparer(nameOrganizationPreparer);
-        passportObjectData.setOgrnOrganizationPreparer(ogrnOrganizationPreparer);
-        passportObjectData.setInnOrganizationPreparer(innOrganizationPreparer);
-        passportObjectData.setPostCustomer(postCustomer);
-        passportObjectData.setFioCustomer(fioCustomer);
-        passportObjectData.setIdCustomer(idCustomer);
         passportObjectData.setNameCustomer(nameCustomer);
-        passportObjectData.setNumberCustomer(numberCustomer);
-        passportObjectData.setDataCustomer(dataCustomer);
+        passportObjectData.setOgrnCustomer(ogrnCustomer);
+        passportObjectData.setInnCustomer(innCustomer);
+        passportObjectData.setAddressCustomer(addressCustomer);
+        passportObjectData.setPhoneCustomer(phoneCustomer);
         passportObjectData.setNameOrganizationCustomer(nameOrganizationCustomer);
         passportObjectData.setOgrnOrganizationCustomer(ogrnOrganizationCustomer);
         passportObjectData.setInnOrganizationCustomer(innOrganizationCustomer);
-        passportObjectData.setAdrOrganizationCustomer(adrOrganizationCustomer);
-        passportObjectData.setPostContractor(postContractor);
-        passportObjectData.setFioContractor(fioContractor);
-        passportObjectData.setIdContractor(idContractor);
         passportObjectData.setNameContractor(nameContractor);
-        passportObjectData.setNumberContractor(numberContractor);
-        passportObjectData.setDataContractor(dataContractor);
-        passportObjectData.setPostContractor2(postContractor2);
-        passportObjectData.setFioContractor2(fioContractor2);
-        passportObjectData.setIdContractor2(idContractor2);
-        passportObjectData.setNameContractor2(nameContractor2);
-        passportObjectData.setNumberContractor2(numberContractor2);
-        passportObjectData.setDataContractor2(dataContractor2);
-        passportObjectData.setPostProjector(postProjector);
-        passportObjectData.setFioProjector(fioProjector);
-        passportObjectData.setIdProjector(idProjector);
-        passportObjectData.setNameProjector(nameProjector);
-        passportObjectData.setNumberProjector(numberProjector);
-        passportObjectData.setDataProjector(dataProjector);
-        passportObjectData.setNameOrganizationProjector(nameOrganizationProjector);
-        passportObjectData.setOgrnOrganizationProjector(ogrnOrganizationProjector);
-        passportObjectData.setInnOrganizationProjector(innOrganizationProjector);
-        passportObjectData.setAdrOrganizationProjector(adrOrganizationProjector);
-        passportObjectData.setPostAnotherPerson(postAnotherPerson);
-        passportObjectData.setFioAnotherPerson(fioAnotherPerson);
-        passportObjectData.setIdAnotherPerson(idAnotherPerson);
-        passportObjectData.setNameAnotherPerson(nameAnotherPerson);
-        passportObjectData.setNumberAnotherPerson(numberAnotherPerson);
-        passportObjectData.setDataAnotherPerson(dataAnotherPerson);
-        passportObjectData.setNameOrganizationAnotherPerson(nameOrganizationAnotherPerson);
-        passportObjectData.setOgrnOrganizationAnotherPerson(ogrnOrganizationAnotherPerson);
-        passportObjectData.setInnOrganizationAnotherPerson(innOrganizationAnotherPerson);
-        passportObjectData.setAdrOrganizationAnotherPerson(adrOrganizationAnotherPerson);
+        passportObjectData.setOgrnContractor(ogrnContractor);
+        passportObjectData.setInnContractor(innContractor);
+        passportObjectData.setAddressContractor(addressContractor);
+        passportObjectData.setPhoneContractor(phoneContractor);
+        passportObjectData.setNameOrganizationContractor(nameOrganizationContractor);
+        passportObjectData.setOgrnOrganizationContractor(ogrnOrganizationContractor);
+        passportObjectData.setInnOrganizationContractor(innOrganizationContractor);
+        passportObjectData.setNameDesigner(nameDesigner);
+        passportObjectData.setOgrnDesigner(ogrnDesigner);
+        passportObjectData.setInnDesigner(innDesigner);
+        passportObjectData.setAddressDesigner(addressDesigner);
+        passportObjectData.setPhoneDesigner(phoneDesigner);
+        passportObjectData.setNameOrganizationDesigner(nameOrganizationDesigner);
+        passportObjectData.setOgrnOrganizationDesigner(ogrnOrganizationDesigner);
+        passportObjectData.setInnOrganizationDesigner(innOrganizationDesigner);
+
         passportObjectRepository.save(passportObjectData);
         return "redirect:/passport-object-table";
     }

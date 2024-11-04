@@ -78,7 +78,7 @@ public class MaterialsUsedController {
             return "redirect:/materials-used-table";
         }
         MaterialsUsedData materialsUsedData = materialsUsedDataOptional.get();
-        model.addAttribute("materialsUsedData", materialsUsedData); // Добавляем materialsUsedData в модель
+        model.addAttribute("materialsUsedData", materialsUsedData);
         return "materialsUsedEdit";
     }
 

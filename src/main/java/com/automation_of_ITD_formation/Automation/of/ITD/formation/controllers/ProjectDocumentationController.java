@@ -69,7 +69,7 @@ public class ProjectDocumentationController {
         Optional<ProjectDocumentationData> projectDocumentationDataOptional = projectDocumentationRepository.findById(id);
         ArrayList<ProjectDocumentationData> res = new ArrayList<>();
         projectDocumentationDataOptional.ifPresent(res::add);
-        Iterable<DrawingsData> drawingsList = drawingsRepository.findAll();
+        Iterable<DrawingsData> drawingsList = res.getFirst().getDrawingsList();
         model.addAttribute("drawingsList", drawingsList);
         model.addAttribute("projectDocumentationDataOptional", res);
         return "projectDocumentationEdit";
