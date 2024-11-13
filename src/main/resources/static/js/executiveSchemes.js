@@ -22,16 +22,17 @@ function updateDrawings() {
             checkbox.parentElement.style.display = "block";
         } else {
             checkbox.parentElement.style.display = "none";
+            checkbox.checked = false;
         }
     });
 
     saveSelectData();
 }
 
-function removeMaterial(button) {
-    var parentDiv = button.parentElement;
-    if (parentDiv) {
-        parentDiv.remove();
+function saveSelectData() {
+    const select = document.getElementById("projectSectionSelect");
+    if (select) {
+        localStorage.setItem("selectedProjectSection", select.value);
     }
 }
 
@@ -49,13 +50,6 @@ function saveInputData() {
 
     localStorage.setItem("formData", JSON.stringify(data));
     saveSelectData();
-}
-
-function saveSelectData() {
-    const select = document.getElementById("projectSectionSelect");
-    if (select) {
-        localStorage.setItem("selectedProjectSection", select.value);
-    }
 }
 
 function restoreInputData() {
@@ -97,3 +91,10 @@ function clearSelectData() {
 document.querySelectorAll("input[type='text'], input[type='checkbox']").forEach(input => {
     input.addEventListener(input.type === 'checkbox' ? "change" : "input", saveInputData);
 });
+
+function removeMaterial(button) {
+    var parentDiv = button.parentElement;
+    if (parentDiv) {
+        parentDiv.remove();
+    }
+}

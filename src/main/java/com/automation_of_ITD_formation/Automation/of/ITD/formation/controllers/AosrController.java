@@ -2,7 +2,7 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.*;
-//import com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.GenerateFileUtils;
+import com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.GenerateFileUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,8 +27,24 @@ import java.util.zip.ZipOutputStream;
 
 @Controller
 public class AosrController {
+
     @Autowired
     private AosrRepository aosrRepository;
+
+    @Autowired
+    private final AnotherPersonResponsibleRepository anotherPersonResponsibleRepository;
+
+    @Autowired
+    private final CustomerResponsibleRepository customerResponsibleRepository;
+
+    @Autowired
+    private final DesignerResponsibleRepository designerResponsibleRepository;
+
+    @Autowired
+    private final SubcustomerResponsibleRepository subcustomerResponsibleRepository;
+
+    @Autowired
+    private final SubcustomerResponsible2Repository subcustomerResponsible2Repository;
 
     @Autowired
     private final PassportObjectRepository passportObjectRepository;
@@ -59,13 +75,12 @@ public class AosrController {
     Collator collator = Collator.getInstance(new Locale("ru", "RU"));
     private final Set<String> typeOfWorkSet = new TreeSet<>(collator);
 
-    public AosrController(PassportObjectRepository passportObjectRepository,
-                          ProjectDocumentationRepository projectDocumentationRepository,
-                          MaterialsUsedRepository materialsUsedRepository,
-                          ExecutiveSchemesRepository executiveSchemesRepository,
-                          ActsViCRepository actsViCRepository,
-                          SealingProtocolsRepository sealingProtocolsRepository,
-                          ProtocolsGnbRepository protocolsGnbRepository) {
+    public AosrController(PassportObjectRepository passportObjectRepository, ProjectDocumentationRepository projectDocumentationRepository,
+                          MaterialsUsedRepository materialsUsedRepository, ExecutiveSchemesRepository executiveSchemesRepository,
+                          ActsViCRepository actsViCRepository, SealingProtocolsRepository sealingProtocolsRepository,
+                          ProtocolsGnbRepository protocolsGnbRepository, AnotherPersonResponsibleRepository anotherPersonResponsibleRepository,
+                          CustomerResponsibleRepository customerResponsibleRepository, DesignerResponsibleRepository designerResponsibleRepository,
+                          SubcustomerResponsibleRepository subcustomerResponsibleRepository, SubcustomerResponsible2Repository subcustomerResponsible2Repository) {
         this.passportObjectRepository = passportObjectRepository;
         this.projectDocumentationRepository = projectDocumentationRepository;
         this.materialsUsedRepository = materialsUsedRepository;
@@ -73,6 +88,11 @@ public class AosrController {
         this.actsViCRepository = actsViCRepository;
         this.sealingProtocolsRepository = sealingProtocolsRepository;
         this.protocolsGnbRepository = protocolsGnbRepository;
+        this.anotherPersonResponsibleRepository = anotherPersonResponsibleRepository;
+        this.customerResponsibleRepository = customerResponsibleRepository;
+        this.designerResponsibleRepository = designerResponsibleRepository;
+        this.subcustomerResponsibleRepository = subcustomerResponsibleRepository;
+        this.subcustomerResponsible2Repository = subcustomerResponsible2Repository;
         initializeMapSp();
         initializeMonthMap();
         initializeTypeOfWorkSet();
@@ -109,7 +129,7 @@ public class AosrController {
         spMap.put(Arrays.asList("Бестраншейная прокладка методом ГНБ стального трубопровода", "Бестраншейная прокладка стального трубопровода с протаскиванием в футляр методом ГНБ"), "СП 341.1325800.2017 Подземные инженерные коммуникации. Прокладка горизонтальным направленным бурением, раздел 8;");
         spMap.put(Arrays.asList("Заделка концов футляра"), "СП 399.1325800.2018 Системы водоснабжения и канализации наружные из полимерных материалов, раздел 6; СП 129.13330.2019 Наружные сети и сооружения водоснабжения и канализации, раздел ;");
         spMap.put(Arrays.asList("Монтаж днища и рабочей части сборного железобетонного колодца", "Монтаж плиты перекрытия и горловины сборного железобетонного колодца"), "СП 70.13330.2012 Несущие и ограждающие конструкции, раздел 6;");
-        spMap.put(Arrays.asList("Монтаж стремянок", "Монтаж опор под пожарные гидранты", "Демонтаж "), "СП 399.1325800.2018 Системы водоснабжения и канализации наружные из полимерных материалов; СП 129.13330.2019 Наружные сети и сооружения водоснабжения и канализации;");
+        spMap.put(Arrays.asList("Монтаж стремянок", "Монтаж опор под пожарные гидранты", "Демонтаж"), "СП 399.1325800.2018 Системы водоснабжения и канализации наружные из полимерных материалов; СП 129.13330.2019 Наружные сети и сооружения водоснабжения и канализации;");
         spMap.put(Arrays.asList("Устройство оклеечной гидроизоляции стеклоизолом в два слоя по слою праймера битумного наружной поверхности колодца, а также мест стыковок железобетонных элементов колодца"), "СП 72.13330.2016 Защита строительных конструкций и сооружений от коррозии, раздел 9;");
         spMap.put(Arrays.asList("Герметизация мест прохода полиэтиленового трубопровода через стенки колодца"), "СП 399.1325800.2018 Системы водоснабжения и канализации наружные из полимерных материалов, раздел 4;");
         spMap.put(Arrays.asList("Герметизация мест прохода стального через стенки колодца"), "СП 129.13330.2019 Наружные сети и сооружения водоснабжения и канализации, раздел ;");
@@ -124,19 +144,29 @@ public class AosrController {
 
     private void populateModel(Model model) {
         Iterable<ProjectDocumentationData> projectDocumentationList = projectDocumentationRepository.findAll();
-        Iterator<ProjectDocumentationData> iterator = projectDocumentationList.iterator();
-        ProjectDocumentationData projDoc = iterator.next();
         Iterable<ExecutiveSchemesData> executiveSchemesList = executiveSchemesRepository.findAll();
         Iterable<MaterialsUsedData> materialsUsedList = materialsUsedRepository.findAll();
         Iterable<ActsViCData> actsViCList = actsViCRepository.findAll();
         Iterable<SealingProtocolsData> sealingProtocolsList = sealingProtocolsRepository.findAll();
         Iterable<ProtocolsGnbData> protocolsGnbList = protocolsGnbRepository.findAll();
+        Iterable<DrawingsData> drawingsList = drawingsRepository.findAll();
+        Iterable<AnotherPersonResponsibleData> anotherPersonResponsibleList = anotherPersonResponsibleRepository.findAll();
+        Iterable<CustomerResponsibleData> customerResponsibleList = customerResponsibleRepository.findAll();
+        Iterable<DesignerResponsibleData> designerResponsibleList = designerResponsibleRepository.findAll();
+        Iterable<SubcustomerResponsibleData> subcustomerResponsibleList = subcustomerResponsibleRepository.findAll();
+        Iterable<SubcustomerResponsible2Data> subcustomerResponsible2List = subcustomerResponsible2Repository.findAll();
+        model.addAttribute("drawingsList", drawingsList);
         model.addAttribute("actsViCList", actsViCList);
         model.addAttribute("sealingProtocolsList", sealingProtocolsList);
         model.addAttribute("protocolsGnbList", protocolsGnbList);
         model.addAttribute("materialsUsedList", materialsUsedList);
         model.addAttribute("executiveSchemesList", executiveSchemesList);
-        model.addAttribute("projDoc", projDoc);
+        model.addAttribute("projectDocumentationList", projectDocumentationList);
+        model.addAttribute("anotherPersonResponsibleList", anotherPersonResponsibleList);
+        model.addAttribute("customerResponsibleList", customerResponsibleList);
+        model.addAttribute("designerResponsibleList", designerResponsibleList);
+        model.addAttribute("subcustomerResponsibleList", subcustomerResponsibleList);
+        model.addAttribute("subcustomerResponsible2List", subcustomerResponsible2List);
         model.addAttribute("typeOfWorkSet", typeOfWorkSet);
     }
 
@@ -144,43 +174,56 @@ public class AosrController {
     public String aosrTable(Model model) {
         Iterable<AosrData> aosrList = aosrRepository.findAll();
         model.addAttribute("aosrList", aosrList);
-        Map<Long, Set<String>> projectSectionMap = new HashMap<>();
-        for (AosrData aosr : aosrList) {
-            Set<String> mySet = new HashSet<>();
-            for (DrawingsData drawing : aosr.getAosrToDrawings()) {
-                mySet.add(drawing.getProjDocToDrawings().getProjectSection());
-            }
-            projectSectionMap.put(aosr.getId(), mySet);
-        }
-        model.addAttribute("projectSectionMap", projectSectionMap);
         return "aosrTable";
     }
 
     @GetMapping("/aosr-add")
     public String aosrAdd(Model model) {
         populateModel(model);
+        model.addAttribute("aosrFormData", new ArrayList<String>());
         return "aosrAdd";
     }
 
-//    @GetMapping("/search-materials")
-//    public String searchMaterials(@RequestParam("query") String query,
-//                                  @RequestParam(name = "selectedMaterials", required = false) List<Long> selectedMaterialsIds,
-//                                  @RequestParam(name = "sourcePage", required = false, defaultValue = "aosrAdd") String sourcePage,
-//                                  Model model) {
-//
-//        List<MaterialsUsedData> foundMaterials = materialsUsedRepository.findByNameMaterialContainingIgnoreCase(query);
-//        Iterable<MaterialsUsedData> selectedMaterials = new ArrayList<>();
-//        if (selectedMaterialsIds != null) {
-//            selectedMaterials = materialsUsedRepository.findAllById(selectedMaterialsIds);
-//            foundMaterials = foundMaterials.stream()
-//                    .filter(material -> !selectedMaterialsIds.contains(material.getId()))
-//                    .collect(Collectors.toList());
-//        }
-//        model.addAttribute("foundMaterialsList", foundMaterials);
-//        model.addAttribute("selectedMaterialsList", selectedMaterials);
-//        populateModel(model);
-//        return sourcePage;
-//    }
+    @GetMapping("/aosr-search-materials")
+    public String searchMaterials(@RequestParam("query") String query,
+                                  @RequestParam(name = "selectedMaterials", required = false) List<Long> selectedMaterialsIds,
+                                  @RequestParam(name = "sourcePage", required = false, defaultValue = "aosrAdd") String sourcePage,
+                                  @RequestParam(name = "id", required = false) Long id,
+                                  @RequestParam Map<String, String> formData,
+                                  Model model) {
+        List<String> aosrFormData = (List<String>) model.asMap().getOrDefault("aosrFormData", new ArrayList<String>());
+
+        formData.forEach((key, value) -> {
+            if (key.startsWith("projectSectionHidden") && !aosrFormData.contains(value)) {
+                aosrFormData.add(value);
+            }
+        });
+
+        if (id != null) {
+            Optional<AosrData> aosrDataOptional = aosrRepository.findById(id);
+            if (aosrDataOptional.isPresent()) {
+                AosrData aosrData = aosrDataOptional.get();
+                model.addAttribute("aosrData", aosrData);
+                Set<Long> drawingIds = aosrData.getAosrToDrawings().stream().map(DrawingsData::getId).collect(Collectors.toSet());
+                model.addAttribute("drawingIds", drawingIds);
+
+            }
+        }
+        populateModel(model);
+
+        List<MaterialsUsedData> foundMaterials = materialsUsedRepository.findByNameMaterialContainingIgnoreCase(query);
+        Iterable<MaterialsUsedData> selectedMaterials = new ArrayList<>();
+        if (selectedMaterialsIds != null) {
+            selectedMaterials = materialsUsedRepository.findAllById(selectedMaterialsIds);
+            foundMaterials = foundMaterials.stream()
+                    .filter(material -> !selectedMaterialsIds.contains(material.getId()))
+                    .collect(Collectors.toList());
+        }
+        model.addAttribute("foundMaterialsList", foundMaterials);
+        model.addAttribute("selectedMaterialsList", selectedMaterials);
+        model.addAttribute("aosrFormData", aosrFormData);
+        return sourcePage;
+    }
 
     @PostMapping("/aosr-table/{id}/update-status")
     public String updateStatus(@PathVariable("id") Long id, @RequestParam("status") String status) {
@@ -202,9 +245,13 @@ public class AosrController {
                               @RequestParam("execSchemSelect") Long execSchemId,
                               @RequestParam("protocolGnbSelect") Long protocolGnbId,
                               @RequestParam("sealingProtocolSelect") Long sealingProtocolId,
-                              @RequestParam(value = "actViCCheckbox", required = false) List<Long> actViCIds,
-                              @RequestParam(value = "drawingCheckbox", required = false) List<Long> drawingIds,
-                              @RequestParam(value = "selectedMaterials", required = false) List<Long> materialIds) {
+                              @RequestParam("customerResponsibleSelect") Long customerResId,
+                              @RequestParam("subcustomerResponsibleSelect") Long subcustomerResId,
+                              @RequestParam("subcustomerResponsible2Select") Long subcustomerRes2Id,
+                              @RequestParam("designerResponsibleSelect") Long designerResId,
+                              @RequestParam("anotherPersonResponsibleSelect") Long anotherPersonResId,
+                              @RequestParam(value = "selectedMaterials", required = false) List<Long> materialIds,
+                              @RequestParam Map<String, String> formData) {
         yearStart = "20" + yearStart;
         yearEnd = "20" + yearEnd;
 
@@ -224,115 +271,72 @@ public class AosrController {
             }
             aosrData.setAosrToMaterials(materials);
         }
-        if (drawingIds != null) {
-            Set<DrawingsData> drawings = new HashSet<>();
-            for (Long drawingId : drawingIds) {
-                DrawingsData drawing = drawingsRepository.findById(drawingId).orElseThrow();
-                drawings.add(drawing);
+
+        Set<DrawingsData> drawingsSet = new HashSet<>();
+        Set<ActsViCData> actsViCSet = new HashSet<>();
+        Set<ProjectDocumentationData> projectDocumentationSet = new HashSet<>(aosrData.getAosrToProjDocs());
+
+        formData.forEach((key, value) -> {
+            if (key.startsWith("drawingCheckbox")) {
+                String[] parts = key.split("-");
+                if (parts.length >= 2) {
+                    Long drawingId = Long.parseLong(parts[0].replace("drawingCheckbox", ""));
+                    DrawingsData drawing = drawingsRepository.findById(drawingId).orElseThrow();
+                    drawingsSet.add(drawing);
+
+                    ProjectDocumentationData projDoc = drawing.getProjDocToDrawings();
+                    projectDocumentationSet.add(projDoc);
+                }
             }
-            aosrData.setAosrToDrawings(drawings);
-            if (drawings.stream().findFirst().isPresent()) {
-                DrawingsData drawingsData = drawings.stream().findFirst().get();
-                aosrData.setProjectDocumentationData(drawingsData.getProjDocToDrawings());
+            if (key.startsWith("actViCCheckbox")) {
+                Long actVicId = Long.parseLong(key.replace("actViCCheckbox", ""));
+                ActsViCData actsViCData = actsViCRepository.findById(actVicId).orElseThrow();
+                actsViCData.setActsToAosrData(aosrData);
+                actsViCSet.add(actsViCData);
             }
-        }
+        });
+
+        aosrData.setAosrToDrawings(drawingsSet);
+        aosrData.setActsViCData(actsViCSet);
+        aosrData.setAosrToProjDocs(projectDocumentationSet);
+
         if (execSchemId != null) {
             ExecutiveSchemesData executiveSchemesData = executiveSchemesRepository.findById(execSchemId).orElseThrow();
             aosrData.setExecutiveSchemesData(executiveSchemesData);
         }
         if (protocolGnbId != null && protocolGnbId != -1) {
             ProtocolsGnbData protocolsGnbData = protocolsGnbRepository.findById(protocolGnbId).orElseThrow();
-            aosrData.setProtocolsGnbData(protocolsGnbData);
-        }
-        if (actViCIds != null) {
-            Set<ActsViCData> actsViCSet = new HashSet<>();
-            for (Long actVicId : actViCIds) {
-                ActsViCData actsViCData = actsViCRepository.findById(actVicId).orElseThrow();
-                actsViCSet.add(actsViCData);
-            }
-            aosrData.setActsViCData(actsViCSet);
+            protocolsGnbData.setGnbToAosrData(aosrData);
         }
         if (sealingProtocolId != null && sealingProtocolId != -1) {
             SealingProtocolsData sealingProtocolsData = sealingProtocolsRepository.findById(sealingProtocolId).orElseThrow();
-            aosrData.setSealingProtocolsData(sealingProtocolsData);
+            sealingProtocolsData.setSealingToAosrData(aosrData);
+        }
+        if (customerResId != null && customerResId != -1) {
+            CustomerResponsibleData customerResponsibleData = customerResponsibleRepository.findById(customerResId).orElseThrow();
+            aosrData.setCustomerResponsibleData(customerResponsibleData);
+        }
+        if (subcustomerResId != null && subcustomerResId != -1) {
+            SubcustomerResponsibleData subcustomerResponsibleData = subcustomerResponsibleRepository.findById(subcustomerResId).orElseThrow();
+            aosrData.setSubcustomerResponsibleData(subcustomerResponsibleData);
+        }
+        if (subcustomerRes2Id != null && subcustomerRes2Id != -1) {
+            SubcustomerResponsible2Data subcustomerResponsible2Data = subcustomerResponsible2Repository.findById(subcustomerRes2Id).orElseThrow();
+            aosrData.setSubcustomerResponsible2Data(subcustomerResponsible2Data);
+        }
+        if (designerResId != null && designerResId != -1) {
+            DesignerResponsibleData designerResponsibleData = designerResponsibleRepository.findById(designerResId).orElseThrow();
+            aosrData.setDesignerResponsibleData(designerResponsibleData);
+        }
+        if (anotherPersonResId != null && anotherPersonResId != -1) {
+            AnotherPersonResponsibleData anotherPersonResponsibleData = anotherPersonResponsibleRepository.findById(anotherPersonResId).orElseThrow();
+            aosrData.setAnotherPersonResponsibleData(anotherPersonResponsibleData);
         }
 
         Iterable<PassportObjectData> passportObjectList = passportObjectRepository.findAll();
         passportObjectList.forEach(aosrData::setPassportObjectData);
 
         aosrRepository.save(aosrData);
-        return "redirect:/aosr-table";
-    }
-
-    @PostMapping("/aosr-table/{id}/aosr-remove")
-    @Transactional
-    public String postAosrDelete(@PathVariable(value = "id") long id, Model model) {
-        AosrData aosrData = aosrRepository.findById(id).orElseThrow();
-
-        Set<DrawingsData> drawings = aosrData.getAosrToDrawings();
-        Set<MaterialsUsedData> materialsUsedSet = aosrData.getAosrToMaterials();
-        Set<ActsViCData> actsViCSet = aosrData.getActsViCData();
-
-        aosrRepository.delete(aosrData);
-
-        if (!drawings.isEmpty()) {
-            drawings.forEach(drawing -> {
-                Set<AosrData> aosrs = drawing.getDrawingsToAosr();
-                aosrs.remove(aosrData);
-                drawing.setDrawingsToAosr(aosrs);
-                drawingsRepository.save(drawing);
-            });
-        }
-
-        if (!materialsUsedSet.isEmpty()) {
-            materialsUsedSet.forEach(material -> {
-                Set<AosrData> aosrs = material.getMaterialsToAosr();
-                aosrs.remove(aosrData);
-                material.setMaterialsToAosr(aosrs);
-                materialsUsedRepository.save(material);
-            });
-        }
-
-        if (!actsViCSet.isEmpty()) {
-            actsViCSet.forEach(actViC -> {
-                actViC.setDataActViC(null);
-                actsViCRepository.save(actViC);
-            });
-        }
-
-        ExecutiveSchemesData executiveSchemesData = aosrData.getExecutiveSchemesData();
-        if (executiveSchemesData != null) {
-            Set<AosrData> aosrs = executiveSchemesData.getAosrs();
-            aosrs.remove(aosrData);
-            executiveSchemesData.setExecSchemesToAosr(aosrs);
-            executiveSchemesRepository.save(executiveSchemesData);
-        }
-
-        ProjectDocumentationData projectDocumentationData = aosrData.getProjectDocumentationData();
-        if (projectDocumentationData != null) {
-            Set<AosrData> aosrs = projectDocumentationData.getAosrs();
-            aosrs.remove(aosrData);
-            projectDocumentationData.setAosrs(aosrs);
-            projectDocumentationRepository.save(projectDocumentationData);
-        }
-        PassportObjectData passportObjectData = aosrData.getPassportObjectData();
-        if (passportObjectData != null) {
-            Set<AosrData> aosrs = passportObjectData.getAosrs();
-            aosrs.remove(aosrData);
-            passportObjectData.setAosrs(aosrs);
-            passportObjectRepository.save(passportObjectData);
-        }
-        ProtocolsGnbData protocolsGnbData = aosrData.getProtocolsGnbData();
-        if (protocolsGnbData != null) {
-            protocolsGnbData.setGnbToAosrData(null);
-            protocolsGnbRepository.save(protocolsGnbData);
-        }
-        SealingProtocolsData sealingProtocolsData = aosrData.getSealingProtocolsData();
-        if (sealingProtocolsData != null) {
-            sealingProtocolsData.setSealingToAosrData(null);
-            sealingProtocolsRepository.save(sealingProtocolsData);
-        }
-
         return "redirect:/aosr-table";
     }
 
@@ -348,14 +352,13 @@ public class AosrController {
             aosrData.getAosrToMaterials().forEach(materialsUsedData -> selectedMaterialsIds.add(materialsUsedData.getId()));
             Iterable<MaterialsUsedData> selectedMaterials = materialsUsedRepository.findAllById(selectedMaterialsIds);
             Set<Long> drawingIds = aosrData.getAosrToDrawings().stream().map(DrawingsData::getId).collect(Collectors.toSet());
-            List<String> myList = new ArrayList<>();
+            Set<Long> actsVicIds = aosrData.getActsViCData().stream().map(ActsViCData::getId).collect(Collectors.toSet());
+            List<String> projectSectionList = new ArrayList<>();
             for (DrawingsData drawing : aosrData.getAosrToDrawings()) {
-                if (!myList.contains(drawing.getProjDocToDrawings().getProjectSection())) {
-                    myList.add(drawing.getProjDocToDrawings().getProjectSection());
+                if (!projectSectionList.contains(drawing.getProjDocToDrawings().getProjectSection())) {
+                    projectSectionList.add(drawing.getProjDocToDrawings().getProjectSection());
                 }
             }
-            String countProjects = (myList.size() == 2) ? "2" : "1";
-            String projectSection = myList.getFirst();
             LocalDate dateStart = aosrData.getStartDate();
             LocalDate dateEnd = aosrData.getEndDate();
 
@@ -381,9 +384,9 @@ public class AosrController {
             model.addAttribute("yearEnd", yearEnd);
             model.addAttribute("monthStart", monthStart);
             model.addAttribute("monthEnd", monthEnd);
-            model.addAttribute("countProjects", countProjects);
-            model.addAttribute("projectSection", projectSection);
+            model.addAttribute("projectSectionList", projectSectionList);
             model.addAttribute("drawingIds", drawingIds);
+            model.addAttribute("actsVicIds", actsVicIds);
             model.addAttribute("aosrData", aosrData);
             model.addAttribute("selectedMaterialsList", selectedMaterials);
         }
@@ -403,13 +406,15 @@ public class AosrController {
                                  @RequestParam("monthEnd") String monthEnd,
                                  @RequestParam("yearEnd") String yearEnd,
                                  @RequestParam("execSchemSelect") Long execSchemId,
-                                 @RequestParam("countProjectsSelect") String countProjectsSelect,
-                                 @RequestParam("projectSectionSelect") String projectSectionSelect,
                                  @RequestParam("protocolGnbSelect") Long protocolGnbId,
                                  @RequestParam("sealingProtocolSelect") Long sealingProtocolId,
-                                 @RequestParam(value = "actViCCheckbox", required = false) List<Long> actViCIds,
-                                 @RequestParam(value = "drawingCheckbox", required = false) List<Long> drawingIds,
-                                 @RequestParam(value = "selectedMaterials", required = false) List<Long> materialIds) {
+                                 @RequestParam("customerResponsibleSelect") Long customerResId,
+                                 @RequestParam("subcustomerResponsibleSelect") Long subcustomerResId,
+                                 @RequestParam("subcustomerResponsible2Select") Long subcustomerRes2Id,
+                                 @RequestParam("designerResponsibleSelect") Long designerResId,
+                                 @RequestParam("anotherPersonResponsibleSelect") Long anotherPersonResId,
+                                 @RequestParam(value = "selectedMaterials", required = false) List<Long> materialIds,
+                                 @RequestParam Map<String, String> formData) {
         AosrData aosrData = aosrRepository.findById(id).orElseThrow();
 
         for (DrawingsData drawing : aosrData.getAosrToDrawings()) {
@@ -418,25 +423,47 @@ public class AosrController {
         }
         aosrData.getAosrToDrawings().clear();
 
-        if (drawingIds != null) {
-            if (countProjectsSelect.equals("2")) {
-                for (Long drawingId : drawingIds) {
+        for (ProjectDocumentationData projDoc : aosrData.getAosrToProjDocs()) {
+            projDoc.setAosrs(null);
+            projectDocumentationRepository.save(projDoc);
+        }
+        aosrData.getAosrToProjDocs().clear();
+
+        for (ActsViCData act : aosrData.getActsViCData()) {
+            act.setActsToAosrData(null);
+            actsViCRepository.save(act);
+        }
+        aosrData.getActsViCData().clear();
+
+        formData.forEach((key, value) -> {
+            if (key.startsWith("drawingCheckbox")) {
+                String[] parts = key.split("-");
+                if (parts.length >= 2) {
+                    Long drawingId = Long.parseLong(parts[0].replace("drawingCheckbox", ""));
                     DrawingsData drawing = drawingsRepository.findById(drawingId).orElseThrow();
                     drawing.getDrawingsToAosr().add(aosrData);
                     aosrData.getAosrToDrawings().add(drawing);
                     drawingsRepository.save(drawing);
                 }
-            } else {
-                for (Long drawingId : drawingIds) {
-                    DrawingsData drawing = drawingsRepository.findById(drawingId).orElseThrow();
-                    if (drawing.getProjDocToDrawings().getProjectSection().equals(projectSectionSelect)) {
-                        drawing.getDrawingsToAosr().add(aosrData);
-                        aosrData.getAosrToDrawings().add(drawing);
-                        drawingsRepository.save(drawing);
-                    }
-                }
             }
-        }
+            if (key.startsWith("projectSectionSelect")) {
+                ProjectDocumentationData projDoc = projectDocumentationRepository.findByProjectSection(value)
+                        .orElseThrow(() -> new NoSuchElementException("ProjectDocumentationData with section " + value + " not found"));
+                if (projDoc.getAosrs() == null) {
+                    projDoc.setAosrs(new HashSet<>());
+                }
+                projDoc.getAosrs().add(aosrData);
+                aosrData.getAosrToProjDocs().add(projDoc);
+                projectDocumentationRepository.save(projDoc);
+            }
+            if (key.startsWith("actViCCheckbox")) {
+                Long actVicId = Long.parseLong(key.replace("actViCCheckbox", ""));
+                ActsViCData actsViCData = actsViCRepository.findById(actVicId).orElseThrow();
+                actsViCData.setActsToAosrData(aosrData);
+                aosrData.getActsViCData().add(actsViCData);
+                actsViCRepository.save(actsViCData);
+            }
+        });
 
         for (MaterialsUsedData material : aosrData.getAosrToMaterials()) {
             material.getMaterialsToAosr().remove(aosrData);
@@ -455,49 +482,129 @@ public class AosrController {
             }
         }
         if (protocolGnbId != null) {
-            if (protocolGnbId != -1) {
-                ProtocolsGnbData protocolsGnbData = protocolsGnbRepository.findById(protocolGnbId).orElseThrow();
-                aosrData.setProtocolsGnbData(protocolsGnbData);
-                protocolsGnbData.setGnbToAosrData(aosrData);
+            ProtocolsGnbData protocolsGnbData = aosrData.getProtocolsGnbData();
+            if (protocolsGnbData != null) {
+                protocolsGnbData.setGnbToAosrData(null);
+                aosrData.setProtocolsGnbData(null);
                 protocolsGnbRepository.save(protocolsGnbData);
-            } else {
-                ProtocolsGnbData protocolsGnbData = aosrData.getProtocolsGnbData();
-                if (protocolsGnbData != null) {
-                    protocolsGnbData.setGnbToAosrData(null);
-                    aosrData.setProtocolsGnbData(null);
-                    protocolsGnbRepository.save(protocolsGnbData);
-                }
             }
-        }
 
-        for (ActsViCData actsViCData : aosrData.getActsViCData()) {
-            actsViCData.setActsToAosrData(null);
-            actsViCRepository.save(actsViCData);
-        }
-        aosrData.getAosrToDrawings().clear();
-
-        if (actViCIds != null) {
-            for (Long actVicId : actViCIds) {
-                ActsViCData actsViCData = actsViCRepository.findById(actVicId).orElseThrow();
-                actsViCData.setActsToAosrData(aosrData);
-                aosrData.getActsViCData().add(actsViCData);
-                actsViCRepository.save(actsViCData);
+            if (protocolGnbId != -1) {
+                ProtocolsGnbData newProtocol = protocolsGnbRepository.findById(protocolGnbId).orElseThrow();
+                newProtocol.setGnbToAosrData(aosrData);
+                aosrData.setProtocolsGnbData(newProtocol);
+                protocolsGnbRepository.save(newProtocol);
             }
         }
 
         if (sealingProtocolId != null) {
-            if (sealingProtocolId != -1) {
-                SealingProtocolsData sealingProtocolsData = sealingProtocolsRepository.findById(sealingProtocolId).orElseThrow();
-                aosrData.setSealingProtocolsData(sealingProtocolsData);
-                sealingProtocolsData.setSealingToAosrData(aosrData);
+            SealingProtocolsData sealingProtocolsData = aosrData.getSealingProtocolsData();
+            if (sealingProtocolsData != null) {
+                sealingProtocolsData.setSealingToAosrData(null);
+                aosrData.setSealingProtocolsData(null);
                 sealingProtocolsRepository.save(sealingProtocolsData);
-            } else {
-                SealingProtocolsData sealingProtocolsData = aosrData.getSealingProtocolsData();
-                if (sealingProtocolsData != null) {
-                    sealingProtocolsData.setSealingToAosrData(null);
-                    aosrData.setSealingProtocolsData(null);
-                    sealingProtocolsRepository.save(sealingProtocolsData);
+            }
+
+            if (sealingProtocolId != -1) {
+                SealingProtocolsData newProtocol = sealingProtocolsRepository.findById(sealingProtocolId).orElseThrow();
+                aosrData.setSealingProtocolsData(newProtocol);
+                newProtocol.setSealingToAosrData(aosrData);
+                sealingProtocolsRepository.save(newProtocol);
+            }
+        }
+
+        if (customerResId != null) {
+            CustomerResponsibleData customerResponsibleData = aosrData.getCustomerResponsibleData();
+            if (customerResponsibleData != null) {
+                customerResponsibleData.setAosrData(null);
+                aosrData.setCustomerResponsibleData(null);
+                customerResponsibleRepository.save(customerResponsibleData);
+            }
+
+            if (customerResId != -1) {
+                CustomerResponsibleData newCustomer = customerResponsibleRepository.findById(customerResId).orElseThrow();
+                aosrData.setCustomerResponsibleData(newCustomer);
+                if (newCustomer.getAosrData() == null) {
+                    newCustomer.setAosrData(new ArrayList<>());
                 }
+                newCustomer.getAosrData().add(aosrData);
+                customerResponsibleRepository.save(newCustomer);
+            }
+        }
+
+        if (subcustomerResId != null) {
+            SubcustomerResponsibleData subcustomerResponsibleData = aosrData.getSubcustomerResponsibleData();
+            if (subcustomerResponsibleData != null) {
+                subcustomerResponsibleData.setAosrData(null);
+                aosrData.setSubcustomerResponsibleData(null);
+                subcustomerResponsibleRepository.save(subcustomerResponsibleData);
+            }
+
+            if (subcustomerResId != -1) {
+                SubcustomerResponsibleData newSubcustomer = subcustomerResponsibleRepository.findById(subcustomerResId).orElseThrow();
+                aosrData.setSubcustomerResponsibleData(newSubcustomer);
+                if (newSubcustomer.getAosrData() == null) {
+                    newSubcustomer.setAosrData(new ArrayList<>());
+                }
+                newSubcustomer.getAosrData().add(aosrData);
+                subcustomerResponsibleRepository.save(newSubcustomer);
+            }
+        }
+
+        if (subcustomerRes2Id != null) {
+            SubcustomerResponsible2Data subcustomerResponsible2Data = aosrData.getSubcustomerResponsible2Data();
+            if (subcustomerResponsible2Data != null) {
+                subcustomerResponsible2Data.setAosrData(null);
+                aosrData.setSubcustomerResponsible2Data(null);
+                subcustomerResponsible2Repository.save(subcustomerResponsible2Data);
+            }
+
+            if (subcustomerRes2Id != -1) {
+                SubcustomerResponsible2Data newSubcustomer2 = subcustomerResponsible2Repository.findById(subcustomerRes2Id).orElseThrow();
+                aosrData.setSubcustomerResponsible2Data(newSubcustomer2);
+                if (newSubcustomer2.getAosrData() == null) {
+                    newSubcustomer2.setAosrData(new ArrayList<>());
+                }
+                newSubcustomer2.getAosrData().add(aosrData);
+                subcustomerResponsible2Repository.save(newSubcustomer2);
+            }
+        }
+
+        if (designerResId != null) {
+            DesignerResponsibleData designerResponsibleData = aosrData.getDesignerResponsibleData();
+            if (designerResponsibleData != null) {
+                designerResponsibleData.setAosrData(null);
+                aosrData.setDesignerResponsibleData(null);
+                designerResponsibleRepository.save(designerResponsibleData);
+            }
+
+            if (designerResId != -1) {
+                DesignerResponsibleData newDesigner = designerResponsibleRepository.findById(designerResId).orElseThrow();
+                aosrData.setDesignerResponsibleData(newDesigner);
+                if (newDesigner.getAosrData() == null) {
+                    newDesigner.setAosrData(new ArrayList<>());
+                }
+                newDesigner.getAosrData().add(aosrData);
+                designerResponsibleRepository.save(newDesigner);
+            }
+        }
+
+        if (anotherPersonResId != null) {
+            AnotherPersonResponsibleData anotherPersonResponsibleData = aosrData.getAnotherPersonResponsibleData();
+            if (anotherPersonResponsibleData != null) {
+                anotherPersonResponsibleData.setAosrData(null);
+                aosrData.setAnotherPersonResponsibleData(null);
+                anotherPersonResponsibleRepository.save(anotherPersonResponsibleData);
+            }
+
+            if (anotherPersonResId != -1) {
+                AnotherPersonResponsibleData newAnotherPerson = anotherPersonResponsibleRepository.findById(anotherPersonResId).orElseThrow();
+                aosrData.setAnotherPersonResponsibleData(newAnotherPerson);
+                if (newAnotherPerson.getAosrData() == null) {
+                    newAnotherPerson.setAosrData(new ArrayList<>());
+                }
+                newAnotherPerson.getAosrData().add(aosrData);
+                anotherPersonResponsibleRepository.save(newAnotherPerson);
             }
         }
 
@@ -523,6 +630,68 @@ public class AosrController {
         return "redirect:/aosr-table";
     }
 
+    @PostMapping("/aosr-table/{id}/aosr-remove")
+    @Transactional
+    public String postAosrDelete(@PathVariable(value = "id") long id, Model model) {
+        AosrData aosrData = aosrRepository.findById(id).orElseThrow();
+
+        Set<DrawingsData> drawings = aosrData.getAosrToDrawings();
+        Set<MaterialsUsedData> materialsUsedSet = aosrData.getAosrToMaterials();
+        Set<ActsViCData> actsViCSet = aosrData.getActsViCData();
+        Set<ProjectDocumentationData> projDocs = aosrData.getAosrToProjDocs();
+
+        if (!drawings.isEmpty()) {
+            drawings.forEach(drawing -> drawing.getDrawingsToAosr().remove(aosrData));
+            aosrData.getAosrToDrawings().clear();
+        }
+
+        if (!materialsUsedSet.isEmpty()) {
+            materialsUsedSet.forEach(material -> material.getMaterialsToAosr().remove(aosrData));
+            aosrData.getAosrToMaterials().clear();
+        }
+
+        if (!actsViCSet.isEmpty()) {
+            actsViCSet.forEach(actViC -> {
+                actViC.setActsToAosrData(null);
+                actsViCRepository.save(actViC);
+            });
+            aosrData.getActsViCData().clear();
+        }
+
+        if (!projDocs.isEmpty()) {
+            projDocs.forEach(projDoc -> projDoc.getAosrs().remove(aosrData));
+            aosrData.getAosrToProjDocs().clear();
+        }
+
+        ExecutiveSchemesData executiveSchemesData = aosrData.getExecutiveSchemesData();
+        if (executiveSchemesData != null) {
+            executiveSchemesData.getAosrs().remove(aosrData);
+            aosrData.setExecutiveSchemesData(null);
+        }
+
+        PassportObjectData passportObjectData = aosrData.getPassportObjectData();
+        if (passportObjectData != null) {
+            passportObjectData.getAosrs().remove(aosrData);
+            aosrData.setPassportObjectData(null);
+        }
+
+        ProtocolsGnbData protocolsGnbData = aosrData.getProtocolsGnbData();
+        if (protocolsGnbData != null) {
+            protocolsGnbData.setGnbToAosrData(null);
+            aosrData.setProtocolsGnbData(null);
+        }
+
+        SealingProtocolsData sealingProtocolsData = aosrData.getSealingProtocolsData();
+        if (sealingProtocolsData != null) {
+            sealingProtocolsData.setSealingToAosrData(null);
+            aosrData.setSealingProtocolsData(null);
+        }
+
+        aosrRepository.delete(aosrData);
+
+        return "redirect:/aosr-table";
+    }
+
     @PostMapping("/aosr-table")
     public void postAosrTable(HttpServletResponse response) {
         List<File> tempFiles = new ArrayList<>();
@@ -530,8 +699,8 @@ public class AosrController {
         try {
             int indexAosr = 1;
             for (AosrData aosrData : aosrList) {
-//                File tempFile = GenerateFileUtils.generateAosrFile(aosrData, indexAosr, spMap, monthMap);
-//                tempFiles.add(tempFile);
+                File tempFile = GenerateFileUtils.generateAosrFile(aosrData, indexAosr, spMap, monthMap);
+                tempFiles.add(tempFile);
                 indexAosr++;
             }
 

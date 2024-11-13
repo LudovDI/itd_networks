@@ -2,6 +2,9 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 public class SubcustomerResponsible2Data {
 
@@ -14,6 +17,9 @@ public class SubcustomerResponsible2Data {
     @ManyToOne
     @JoinColumn(name = "passport_object_id")
     private PassportObjectData passportObjectData;
+
+    @OneToMany(mappedBy = "subcustomerResponsible2Data", cascade = CascadeType.ALL)
+    private List<AosrData> aosrData = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -77,6 +83,14 @@ public class SubcustomerResponsible2Data {
 
     public void setPassportObjectData(PassportObjectData passportObjectData) {
         this.passportObjectData = passportObjectData;
+    }
+
+    public List<AosrData> getAosrData() {
+        return aosrData;
+    }
+
+    public void setAosrData(List<AosrData> aosrData) {
+        this.aosrData = aosrData;
     }
 
     public SubcustomerResponsible2Data() {

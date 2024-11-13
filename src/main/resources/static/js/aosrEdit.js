@@ -36,81 +36,209 @@ myMap.set("Герметизация мест прохода стального �
 myMap.set("Подготовка под изоляцию (очистка, обеспыливание, обезжиривание) металлических поверхностей", ["Огрунтовка металлических поверхностей"]);
 myMap.set("Огрунтовка за один раз металлических поверхностей", ["Окраска металлических огрунтованных поверхностей"]);
 myMap.set("Окраска в два слоя металлических огрунтованных поверхностей", ["---"]);
-myMap.set("Нанесение антикоррозионной изоляции лентами поливинилхлоридными липкими в три слоя по слою праймера битумного на стальной трубопровод", ["Устройство над трубопроводом защитного слоя из песка и обратная засыпка грунтом", "Обратная засыпка грунтом"]);
+myMap.set("Нанесение антикоррозийной изоляции лентами поливинилхлоридными липкими в три слоя по слою праймера битумного на стальной трубопровод", ["Устройство над трубопроводом защитного слоя из песка и обратная засыпка грунтом", "Обратная засыпка грунтом"]);
 
 function addSelect() {
     var select1Text = document.getElementById('work1').value;
     var select2 = document.getElementById('work2');
-
     select2.innerHTML = '';
+
+    var permittedFollowingWork = document.getElementById('permittedFollowingWork').value;
 
     var arrayOption = myMap.get(select1Text);
     arrayOption.forEach(function(el) {
         var optionAdd = document.createElement('option');
         optionAdd.text = el;
+        optionAdd.value = el;
         select2.appendChild(optionAdd);
     });
+
+    select2.value = permittedFollowingWork;
 }
 
-document.addEventListener("DOMContentLoaded", function(event) {
-    addSelect();
-    countProjects();
-    updateDrawings();
+var projectSectionContainer = document.getElementById('projectSectionContainer');
+let maxProjectSectionCounter = 0;
+var divRow = projectSectionContainer.querySelectorAll('div[id^="projectSectionRow"]');
+
+divRow.forEach(function (div) {
+    var id = div.id;
+    var divNumber = parseInt(id.replace('projectSectionRow', ''));
+    if (divNumber > maxProjectSectionCounter) {
+        maxProjectSectionCounter = divNumber;
+    }
 });
 
-function updateDrawings() {
-    var projectSection = document.getElementById("projectSectionSelect").value;
-    var drawingsList1 = document.querySelectorAll('div[id="drawingsList1"]');
-        var drawingsList2 = document.querySelectorAll('div[id="drawingsList2"]');
+let projectSectionCounter = maxProjectSectionCounter + 1;
 
-    var option1 = document.querySelector("#projectSectionSelect option:first-child");
-    var option2 = document.querySelector("#projectSectionSelect option:last-child");
+function addProjectSection() {
 
-    drawingsList1.forEach((drawing) => {
-        drawing.style.display = (projectSection === option1.value) ? "block" : "none";
-    });
-    drawingsList2.forEach((drawing) => {
-        drawing.style.display = (projectSection === option2.value) ? "block" : "none";
-    });
-}
+    const originalSection = document.querySelector("#projectSectionContainer .row");
 
-function countProjects() {
-    var countProjects = document.getElementById("countProjectsSelect").value;
-    var drawingsList1 = document.querySelectorAll('div[id="drawingsList1"]');
-    var drawingsList2 = document.querySelectorAll('div[id="drawingsList2"]')
-    var firstProjectSection = document.getElementById("firstProjectSection");
-    var secondProjectSection = document.getElementById("secondProjectSection");
-    var projectSectionSelect = document.getElementById("projectSectionSelect");
-    if (countProjects == "1") {
-        firstProjectSection.setAttribute("hidden", "");
-        secondProjectSection.setAttribute("hidden", "");
+    if (originalSection) {
+        const newProjectSection = originalSection.cloneNode(true);
 
-        drawingsList1.forEach((drawing) => {
-            drawing.style.display = "none";
-        });
-        drawingsList2.forEach((drawing) => {
-            drawing.style.display = "none";
+        newProjectSection.id = `projectSectionRow${projectSectionCounter}`;
+
+        const select = newProjectSection.querySelector("select[name^='projectSectionSelect']");
+        select.name = `projectSectionSelect${projectSectionCounter}`;
+
+        const checkboxes = newProjectSection.querySelectorAll("input[type='checkbox'][name^='drawingCheckbox']");
+        checkboxes.forEach(checkbox => {
+            const nameParts = checkbox.name.split('-');
+
+            if (nameParts.length > 1) {
+                nameParts[nameParts.length - 1] = projectSectionCounter;
+            } else {
+                nameParts.push(projectSectionCounter);
+            }
+
+            checkbox.name = nameParts.join('-');
+            checkbox.checked = false;
         });
 
-        projectSectionSelect.removeAttribute("hidden");
-    } else {
-        projectSectionSelect.setAttribute("hidden", "");
+        const toggleLink = newProjectSection.querySelector("a[href^='#collapseCardDrawings']");
+        const newHrefId = `collapseCardDrawings${projectSectionCounter}`;
+        toggleLink.href = `#${newHrefId}`;
+        toggleLink.setAttribute("aria-controls", newHrefId);
 
-        firstProjectSection.removeAttribute("hidden");
-        secondProjectSection.removeAttribute("hidden");
+        const collapseDiv = newProjectSection.querySelector("div.collapse[id^='collapseCardDrawings']");
+        collapseDiv.id = newHrefId;
 
-        drawingsList1.forEach((drawing) => {
-            drawing.style.display = "block";
+        const hiddenField = document.createElement('input');
+        hiddenField.type = 'hidden';
+        hiddenField.name = `projectSectionHidden${projectSectionCounter}`;
+        hiddenField.value = projectSectionCounter;
+        newProjectSection.appendChild(hiddenField);
+
+        select.addEventListener("change", function() {
+            updateDrawings();
+            saveSelectData();
         });
-        drawingsList2.forEach((drawing) => {
-            drawing.style.display = "block";
-        });
+
+        document.getElementById('projectSectionContainer').appendChild(newProjectSection);
     }
+    projectSectionCounter++;
 }
 
-function removeMaterial(button) {
+function removeDiv(button) {
     var parentDiv = button.parentElement;
     if (parentDiv) {
         parentDiv.remove();
     }
+}
+
+document.addEventListener("DOMContentLoaded", function(event) {
+    addSelect();
+    restoreInputData();
+    updateDrawings();
+
+    const projectSectionSelects = document.querySelectorAll("select[name^='projectSectionSelect']");
+    projectSectionSelects.forEach(select => {
+        select.addEventListener("change", function() {
+            updateDrawings();
+            saveSelectData();
+        });
+    });
+});
+
+function updateDrawings() {
+    const projectSectionSelects = document.querySelectorAll("select[name^='projectSectionSelect']");
+
+    projectSectionSelects.forEach(select => {
+        const selectedProjectSectionId = select.value;
+        const sectionContainer = select.closest(".row");
+
+        if (sectionContainer) {
+            const drawingsContainer = sectionContainer.querySelector("div[id^='collapseCardDrawings']");
+            const drawingCheckboxes = drawingsContainer.querySelectorAll("input[name^='drawingCheckbox']");
+
+            drawingCheckboxes.forEach(checkbox => {
+                if (checkbox.value === selectedProjectSectionId) {
+                    checkbox.parentElement.style.display = "block";
+                } else {
+                    checkbox.parentElement.style.display = "none";
+                    checkbox.checked = false;
+                }
+            });
+        }
+    });
+
+    saveSelectData();
+}
+
+function saveSelectData() {
+    const selects = document.querySelectorAll("select");
+    const selectData = {};
+
+    selects.forEach(select => {
+        selectData[select.name] = select.value;
+    });
+
+    localStorage.setItem("selectedOptions", JSON.stringify(selectData));
+}
+
+function saveInputData() {
+    const inputs = document.querySelectorAll("input[type='text'], input[type='checkbox']");
+    const data = {};
+
+    inputs.forEach(input => {
+        if (input.type === "checkbox") {
+            data[input.name] = input.checked;
+        } else {
+            data[input.name] = input.value;
+        }
+    });
+
+    localStorage.setItem("formData", JSON.stringify(data));
+    saveSelectData();
+}
+
+function restoreInputData() {
+    const data = JSON.parse(localStorage.getItem("formData"));
+    if (data) {
+        Object.keys(data).forEach(name => {
+            const input = document.querySelector(`input[name="${name}"]`);
+            if (input) {
+                if (input.type === "checkbox") {
+                    input.checked = data[name];
+                } else {
+                    input.value = data[name];
+                }
+            }
+        });
+    }
+    restoreSelectData();
+}
+
+function restoreSelectData() {
+    const selectData = JSON.parse(localStorage.getItem("selectedOptions"));
+    if (selectData) {
+        const selects = document.querySelectorAll("select");
+        selects.forEach(select => {
+            if (selectData[select.name] !== undefined) {
+                select.value = selectData[select.name];
+            }
+        });
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    restoreInputData();
+
+    document.querySelectorAll("input[type='text'], input[type='checkbox']").forEach(input => {
+        input.addEventListener(input.type === 'checkbox' ? "change" : "input", saveInputData);
+    });
+
+    document.querySelectorAll("select").forEach(select => {
+        select.addEventListener("change", saveSelectData);
+    });
+});
+
+function clearInputData() {
+    localStorage.removeItem("formData");
+    clearSelectData();
+}
+
+function clearSelectData() {
+    localStorage.removeItem("selectedOptions");
 }

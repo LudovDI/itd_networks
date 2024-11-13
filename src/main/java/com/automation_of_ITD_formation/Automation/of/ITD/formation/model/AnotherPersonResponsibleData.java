@@ -2,6 +2,9 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 public class AnotherPersonResponsibleData {
 
@@ -14,6 +17,9 @@ public class AnotherPersonResponsibleData {
     @ManyToOne
     @JoinColumn(name = "passport_object_id")
     private PassportObjectData passportObjectData;
+
+    @OneToMany(mappedBy = "anotherPersonResponsibleData", cascade = CascadeType.ALL)
+    private List<AosrData> aosrData = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -109,6 +115,14 @@ public class AnotherPersonResponsibleData {
 
     public void setAdrCompany(String adrCompany) {
         this.adrCompany = adrCompany;
+    }
+
+    public List<AosrData> getAosrData() {
+        return aosrData;
+    }
+
+    public void setAosrData(List<AosrData> aosrData) {
+        this.aosrData = aosrData;
     }
 
     public AnotherPersonResponsibleData() {

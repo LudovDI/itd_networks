@@ -1,91 +1,162 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Акты АОСР</title>
-    <link href="../static/css/status.css" th:href="@{/css/status.css}" rel="stylesheet"
-          type="text/css"/>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <link href="../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet"
-          type="text/css">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="../static/js/updateStatus.js" th:src="@{/js/updateStatus.js}"
-            type="text/javascript"></script>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Акты ОСР</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
 </head>
-<body>
-<h1 id="headerText" hidden>Акты АОСР</h1>
-<header th:insert="blocks/header :: header"></header>
-<div class="table-responsive">
-    <table class="table table-success table-striped table-hover table-bordered">
-        <tr class="text-center">
-            <th>Статус</th>
-            <th>Виды работ</th>
-            <th>Последующие работы</th>
-            <th>Дата начала работ</th>
-            <th>Дата окончания работ</th>
-            <th>Разделы</th>
-            <th>Чертежи</th>
-            <th>Материалы</th>
-            <th th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}">Действия</th>
-        </tr>
-        <tr th:each="doc : ${aosrList}">
-            <td>
-                <form th:action="'/aosr-table/' + ${doc.id} + '/update-status'" method="post">
-                    <select name="status" class="status-select" onchange="updateStatus(this.form)">
-                        <option value="Готов" th:selected="${doc.status == 'Готов'}"
-                                data-image-url="/staticFiles/green.png"></option>
-                        <option value="В процессе" th:selected="${doc.status == 'В процессе'}"
-                                data-image-url="/staticFiles/yellow.png"></option>
-                        <option value="Требует создания" th:selected="${doc.status == 'Требует создания'}"
-                                data-image-url="/staticFiles/red.png"></option>
-                    </select>
-                </form>
-            </td>
-            <td th:text="${doc.typeOfWork}"></td>
-            <td th:text="${doc.permittedFollowingWork}"></td>
-            <td th:text="${doc.startDate}"></td>
-            <td th:text="${doc.endDate}"></td>
-            <td>
-            <span th:each="projectSection : ${projectSectionMap.get(doc.id)}">
-                <span th:text="${projectSection}"></span>
-                <br>
-            </span>
-            </td>
-            <td>
-            <span th:each="drawing : ${doc.aosrToDrawings}">
-                <span th:text="${drawing.drawing}"></span>
-                <br>
-            </span>
-            </td>
-            <td>
-            <span th:each="material : ${doc.aosrToMaterials}">
-                <span th:text="${material.nameMaterial}"></span>
-                <br>
-            </span>
-            </td>
-            <td th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}"
-                class="d-flex justify-content-start text-white">
-                <a th:href="'/aosr-table/' + ${doc.id} + '/aosr-edit'" role="button"
-                   class="bg-primary btn-sm btn border-white">Редактировать</a>
-                <form th:action="'/aosr-table/' + ${doc.id} + '/aosr-remove'" method="post">
-                    <button type="submit" class="bg-primary btn-sm btn border-white ms-2">Удалить</button>
-                </form>
-            </td>
-        </tr>
-    </table>
-</div>
-<div class="text-white">
-    <a th:href="@{/aosr-add}" th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}"
-       role="button" class="bg-primary btn border-white mt-3 ms-5">Добавить акт АОСР</a>
-</div>
-<form action="/aosr-table" method="post">
-    <div class="text-white">
-        <button type="submit" th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}"
-                class="bg-primary btn border-white mt-3 ms-5">Создать архив с актами
-        </button>
+
+<body id="page-top" class="vsc-initialized">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar_extended :: sidebar_extended}"></div>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h2 mb-0 text-primary">Акты ВиК</h1>
+                    <div>
+                        <form action="/aosr-table" method="post">
+                            <div class="text-white">
+                                <button type="submit"
+                                        class="d-none d-sm-inline-block btn btn-info btn-icon-split shadow-sm">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-book"></i>
+                                    </span>
+                                    <span class="text">Создать архив с актами</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <hr>
+                <div class="table-responsive text-center text-md">
+                    <table class="table table-bordered">
+                        <thead class="bg-gray-300">
+                        <tr>
+                            <th>Статус</th>
+                            <th>Виды работ</th>
+                            <th>Последующие работы</th>
+                            <th>Дата начала работ</th>
+                            <th>Дата окончания работ</th>
+                            <th>Разделы</th>
+                            <th>Чертежи</th>
+                            <th>Материалы</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="doc : ${aosrList}">
+                            <td>
+                                <form th:action="'/aosr-table/' + ${doc.id} + '/update-status'" method="post">
+                                    <select name="status" class="status-select" onchange="updateStatus(this.form)">
+                                        <option value="Готов" th:selected="${doc.status == 'Готов'}"
+                                                data-image-url="/staticFiles/green.png"></option>
+                                        <option value="В процессе" th:selected="${doc.status == 'В процессе'}"
+                                                data-image-url="/staticFiles/yellow.png"></option>
+                                        <option value="Требует создания"
+                                                th:selected="${doc.status == 'Требует создания'}"
+                                                data-image-url="/staticFiles/red.png"></option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td th:text="${doc.typeOfWork}"></td>
+                            <td th:text="${doc.permittedFollowingWork}"></td>
+                            <td th:text="${doc.startDate}"></td>
+                            <td th:text="${doc.endDate}"></td>
+                            <td>
+                                <span th:each="projectDoc : ${doc.aosrToProjDocs}">
+                                    <span th:text="${projectDoc.projectSection}"></span>
+                                    <br>
+                                </span>
+                            </td>
+                            <td>
+                                <span th:each="drawing : ${doc.aosrToDrawings}">
+                                    <span th:text="${drawing.drawing}"></span>
+                                    <br>
+                                </span>
+                            </td>
+                            <td>
+                                <span th:each="material : ${doc.aosrToMaterials}">
+                                    <span th:text="${material.nameMaterial}"></span>
+                                    <br>
+                                </span>
+                            </td>
+                            <td>
+                                <a th:href="'/aosr-table/' + ${doc.id} + '/aosr-edit'" class="btn btn-circle btn-sm btn-primary mr-2"><i class="fas fa-pencil-alt fa-sm text-white-50"></i></a>
+                                <form th:action="'/aosr-table/' + ${doc.id} + '/aosr-remove'" method="post">
+                                    <button type="submit" class="btn btn-circle btn-sm btn-danger"><i class="fas fa-trash fa-sm text-white-50"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <a href="/aosr-add" class="btn btn-primary btn-icon-split mt-3">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-plus fa-md text-white-50"></i>
+                    </span>
+                    <span class="text">Добавить акт ОСР</span>
+                </a>
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <div th:replace="~{fragments/footer :: footer}"></div>
+        <!-- End of Footer -->
+
     </div>
-</form>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Bootstrap core JavaScript-->
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Core plugin JavaScript-->
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+<!-- Custom scripts for all pages-->
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+
 </body>
+
 </html>
