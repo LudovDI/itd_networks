@@ -110,4 +110,19 @@ public class TemplateController {
     public String passportEdit() {
         return "passport/passport_edit";
     }
+
+    @GetMapping("/project_documentations")
+    public String documentations() {
+        return "project_documentation/project_documentations";
+    }
+
+    @GetMapping("/project_documentation_add")
+    public String documentationsAdd() {
+        return "project_documentation/project_documentation_add";
+    }
+
+    @GetMapping("/project_documentation_edit")
+    public String documentationsEdit() {
+        return "project_documentation/project_documentation_edit";
+    }
 }
