@@ -547,12 +547,12 @@ public class PassportObjectController {
         return "redirect:/passport-object-table";
     }
 
-    @PostMapping("/passport-object-table/{id}/passport-object-remove")
-    public String postPassportObjectDelete(@PathVariable(value = "id") long id, Model model) {
-        PassportObjectData passportObjectData = passportObjectRepository.findById(id).orElseThrow();
-        passportObjectRepository.delete(passportObjectData);
-        return "redirect:/passport-object-table";
-    }
+//    @PostMapping("/passport-object-table/{id}/passport-object-remove")
+//    public String postPassportObjectDelete(@PathVariable(value = "id") long id, Model model) {
+//        PassportObjectData passportObjectData = passportObjectRepository.findById(id).orElseThrow();
+//        passportObjectRepository.delete(passportObjectData);
+//        return "redirect:/passport-object-table";
+//    }
 
     @PostMapping("/passport-object-table/{id}/update-status")
     public String updateStatus(@PathVariable("id") Long id, @RequestParam("status") String status) {

@@ -1,172 +1,435 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Редактирование акта освидетельствования скрытых работ</title>
-    <script src="../static/js/aosrEdit.js" th:src="@{/js/aosrEdit.js}"
-            type="text/javascript"></script>
-    <link href="../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet"
-          type="text/css"/>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Редактирование акта ОСР</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="../../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="../../css/sb-admin-2.min.css" rel="stylesheet">
+
 </head>
-<body>
-<h1 id="headerText" hidden>Редактирование акта освидетельствования скрытых работ</h1>
-<header th:insert="blocks/header :: header"></header>
-<div th:each="el : ${aosrData}">
-    <form method="post">
-        <div class="row px-5 text-white d-flex justify-content-between">
-            <div class="col-6 d-flex flex-column bd-highlight mb-3">
-                <div class="m-2 p-2 bg-success d-flex flex-column bd-highlight">
-                    <label>При выполнении работ применены:</label>
-                    <div>
-                        <input class="w-50" type="text" id="searchInput" name="query"
-                               placeholder="Введите название материала">
-                        <input type="hidden" name="sourcePage" value="aosrEdit">
-                        <button type="submit" formaction="/search-materials" formmethod="get">Искать</button>
-                    </div>
-                    <div th:each="material : ${selectedMaterialsList}">
-                        <input type="hidden" name="selectedMaterials" th:value="${material.id}">
-                        <input type="checkbox" th:checked="true" disabled
-                               th:text="${material.nameMaterial} + ' - ' + ${material.accompanyingDocuments[0].name} + ' № ' + ${material.accompanyingDocuments[0].number} + ' от ' + ${material.accompanyingDocuments[0].date} + ' г.'">
-                        <button type="button" onclick="removeMaterial(this)">Удалить</button>
-                    </div>
-                    <div id="searchResults" th:if="${foundMaterialsList}">
-                        <div th:each="material : ${foundMaterialsList}">
-                            <input type="checkbox" name="selectedMaterials" th:value="${material.id}"
-                                   th:text="${material.nameMaterial} + ' - ' + ${material.accompanyingDocuments[0].name} + ' № ' + ${material.accompanyingDocuments[0].number} + ' от ' + ${material.accompanyingDocuments[0].date} + ' г.'">
-                        </div>
-                    </div>
+
+<body id="page-top" class="vsc-initialized">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar_extended :: sidebar_extended}"></div>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h2 mb-0 text-primary">Акты ОСР</h1>
                 </div>
-                <div class="m-2 p-2 bg-success flex-column">
-                    <label>Работы выполнены по проектной документации:</label>
-                    <div>
-                        <label>Количество разделов</label>
-                        <select class="w-25 mb-2" id="countProjectsSelect" name="countProjectsSelect"
-                                onchange="countProjects()">
-                            <option value="1" th:selected="${countProjects == '1'}">Один</option>
-                            <option value="2" th:selected="${countProjects == '2'}">Два</option>
-                        </select>
+                <hr>
+
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Редактирование акта ОСР</h6>
                     </div>
-                    <div>
-                        <select class="w-25 ms-5 mb-2" id="projectSectionSelect" name="projectSectionSelect"
-                                onchange="updateDrawings()"
-                                hidden>
-                            <option th:value="${projDoc.projectSection1}"
-                                    th:text="${projDoc.projectSection1}"
-                                    th:selected="${projDoc.projectSection1 == projectSection}"></option>
-                            <option th:value="${projDoc.projectSection2}"
-                                    th:text="${projDoc.projectSection2}"
-                                    th:selected="${projDoc.projectSection2 == projectSection}"></option>
-                        </select>
+                    <div th:each="el : ${aosrData}">
+                        <form method="post">
+                            <div class="card-body">
+                                <div class="row justify-content-between mb-2">
+                                    <!-- Левая часть -->
+                                    <div class="col-lg-5 mb-3 ml-4">
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <label class="p-0">При выполнении работ применены:</label>
+                                                <div class="row">
+                                                    <div class="col-lg-9">
+                                                        <div>
+                                                            <input class="w-50" type="text" id="searchInput"
+                                                                   name="query"
+                                                                   placeholder="Введите название материала">
+                                                            <input type="hidden" name="sourcePage" value="aosrEdit">
+                                                            <button type="submit" formaction="/aosr-search-materials"
+                                                                    formmethod="get" onclick="saveInputData()"
+                                                                    class="btn btn-success border-white ms-5">Искать
+                                                            </button>
+                                                        </div>
+                                                        <div th:each="material : ${selectedMaterialsList}">
+                                                            <input type="hidden" name="selectedMaterials"
+                                                                   th:value="${material.id}">
+                                                            <input type="checkbox" th:checked="true" disabled
+                                                                   th:text="${material.nameMaterial} + '. ' + ${material.accompanyingDocuments[0].name} + ' № ' + ${material.accompanyingDocuments[0].number} + ' от ' + ${material.accompanyingDocuments[0].date} + ' г.'">
+                                                            <button type="button" onclick="removeDiv(this)"
+                                                                    class="btn btn-success border-white mt-3 me-5">
+                                                                Удалить
+                                                            </button>
+                                                        </div>
+                                                        <div id="searchResults" th:if="${foundMaterialsList}">
+                                                            <div th:each="material : ${foundMaterialsList}">
+                                                                <input type="checkbox" name="selectedMaterials"
+                                                                       th:value="${material.id}"
+                                                                       th:text="${material.nameMaterial} + ' - ' + ${material.accompanyingDocuments[0].name} + ' № ' + ${material.accompanyingDocuments[0].number} + ' от ' + ${material.accompanyingDocuments[0].date} + ' г.'">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <label class="p-0">Работы выполнены по проектной документации:</label>
+                                                <div id="projectSectionContainer">
+                                                    <div class="row" th:each="projSection, iterStat : ${projectSectionList}"
+                                                         th:id="'projectSectionRow' + ${iterStat.index + 1}">
+                                                        <div class="col-lg-6">
+                                                            <select class="btn btn-light dropdown-toggle"
+                                                                    th:name="'projectSectionSelect' + ${iterStat.index + 1}">
+                                                                <option th:each="data : ${projectDocumentationList}"
+                                                                        th:value="${data.projectSection}"
+                                                                        th:text="${data.projectSection}"
+                                                                        th:selected="${data.projectSection == projSection}"></option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                            <div class="card">
+                                                                <!-- Card Header - Accordion -->
+                                                                <a th:href="'#collapseCardDrawings' + ${iterStat.index + 1}"
+                                                                   class="d-block card-header btn-light pr-3 pl-3 pt-3 collapsed"
+                                                                   data-toggle="collapse" role="button"
+                                                                   aria-expanded="false"
+                                                                   th:aria-controls="'#collapseCardDrawings' + ${iterStat.index + 1}">
+                                                                    <h6 class="m-0">Выбор чертежей</h6>
+                                                                </a>
+                                                                <!-- Card Content - Collapse -->
+                                                                <div class="collapse" th:id="'collapseCardDrawings' + ${iterStat.index + 1}"
+                                                                     style="">
+                                                                    <div class="card-body">
+                                                                        <div th:each="drawing : ${drawingsList}">
+                                                                            <input type="checkbox"
+                                                                                   th:name="'drawingCheckbox' + ${drawing.id} + '-' + ${iterStat.index + 1}"
+                                                                                   th:value="${drawing.projDocToDrawings.projectSection}"
+                                                                                   th:checked="${drawingIds.contains(drawing.id)}">
+                                                                            <span th:text="${drawing.drawing}"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <button type="button" onclick="removeDiv(this)"
+                                                                class="btn btn-success border-white mt-3 me-5">Удалить
+                                                        </button>
+                                                    </div>
+                                                    <div th:each="formData : ${aosrFormData}"
+                                                         th:id="'projectSectionRow' + ${formData}">
+                                                        <input type="hidden"
+                                                               th:name="'projectSectionHidden' + ${formData}"
+                                                               th:value="${formData}">
+                                                        <div class="row">
+                                                            <div class="col-lg-6">
+                                                                <select class="btn btn-light dropdown-toggle"
+                                                                        th:name="'projectSectionSelect' + ${formData}">
+                                                                    <option th:each="data : ${projectDocumentationList}"
+                                                                            th:value="${data.projectSection}"
+                                                                            th:text="${data.projectSection}"></option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-lg-6">
+                                                                <div class="card">
+                                                                    <!-- Card Header - Accordion -->
+                                                                    <a th:href="'#collapseCardDrawings' + ${formData}"
+                                                                       class="d-block card-header btn-light pr-3 pl-3 pt-3 collapsed"
+                                                                       data-toggle="collapse" role="button"
+                                                                       aria-expanded="false"
+                                                                       th:aria-controls="'collapseCardDrawings' + ${formData}">
+                                                                        <h6 class="m-0">Выбор чертежей</h6>
+                                                                    </a>
+                                                                    <!-- Card Content - Collapse -->
+                                                                    <div class="collapse"
+                                                                         th:id="'collapseCardDrawings' + ${formData}"
+                                                                         style="">
+                                                                        <div class="card-body">
+                                                                            <div th:each="drawing : ${drawingsList}">
+                                                                                <input type="checkbox"
+                                                                                       th:name="'drawingCheckbox' + ${drawing.id} + '-' + ${formData}"
+                                                                                       th:value="${drawing.projDocToDrawings.projectSection}">
+                                                                                <span th:text="${drawing.drawing}"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <button type="button" onclick="removeDiv(this)"
+                                                                    class="btn btn-success border-white mt-3 me-5">
+                                                                Удалить
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-end">
+                                                    <button type="button"
+                                                            class="bg-success btn btn-success border-white mt-3 me-5"
+                                                            onclick="addProjectSection()">
+                                                        Добавить раздел
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <label class="p-0">К освидетельствованию предъявлены следующие
+                                                    работы:</label>
+                                                <input type="hidden" id="permittedFollowingWork" th:value="${el.permittedFollowingWork}"/>
+                                                <select id="work1" name="work1" class="form-control"
+                                                        onchange="addSelect()">
+                                                    <option th:each="typeOfWork : ${typeOfWorkSet}"
+                                                            th:value="${typeOfWork}"
+                                                            th:text="${typeOfWork}"
+                                                            th:selected="${typeOfWork == el.typeOfWork}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <label class="p-0">Участки:</label>
+                                                <select id="execSchemSelect" name="execSchemSelect"
+                                                        class="form-control">
+                                                    <option th:each="data : ${executiveSchemesList}"
+                                                            th:value="${data.id}"
+                                                            th:text="${data.section}"
+                                                            th:selected="${data.id == el.executiveSchemesData.id}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <label class="p-0">Протокол ГНБ:</label>
+                                                <select id="protocolGnbSelect" name="protocolGnbSelect"
+                                                        class="form-control">
+                                                    <option value="-1">---</option>
+                                                    <option th:each="protocol : ${protocolsGnbList}"
+                                                            th:value="${protocol.id}"
+                                                            th:text="'Протокол ГНБ № ' + ${protocol.numberProtocolGnb} + ' от ' + ${protocol.dataProtocolGnb} + ' г.'"
+                                                            th:selected="${protocol.id == el.protocolsGnbData.id}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="card mb-3">
+                                            <a href="#collapseCardActVik"
+                                               class="d-block card-header pr-3 pl-3 pt-3 collapsed"
+                                               data-toggle="collapse"
+                                               role="button" aria-expanded="false" aria-controls="collapseCardActVik">
+                                                <h6 class="m-0 text-secondary">Акты ВиК:</h6>
+                                            </a>
+                                            <!-- Card Content - Collapse -->
+                                            <div class="collapse" id="collapseCardActVik">
+                                                <div class="card-body">
+                                                    <div th:each="act : ${actsViCList}">
+                                                        <input class="mx-1" type='checkbox' th:value="${act.id}"
+                                                               th:name="'actViCCheckbox' + ${act.id}"
+                                                               th:text="'Акт ВиК № ' + ${act.numberActViC} + ' от ' + ${act.dataActViC} + ' г.'"
+                                                               th:checked="${actsVicIds.contains(act.id)}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <label class="p-0">Протокол уплотнения:</label>
+                                                <select id="sealingProtocolSelect" name="sealingProtocolSelect"
+                                                        class="form-control">
+                                                    <option value="-1">---</option>
+                                                    <option th:each="protocol : ${sealingProtocolsList}"
+                                                            th:value="${protocol.id}"
+                                                            th:text="'Протокол уплотнения № ' + ${protocol.numberSealingProtocols} + ' от ' + ${protocol.dataSealingProtocols} + ' г.'"
+                                                            th:selected="${protocol.id == el.sealingProtocolsData.id}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Правая часть -->
+                                    <div class="col-lg-6 mb-3 mr-4">
+
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <label class="p-0">Приказ на представителя заказчика:</label>
+                                                <select id="customerResponsibleSelect" name="customerResponsibleSelect"
+                                                        class="form-control">
+                                                    <option value="-1">---</option>
+                                                    <option th:each="customer : ${customerResponsibleList}"
+                                                            th:value="${customer.id}"
+                                                            th:text="${customer.position} + ' ' + ${customer.name}"
+                                                            th:selected="${customer.id == el.customerResponsibleData.id}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <label class="p-0">Приказ на представителя подрядчика:</label>
+                                                <select id="subcustomerResponsibleSelect"
+                                                        name="subcustomerResponsibleSelect"
+                                                        class="form-control">
+                                                    <option value="-1">---</option>
+                                                    <option th:each="subcustomer : ${subcustomerResponsibleList}"
+                                                            th:value="${subcustomer.id}"
+                                                            th:text="${subcustomer.position} + ' ' + ${subcustomer.name}"
+                                                            th:selected="${subcustomer.id == el.subcustomerResponsibleData.id}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <label class="p-0">Приказ на представителя подрядчика по вопросам
+                                                    строительного контроля:</label>
+                                                <select id="subcustomerResponsible2Select"
+                                                        name="subcustomerResponsible2Select"
+                                                        class="form-control">
+                                                    <option value="-1">---</option>
+                                                    <option th:each="subcustomer2 : ${subcustomerResponsible2List}"
+                                                            th:value="${subcustomer2.id}"
+                                                            th:text="${subcustomer2.position} + ' ' + ${subcustomer2.name}"
+                                                            th:selected="${subcustomer2.id == el.subcustomerResponsible2Data.id}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <label class="p-0">Приказ на представителя проектировщика:</label>
+                                                <select id="designerResponsibleSelect" name="designerResponsibleSelect"
+                                                        class="form-control">
+                                                    <option value="-1">---</option>
+                                                    <option th:each="designer : ${designerResponsibleList}"
+                                                            th:value="${designer.id}"
+                                                            th:text="${designer.position} + ' ' + ${designer.name}"
+                                                            th:selected="${designer.id == el.designerResponsibleData.id}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <label class="p-0">Приказ на представителя иного лица:</label>
+                                                <select id="anotherPersonResponsibleSelect"
+                                                        name="anotherPersonResponsibleSelect"
+                                                        class="form-control">
+                                                    <option value="-1">---</option>
+                                                    <option th:each="anotherPerson : ${anotherPersonResponsibleList}"
+                                                            th:value="${anotherPerson.id}"
+                                                            th:text="${anotherPerson.position} + ' ' + ${anotherPerson.name}"
+                                                            th:selected="${anotherPerson.id == el.anotherPersonResponsibleData?.id}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <h5 class="h5 mb-0">Даты:</h5>
+                                                <!-- Строки с датами: начало работ -->
+                                                <div class="form-group row">
+                                                    <label class="col-lg-4 col-form-label">Начало работ:</label>
+                                                    <div class="col-lg-8 d-flex justify-content-between align-items-center">
+                                                        <input type="text" name="dayStart" placeholder="день" th:value="${dayStart}"
+                                                               class="form-control mr-2" required>
+                                                        <input type="text" name="monthStart" placeholder="месяц" th:value="${monthStart}"
+                                                               class="form-control mr-2" required>
+                                                        <label class="text m-0">20</label>
+                                                        <input type="text" name="yearStart" placeholder="год" th:value="${yearStart}"
+                                                               class="form-control" required>
+                                                    </div>
+                                                </div>
+                                                <!-- Строки с датами: окончание работ -->
+                                                <div class="form-group row">
+                                                    <label class="col-lg-4 col-form-label">Окончание работ:</label>
+                                                    <div class="col-lg-8 d-flex justify-content-between align-items-center">
+                                                        <input type="text" name="dayEnd" placeholder="день" th:value="${dayEnd}"
+                                                               class="form-control mr-2" required>
+                                                        <input type="text" name="monthEnd" placeholder="месяц" th:value="${monthEnd}"
+                                                               class="form-control mr-2" required>
+                                                        <label class="text m-0">20</label>
+                                                        <input type="text" name="yearEnd" placeholder="год" th:value="${yearEnd}"
+                                                               class="form-control" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <label>Разрешается производство последующих работ:</label>
+                                                <select id="work2" name="work2" class="form-control" required></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Кнопки Отмена и Сохранить -->
+                                <div class="d-flex justify-content-between mt-4 mr-5 ml-5">
+                                    <a href="/aosr-table" role="button" class="btn btn-light btn-icon-split"
+                                       onclick="clearInputData()">
+                                    <span class="icon text-gray-600">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </span>
+                                        <span class="text">Отмена</span>
+                                    </a>
+                                    <button type="submit" class="btn btn-success btn-icon-split"
+                                            onclick="clearInputData()">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                        <span class="text">Обновить</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <div class="col-6 m-2 p-2 flex-column">
-                            <div class="ms-5" id="firstProjectSection" hidden>
-                                <label th:text="${projDoc.projectSection1}"></label>
-                            </div>
-                            <div id="drawingsList1" th:each="drawing : ${projDoc.drawingsForSection1}"
-                                 style="display: none">
-                                <input type='checkbox' name='drawingCheckbox' th:value="${drawing.id}"
-                                       th:checked="${drawingIds.contains(drawing.id)}" th:text="${drawing.drawing}">
-                            </div>
-                        </div>
-                        <div class="col-6 m-2 p-2 flex-column">
-                            <div class="ms-5" id="secondProjectSection" hidden>
-                                <label th:text="${projDoc.projectSection2}"></label>
-                            </div>
-                            <div id="drawingsList2" th:each="drawing : ${projDoc.drawingsForSection2}"
-                                 style="display: none">
-                                <input type='checkbox' name='drawingCheckbox' th:value="${drawing.id}"
-                                       th:checked="${drawingIds.contains(drawing.id)}"
-                                       th:text="${drawing.drawing}">
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
-                <div class="d-flex justify-content-start">
-                    <a href="/aosr-table" role="button" class="bg-success btn btn-succcess border-white mt-3 ms-5">
-                        Отмена
-                    </a>
-                </div>
+
             </div>
-            <div class="col-6 d-flex flex-column bd-highlight mb-3">
-                <div class="m-2 p-2 bg-success d-flex justify-content-between">
-                    <label class="w-50">К освидетельствованию предъявлены следующие работы: </label>
-                    <select class="w-50" id="work1" name="work1" onchange="addSelect()">
-                        <option th:each="typeOfWork : ${typeOfWorkSet}" th:value="${typeOfWork}"
-                                th:text="${typeOfWork}" th:selected="${typeOfWork == el.typeOfWork}"></option>
-                    </select>
-                </div>
-                <div class="m-2 p-2 bg-success d-flex justify-content-between">
-                    <label class="w-auto">Участки:</label>
-                    <select class="w-50" id="execSchemSelect" name="execSchemSelect">
-                        <option th:each="data : ${executiveSchemesList}" th:value="${data.id}"
-                                th:text="${data.section}"
-                                th:selected="${data.id == el.executiveSchemesData.id}"></option>
-                    </select>
-                </div>
-                <div class="m-2 p-2 bg-success d-flex justify-content-between">
-                    <label class="w-auto">Протокол ГНБ:</label>
-                    <select id="protocolGnbSelect" name="protocolGnbSelect">
-                        <option value="-1">---</option>
-                        <option th:each="protocol : ${protocolsGnbList}" th:value="${protocol.id}"
-                                th:text="'Протокол ГНБ № ' + ${protocol.numberProtocolGnb} + ' от ' + ${protocol.dataProtocolGnb} + ' г.'"></option>
-                    </select>
-                </div>
-                <div class="m-2 p-2 bg-success d-flex flex-column bd-highlight">
-                    <label class="w-auto">Акты ВиК:</label>
-                    <div th:each="act : ${actsViCList}">
-                        <input type='checkbox' name='actViCCheckbox' th:value="${act.id}"
-                               th:checked="${el.actsViCData.contains(act.id)}"
-                               th:text="'Акт ВиК № ' + ${act.numberActViC} + ' от ' + ${act.dataActViC} + ' г.'">
-                    </div>
-                </div>
-                <div class="m-2 p-2 bg-success d-flex flex-column bd-highlight">
-                    <label class="w-auto">Протокол уплотнения:</label>
-                    <select class="w-50" id="sealingProtocolSelect" name="sealingProtocolSelect">
-                        <option value="-1">---</option>
-                        <option th:each="protocol : ${sealingProtocolsList}" th:value="${protocol.id}"
-                                th:text="'Протокол уплотнения № ' + ${protocol.numberSealingProtocols} + ' от ' + ${protocol.dataSealingProtocols} + ' г.'"></option>
-                    </select>
-                </div>
-                <div class="m-2 p-2 bg-success d-flex flex-column bd-highlight">
-                    <label>Даты:</label>
-                    <div class="d-flex justify-content-end">
-                        <label class="w-auto px-2">начала работ</label><br>
-                        <label class="w-auto px-2">день:</label>
-                        <input class="w-25" type="text" name="dayStart" th:value="${dayStart}">
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <label class="w-auto px-2">месяц:</label>
-                        <input class="w-25" type="text" name="monthStart" th:value="${monthStart}">
-                    </div>
-                    <div class="d-flex justify-content-end mb-2">
-                        <label class="w-auto px-2">год: 20</label>
-                        <input class="w-25" type="text" name="yearStart" th:value="${yearStart}">
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <label class="w-auto px-2">окончания работ</label>
-                        <label class="w-auto px-2">день:</label>
-                        <input class="w-25" type="text" name="dayEnd" th:value="${dayEnd}">
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <label class="w-auto px-2">месяц:</label>
-                        <input class="w-25" type="text" name="monthEnd" th:value="${monthEnd}">
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <label class="w-auto px-2">год: 20</label>
-                        <input class="w-25" type="text" name="yearEnd" th:value="${yearEnd}">
-                    </div>
-                </div>
-                <div class="m-2 p-2 bg-success d-flex justify-content-between">
-                    <label class="w-auto">Разрешается производство последующих работ: </label>
-                    <select id="work2" name="work2"></select>
-                </div>
-            </div>
+            <!-- /.container-fluid -->
+
         </div>
-        <div class="d-flex justify-content-end">
-            <button type="submit" class="bg-success btn btn-succcess border-white mt-3 me-5">Обновить</button>
-        </div>
-    </form>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <div th:replace="~{fragments/footer :: footer}"></div>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
 </div>
+<!-- End of Page Wrapper -->
+
+<script th:src="@{/js/aosrEdit.js}"></script>
+
+<!-- Bootstrap core JavaScript-->
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Core plugin JavaScript-->
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+<!-- Custom scripts for all pages-->
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+
 </body>
+
 </html>

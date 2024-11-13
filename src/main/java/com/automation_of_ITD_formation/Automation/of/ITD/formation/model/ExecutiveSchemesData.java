@@ -33,7 +33,7 @@ public class ExecutiveSchemesData {
     private Set<MaterialsUsedData> execSchemesToMaterials = new HashSet<>();
 
     @OneToMany(mappedBy = "executiveSchemesData", cascade = CascadeType.ALL)
-    private Set<AosrData> aosrs;
+    private Set<AosrData> aosrs = new HashSet<>();
 
     public Long getId() {
         return id;

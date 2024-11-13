@@ -2,6 +2,7 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -13,7 +14,7 @@ public class ExcavationLogData {
     private String NamePerformanceManager;
 
     @OneToMany(mappedBy = "excavationLogData", cascade = CascadeType.ALL)
-    private Set<AosrData> aosrs;
+    private Set<AosrData> aosrs = new HashSet<>();
 
     public Long getId() {
         return id;

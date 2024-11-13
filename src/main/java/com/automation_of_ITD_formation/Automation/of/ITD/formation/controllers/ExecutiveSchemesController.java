@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
 @Controller
 public class ExecutiveSchemesController {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Autowired
     private ProjectDocumentationRepository projectDocumentationRepository;
+
+    @Autowired
+    private AosrRepository aosrRepository;
 
     @Autowired
     private DrawingsRepository drawingsRepository;
@@ -53,13 +53,12 @@ public class ExecutiveSchemesController {
         return "executiveSchemesAdd";
     }
 
-    @GetMapping("/search-materials")
+    @GetMapping("/exec-search-materials")
     public String searchMaterials(@RequestParam("query") String query,
                                   @RequestParam(name = "selectedMaterials", required = false) List<Long> selectedMaterialsIds,
                                   @RequestParam(name = "sourcePage", required = false, defaultValue = "executiveSchemesAdd") String sourcePage,
                                   @RequestParam(name = "id", required = false) Long id,
                                   Model model) {
-
         if (id != null) {
             Optional<ExecutiveSchemesData> executiveSchemesDataOptional = executiveSchemesRepository.findById(id);
             if (executiveSchemesDataOptional.isPresent()) {
@@ -69,6 +68,7 @@ public class ExecutiveSchemesController {
                 model.addAttribute("drawingIds", drawingIds);
             }
         }
+        populateModel(model);
 
         List<MaterialsUsedData> foundMaterials = materialsUsedRepository.findByNameMaterialContainingIgnoreCase(query);
         Iterable<MaterialsUsedData> selectedMaterials = new ArrayList<>();
@@ -80,7 +80,6 @@ public class ExecutiveSchemesController {
         }
         model.addAttribute("foundMaterialsList", foundMaterials);
         model.addAttribute("selectedMaterialsList", selectedMaterials);
-        populateModel(model);
         return sourcePage;
     }
 
@@ -255,8 +254,7 @@ public class ExecutiveSchemesController {
 
         Set<DrawingsData> drawings = executiveSchemesData.getExecSchemesToDrawings();
         Set<MaterialsUsedData> materialsUsedData = executiveSchemesData.getExecSchemesToMaterials();
-
-        executiveSchemesRepository.delete(executiveSchemesData);
+        Set<AosrData> aosrData = executiveSchemesData.getAosrs();
 
         if (!drawings.isEmpty()) {
             drawings.forEach(drawing -> {
@@ -275,6 +273,16 @@ public class ExecutiveSchemesController {
                 materialsUsedRepository.save(material);
             });
         }
+
+        if (!aosrData.isEmpty()) {
+            aosrData.forEach(aosr -> {
+                aosr.setExecutiveSchemesData(null);
+                aosrRepository.save(aosr);
+            });
+            executiveSchemesData.getAosrs().clear();
+        }
+
+        executiveSchemesRepository.delete(executiveSchemesData);
 
         return "redirect:/executive-schemes-table";
     }

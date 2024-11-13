@@ -1,115 +1,120 @@
-//package com.automation_of_ITD_formation.Automation.of.ITD.formation.utils;
-//
-//import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
-//import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-//import org.apache.poi.xwpf.usermodel.XWPFDocument;
-//
-//import java.io.File;
-//import java.io.FileInputStream;
-//import java.io.FileOutputStream;
-//import java.io.IOException;
-//import java.time.LocalDate;
-//import java.time.format.DateTimeFormatter;
-//import java.util.*;
-//import java.util.zip.ZipEntry;
-//import java.util.zip.ZipOutputStream;
-//
-//import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.ReplacePlaceholderUtils.replacePlaceholder;
-//import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.ReplacePlaceholderUtils.replacePlaceholderInTable;
-//import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.UpdateSheetUtils.setTextInCell;
-//import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.UpdateSheetUtils.updateSheet;
-//
-//public class GenerateFileUtils {
-//
-//    public static File generateAosrFile(AosrData aosrData, int indexAosr, Map<List<String>, String> spMap, Map<String, Integer> monthMap) throws IOException {
-//        FileInputStream inputStream = new FileInputStream("E:\\javaProjects\\Automation-of-ITD-formation\\src\\main\\resources\\files\\АОСР.docx");
-//        XWPFDocument document = new XWPFDocument(inputStream);
-//        inputStream.close();
-//
-//        PassportObjectData passportObjectData = aosrData.getPassportObjectData();
-//        ProjectDocumentationData projectDocumentationData = aosrData.getProjectDocumentationData();
-//        ExecutiveSchemesData executiveSchemesData = aosrData.getExecutiveSchemesData();
-//        String work1 = aosrData.getTypeOfWork();
-//        String work2 = aosrData.getPermittedFollowingWork();
-//        Set<DrawingsData> drawingsDataSet = aosrData.getAosrToDrawings();
-//        Set<MaterialsUsedData> materialsUsedDataSet = aosrData.getAosrToMaterials();
-//
-//        String capitalConstructionProject = GenerateStringUtils.generateCapitalConstructionProject(passportObjectData);
-//        replacePlaceholderInTable(document, "CapitalConstructionProject", capitalConstructionProject, 100, 100);
-//        String developer = GenerateStringUtils.generateDeveloper(passportObjectData);
-//        replacePlaceholderInTable(document, "InfoDeveloper", developer, 100, 100);
-//        String builder = GenerateStringUtils.generateBuilder(passportObjectData);
-//        replacePlaceholderInTable(document, "InfoBuilder", builder, 100, 100);
-//        String preparer = GenerateStringUtils.generatePreparer(passportObjectData);
-//        replacePlaceholderInTable(document, "InfoPreparer", preparer, 100, 100);
-//        String projectCode = GenerateStringUtils.generateProjectCode(passportObjectData, indexAosr);
-//        replacePlaceholderInTable(document, "ProjectCode", projectCode, 30, 30);
-//        String customer = GenerateStringUtils.generateCustomer(passportObjectData);
-//        replacePlaceholderInTable(document, "InfoCustomer", customer, 100, 100);
-//        String contractor1 = GenerateStringUtils.generateContractor(passportObjectData);
-//        replacePlaceholderInTable(document, "InfoFirstContractor", contractor1, 120, 120);
-//        String contractor2 = GenerateStringUtils.generateContractor2(passportObjectData);
-//        replacePlaceholderInTable(document, "InfoSecondContractor", contractor2, 120, 120);
-//        String projector = GenerateStringUtils.generateProjector(passportObjectData);
-//        replacePlaceholderInTable(document, "InfoProjector", projector, 100, 100);
-//        String nameOrganization = GenerateStringUtils.generateNameOrganization(passportObjectData);
-//        replacePlaceholderInTable(document, "NameOrganization", nameOrganization, 80, 80);
+package com.automation_of_ITD_formation.Automation.of.ITD.formation.utils;
+
+import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.ReplacePlaceholderUtils.replacePlaceholder;
+import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.ReplacePlaceholderUtils.replacePlaceholderInTable;
+import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.UpdateSheetUtils.setTextInCell;
+import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.UpdateSheetUtils.updateSheet;
+
+public class GenerateFileUtils {
+
+    public static File generateAosrFile(AosrData aosrData, int indexAosr, Map<List<String>, String> spMap, Map<String, Integer> monthMap) throws IOException {
+        FileInputStream inputStream = new FileInputStream("E:\\javaProjects\\Automation-of-ITD-formation\\src\\main\\resources\\files\\АОСР.docx");
+        XWPFDocument document = new XWPFDocument(inputStream);
+        inputStream.close();
+
+        PassportObjectData passportObjectData = aosrData.getPassportObjectData();
+        CustomerResponsibleData customerResponsibleData = aosrData.getCustomerResponsibleData();
+        DesignerResponsibleData designerResponsibleData = aosrData.getDesignerResponsibleData();
+        SubcustomerResponsibleData subcustomerResponsibleData = aosrData.getSubcustomerResponsibleData();
+        SubcustomerResponsible2Data subcustomerResponsible2Data = aosrData.getSubcustomerResponsible2Data();
+        AnotherPersonResponsibleData anotherPersonResponsibleData = aosrData.getAnotherPersonResponsibleData();
+        Set<ProjectDocumentationData> projectDocumentationData = aosrData.getAosrToProjDocs();
+        ExecutiveSchemesData executiveSchemesData = aosrData.getExecutiveSchemesData();
+        String work1 = aosrData.getTypeOfWork();
+        String work2 = aosrData.getPermittedFollowingWork();
+        Set<DrawingsData> drawingsDataSet = aosrData.getAosrToDrawings();
+        Set<MaterialsUsedData> materialsUsedDataSet = aosrData.getAosrToMaterials();
+
+        String capitalConstructionProject = GenerateStringUtils.generateCapitalConstructionProject(passportObjectData);
+        replacePlaceholderInTable(document, "CapitalConstructionProject", capitalConstructionProject, 100, 100);
+        String developer = GenerateStringUtils.generateDeveloper(passportObjectData);
+        replacePlaceholderInTable(document, "InfoDeveloper", developer, 100, 100);
+        String builder = GenerateStringUtils.generateBuilder(passportObjectData);
+        replacePlaceholderInTable(document, "InfoBuilder", builder, 100, 100);
+        String preparer = GenerateStringUtils.generatePreparer(passportObjectData);
+        replacePlaceholderInTable(document, "InfoPreparer", preparer, 100, 100);
+        String projectCode = GenerateStringUtils.generateProjectCode(passportObjectData, indexAosr);
+        replacePlaceholderInTable(document, "ProjectCode", projectCode, 30, 30);
+        String customer = GenerateStringUtils.generateCustomer(passportObjectData);
+        replacePlaceholderInTable(document, "InfoCustomer", customer, 100, 100);
+        String contractor1 = GenerateStringUtils.generateContractor(passportObjectData);
+        replacePlaceholderInTable(document, "InfoFirstContractor", contractor1, 120, 120);
+        String contractor2 = GenerateStringUtils.generateContractor2(passportObjectData);
+        replacePlaceholderInTable(document, "InfoSecondContractor", contractor2, 120, 120);
+        String projector = GenerateStringUtils.generateProjector(passportObjectData);
+        replacePlaceholderInTable(document, "InfoProjector", projector, 100, 100);
+        String nameOrganization = GenerateStringUtils.generateNameOrganization(passportObjectData);
+        replacePlaceholderInTable(document, "NameOrganization", nameOrganization, 80, 80);
 //        String nameOfHiddenWork = GenerateStringUtils.generateNameOfHiddenWork(projectDocumentationData, work1, executiveSchemesData);
 //        replacePlaceholderInTable(document, "NameOfHiddenWork", nameOfHiddenWork, 60, 120);
-//        String drawings = GenerateStringUtils.generateDrawings(drawingsDataSet, passportObjectData);
-//        replacePlaceholderInTable(document, "Drawings", drawings, 70, 135);
-//        String materials = GenerateStringUtils.generateMaterials(materialsUsedDataSet);
-//        replacePlaceholderInTable(document, "Materials", materials, 80, 115);
+        String drawings = GenerateStringUtils.generateDrawings(drawingsDataSet, passportObjectData);
+        replacePlaceholderInTable(document, "Drawings", drawings, 70, 135);
+        String materials = GenerateStringUtils.generateMaterials(materialsUsedDataSet);
+        replacePlaceholderInTable(document, "Materials", materials, 80, 115);
 //        String executiveSchemes = GenerateStringUtils.generateExecutiveSchemes(executiveSchemesData, projectDocumentationData, passportObjectData, indexAosr);
 //        replacePlaceholderInTable(document, "ExecutiveSchemes", executiveSchemes, 120, 120);
-//        String spAndProjectDocumentations = GenerateStringUtils.generateSpAndProjectDocumentations(work1, drawingsDataSet, spMap);
-//        replacePlaceholderInTable(document, "ProjectDocumentations", spAndProjectDocumentations, 80, 120);
+        String spAndProjectDocumentations = GenerateStringUtils.generateSpAndProjectDocumentations(work1, drawingsDataSet, spMap);
+        replacePlaceholderInTable(document, "ProjectDocumentations", spAndProjectDocumentations, 80, 120);
 //        String engineeringSupportNetworks = GenerateStringUtils.generateEngineeringSupportNetworks(work2, executiveSchemesData, projectDocumentationData);
 //        replacePlaceholderInTable(document, "EngineeringSupportNetworks", engineeringSupportNetworks, 70, 120);
-//        String fioCustomer = GenerateStringUtils.generateFioCustomer(passportObjectData);
-//        replacePlaceholderInTable(document, "FioCustomer", fioCustomer, 30, 30);
-//        String fioFirstContractor = GenerateStringUtils.generateFioFirstContractor(passportObjectData);
-//        replacePlaceholderInTable(document, "FioFirstContractor", fioFirstContractor, 30, 30);
-//        String fioSecondContractor = GenerateStringUtils.generateFioSecondContractor(passportObjectData);
-//        replacePlaceholderInTable(document, "FioSecondContractor", fioSecondContractor, 30, 30);
-//        String fioSecondProjector = GenerateStringUtils.generateFioSecondProjector(passportObjectData);
-//        replacePlaceholderInTable(document, "FioSecondProjector", fioSecondProjector, 30, 30);
-//
-//        LocalDate dateStart = aosrData.getStartDate();
-//        LocalDate dateEnd = aosrData.getEndDate();
-//
-//        String dayStart = Integer.toString(dateStart.getDayOfMonth());
-//        String yearStart = Integer.toString(dateStart.getYear()).substring(2, 4);
-//        String dayEnd = Integer.toString(dateEnd.getDayOfMonth());
-//        String yearEnd = Integer.toString(dateEnd.getYear()).substring(2, 4);
-//        StringBuilder monthStart = new StringBuilder();
-//        StringBuilder monthEnd = new StringBuilder();
-//        monthMap.forEach((key, value) -> {
-//            if (value.equals(dateStart.getMonthValue()) && value.equals(dateEnd.getMonthValue())) {
-//                monthStart.append(key);
-//                monthEnd.append(key);
-//            } else if (value.equals(dateStart.getMonthValue())) {
-//                monthStart.append(key);
-//            } else if (value.equals(dateEnd.getMonthValue())) {
-//                monthEnd.append(key);
-//            }
-//        });
-//
-//        replacePlaceholderInTable(document, "daySt", dayStart, 10, 10);
-//        replacePlaceholderInTable(document, "monthStart", monthStart.toString(), 10, 10);
-//        replacePlaceholderInTable(document, "yearSt", yearStart, 10, 10);
-//        replacePlaceholderInTable(document, "dayE", dayEnd, 10, 10);
-//        replacePlaceholderInTable(document, "monthEnd", monthEnd.toString(), 10, 10);
-//        replacePlaceholderInTable(document, "yearE", yearEnd, 10, 10);
-//
-//        File tempFile = File.createTempFile("Aosr_" + indexAosr, ".docx");
-//        try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
-//            document.write(outputStream);
-//        }
-//
-//        return tempFile;
-//    }
-//
+        String fioCustomer = GenerateStringUtils.generateFioCustomer(passportObjectData);
+        replacePlaceholderInTable(document, "FioCustomer", fioCustomer, 30, 30);
+        String fioFirstContractor = GenerateStringUtils.generateFioFirstContractor(passportObjectData);
+        replacePlaceholderInTable(document, "FioFirstContractor", fioFirstContractor, 30, 30);
+        String fioSecondContractor = GenerateStringUtils.generateFioSecondContractor(passportObjectData);
+        replacePlaceholderInTable(document, "FioSecondContractor", fioSecondContractor, 30, 30);
+        String fioSecondProjector = GenerateStringUtils.generateFioSecondProjector(passportObjectData);
+        replacePlaceholderInTable(document, "FioSecondProjector", fioSecondProjector, 30, 30);
+
+        LocalDate dateStart = aosrData.getStartDate();
+        LocalDate dateEnd = aosrData.getEndDate();
+
+        String dayStart = Integer.toString(dateStart.getDayOfMonth());
+        String yearStart = Integer.toString(dateStart.getYear()).substring(2, 4);
+        String dayEnd = Integer.toString(dateEnd.getDayOfMonth());
+        String yearEnd = Integer.toString(dateEnd.getYear()).substring(2, 4);
+        StringBuilder monthStart = new StringBuilder();
+        StringBuilder monthEnd = new StringBuilder();
+        monthMap.forEach((key, value) -> {
+            if (value.equals(dateStart.getMonthValue()) && value.equals(dateEnd.getMonthValue())) {
+                monthStart.append(key);
+                monthEnd.append(key);
+            } else if (value.equals(dateStart.getMonthValue())) {
+                monthStart.append(key);
+            } else if (value.equals(dateEnd.getMonthValue())) {
+                monthEnd.append(key);
+            }
+        });
+
+        replacePlaceholderInTable(document, "daySt", dayStart, 10, 10);
+        replacePlaceholderInTable(document, "monthStart", monthStart.toString(), 10, 10);
+        replacePlaceholderInTable(document, "yearSt", yearStart, 10, 10);
+        replacePlaceholderInTable(document, "dayE", dayEnd, 10, 10);
+        replacePlaceholderInTable(document, "monthEnd", monthEnd.toString(), 10, 10);
+        replacePlaceholderInTable(document, "yearE", yearEnd, 10, 10);
+
+        File tempFile = File.createTempFile("Aosr_" + indexAosr, ".docx");
+        try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
+            document.write(outputStream);
+        }
+
+        return tempFile;
+    }
+
 //    public static File generateExcavationLogFile(Map<String, Integer> monthMap, String namePerformanceManager, List<AosrData> aosrToLogList) throws IOException {
 //        FileInputStream inputStream = new FileInputStream("E:\\javaProjects\\Automation-of-ITD-formation\\src\\main\\resources\\files\\ЖЗР.docx");
 //        XWPFDocument document = new XWPFDocument(inputStream);
@@ -354,19 +359,19 @@
 //
 //        return tempXlsxFile;
 //    }
-//
-//    public static void addFileToZip(ZipOutputStream zos, File file, String zipEntryName, byte[] buffer) throws IOException {
-//        try (FileInputStream fis = new FileInputStream(file)) {
-//            ZipEntry zipEntry = new ZipEntry(zipEntryName);
-//            zos.putNextEntry(zipEntry);
-//            int len;
-//            while ((len = fis.read(buffer)) > 0) {
-//                zos.write(buffer, 0, len);
-//            }
-//            zos.closeEntry();
-//        }
-//    }
-//
+
+    public static void addFileToZip(ZipOutputStream zos, File file, String zipEntryName, byte[] buffer) throws IOException {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            ZipEntry zipEntry = new ZipEntry(zipEntryName);
+            zos.putNextEntry(zipEntry);
+            int len;
+            while ((len = fis.read(buffer)) > 0) {
+                zos.write(buffer, 0, len);
+            }
+            zos.closeEntry();
+        }
+    }
+
 //    private static Map<String, String> getPersonMap(PassportObjectData passObj) {
 //        Map<String, String> personMap = new HashMap<>();
 //        personMap.put(passObj.getFioContractor(), passObj.getPostContractor() + " " + passObj.getFioContractor());
@@ -376,4 +381,4 @@
 //        personMap.put(passObj.getFioAnotherPerson(), passObj.getPostAnotherPerson() + " " + passObj.getNameAnotherPerson() + " " + passObj.getFioAnotherPerson());
 //        return personMap;
 //    }
-//}
+}

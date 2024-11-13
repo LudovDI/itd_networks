@@ -27,6 +27,26 @@ public class AosrData {
     @JoinColumn(name = "exec_scheme_id")
     private ExecutiveSchemesData executiveSchemesData;
 
+    @ManyToOne
+    @JoinColumn(name = "another_person_res_id")
+    private AnotherPersonResponsibleData anotherPersonResponsibleData;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_res_id")
+    private CustomerResponsibleData customerResponsibleData;
+
+    @ManyToOne
+    @JoinColumn(name = "designer_res_id")
+    private DesignerResponsibleData designerResponsibleData;
+
+    @ManyToOne
+    @JoinColumn(name = "subcustomer_res_id")
+    private SubcustomerResponsibleData subcustomerResponsibleData;
+
+    @ManyToOne
+    @JoinColumn(name = "subcustomer2_res_id")
+    private SubcustomerResponsible2Data subcustomerResponsible2Data;
+
     @ManyToMany
     @JoinTable(
             name = "aosr_drawings",
@@ -35,9 +55,13 @@ public class AosrData {
     )
     private Set<DrawingsData> aosrToDrawings = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "project_documentation_id")
-    private ProjectDocumentationData projectDocumentationData;
+    @ManyToMany
+    @JoinTable(
+            name = "aosr_projdocs",
+            joinColumns = @JoinColumn(name = "aosr_id"),
+            inverseJoinColumns = @JoinColumn(name = "project_documentation_id")
+    )
+    private Set<ProjectDocumentationData> aosrToProjDocs = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "passport_object_id")
@@ -52,7 +76,7 @@ public class AosrData {
     private GeneralWorksLogData generalWorksLogData;
 
     @OneToMany(mappedBy = "actsToAosrData", cascade = CascadeType.ALL)
-    private Set<ActsViCData> actsViCData;
+    private Set<ActsViCData> actsViCData = new HashSet<>();
 
     @OneToOne(mappedBy = "sealingToAosrData", cascade = CascadeType.ALL)
     private SealingProtocolsData sealingProtocolsData;
@@ -156,12 +180,12 @@ public class AosrData {
         this.aosrToMaterials = aosrToMaterials;
     }
 
-    public ProjectDocumentationData getProjectDocumentationData() {
-        return projectDocumentationData;
+    public Set<ProjectDocumentationData> getAosrToProjDocs() {
+        return aosrToProjDocs;
     }
 
-    public void setProjectDocumentationData(ProjectDocumentationData projectDocumentationData) {
-        this.projectDocumentationData = projectDocumentationData;
+    public void setAosrToProjDocs(Set<ProjectDocumentationData> aosrToProjDocs) {
+        this.aosrToProjDocs = aosrToProjDocs;
     }
 
     public ExecutiveSchemesData getExecutiveSchemesData() {
@@ -186,6 +210,46 @@ public class AosrData {
 
     public void setGeneralWorksLogData(GeneralWorksLogData generalWorksLogData) {
         this.generalWorksLogData = generalWorksLogData;
+    }
+
+    public AnotherPersonResponsibleData getAnotherPersonResponsibleData() {
+        return anotherPersonResponsibleData;
+    }
+
+    public void setAnotherPersonResponsibleData(AnotherPersonResponsibleData anotherPersonResponsibleData) {
+        this.anotherPersonResponsibleData = anotherPersonResponsibleData;
+    }
+
+    public CustomerResponsibleData getCustomerResponsibleData() {
+        return customerResponsibleData;
+    }
+
+    public void setCustomerResponsibleData(CustomerResponsibleData customerResponsibleData) {
+        this.customerResponsibleData = customerResponsibleData;
+    }
+
+    public DesignerResponsibleData getDesignerResponsibleData() {
+        return designerResponsibleData;
+    }
+
+    public void setDesignerResponsibleData(DesignerResponsibleData designerResponsibleData) {
+        this.designerResponsibleData = designerResponsibleData;
+    }
+
+    public SubcustomerResponsibleData getSubcustomerResponsibleData() {
+        return subcustomerResponsibleData;
+    }
+
+    public void setSubcustomerResponsibleData(SubcustomerResponsibleData subcustomerResponsibleData) {
+        this.subcustomerResponsibleData = subcustomerResponsibleData;
+    }
+
+    public SubcustomerResponsible2Data getSubcustomerResponsible2Data() {
+        return subcustomerResponsible2Data;
+    }
+
+    public void setSubcustomerResponsible2Data(SubcustomerResponsible2Data subcustomerResponsible2Data) {
+        this.subcustomerResponsible2Data = subcustomerResponsible2Data;
     }
 
     public AosrData() {

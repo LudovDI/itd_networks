@@ -2,6 +2,7 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ public class PassportObjectData {
             nameDesigner, ogrnDesigner, innDesigner, addressDesigner, phoneDesigner, nameOrganizationDesigner, ogrnOrganizationDesigner, innOrganizationDesigner;
 
     @OneToMany(mappedBy = "passportObjectData", cascade = CascadeType.ALL)
-    private Set<AosrData> aosrs;
+    private Set<AosrData> aosrs = new HashSet<>();
 
     @OneToMany(mappedBy = "passportObjectData", cascade = CascadeType.ALL)
     private List<AnotherPersonResponsibleData> anotherPersonResponsibleData;

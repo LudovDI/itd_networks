@@ -3,6 +3,7 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.model;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -17,8 +18,8 @@ public class ProjectDocumentationData {
     @OneToMany(mappedBy = "projDocToDrawings", cascade = CascadeType.ALL)
     private List<DrawingsData> drawingsList;
 
-    @OneToMany(mappedBy = "projectDocumentationData", cascade = CascadeType.ALL)
-    private Set<AosrData> aosrs;
+    @ManyToMany(mappedBy = "aosrToProjDocs", cascade = CascadeType.ALL)
+    private Set<AosrData> aosrs = new HashSet<>();
 
     public Long getId() {
         return id;
