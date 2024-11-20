@@ -14,6 +14,10 @@ public class ProtocolsGnbData {
     @JoinColumn(name = "aosr_data_id")
     private AosrData gnbToAosrData;
 
+    @ManyToOne
+    @JoinColumn(name = "itd_id")
+    private ItdData itdToProtocolsGnbData;
+
     public Long getId() {
         return id;
     }
@@ -52,6 +56,14 @@ public class ProtocolsGnbData {
 
     public void setGnbToAosrData(AosrData gnbToAosrData) {
         this.gnbToAosrData = gnbToAosrData;
+    }
+
+    public ItdData getItdToProtocolsGnbData() {
+        return itdToProtocolsGnbData;
+    }
+
+    public void setItdToProtocolsGnbData(ItdData itdToProtocolsGnbData) {
+        this.itdToProtocolsGnbData = itdToProtocolsGnbData;
     }
 
     public ProtocolsGnbData() {

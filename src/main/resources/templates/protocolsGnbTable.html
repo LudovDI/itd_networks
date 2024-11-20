@@ -12,13 +12,14 @@
     <title>Протоколы ГНБ</title>
 
     <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-            rel="stylesheet">
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/status.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i}"
+          rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css}" rel="stylesheet" />
 
 </head>
 
@@ -62,7 +63,7 @@
                         <tbody>
                         <tr th:each="el : ${protocolsGnbList}">
                             <td>
-                                <form th:action="'/protocols-gnb-table/' + ${el.id} + '/update-status'" method="post">
+                                <form th:action="'/protocols-gnb-table/' + ${itdData.id} + '/update-status/' + ${el.id}" method="post">
                                     <select name="status" class="status-select" onchange="updateStatus(this.form)">
                                         <option value="Готов" th:selected="${el.status == 'Готов'}"
                                                 data-image-url="/images/green.png"></option>
@@ -76,8 +77,8 @@
                             <td th:text="${el.numberProtocolGnb}"></td>
                             <td th:text="${el.dataProtocolGnb}"></td>
                             <td>
-                                <a th:href="'/protocols-gnb-table/' + ${el.id} + '/protocols-gnb-edit'" class="btn btn-circle btn-sm btn-primary mr-2"><i class="fas fa-pencil-alt fa-sm text-white-50"></i></a>
-                                <form th:action="'/protocols-gnb-table/' + ${el.id} + '/protocols-gnb-remove'" method="post">
+                                <a th:href="'/protocols-gnb-table/' + ${itdData.id} + '/protocols-gnb-edit/' + ${el.id}" class="btn btn-circle btn-sm btn-primary mr-2"><i class="fas fa-pencil-alt fa-sm text-white-50"></i></a>
+                                <form th:action="'/protocols-gnb-table/' + ${itdData.id} + '/protocols-gnb-remove/' + ${el.id}" method="post">
                                     <button class="btn btn-circle btn-sm btn-danger"><i class="fas fa-trash fa-sm text-white-50"></i></button>
                                 </form>
                             </td>
@@ -86,7 +87,7 @@
                     </table>
                 </div>
 
-                <a th:href="@{/protocols-gnb-add}" class="btn btn-primary btn-icon-split mt-3">
+                <a th:href="'/protocols-gnb-add/' + ${itdData.id}" class="btn btn-primary btn-icon-split mt-3">
                     <span class="icon text-white-50">
                         <i class="fas fa-plus fa-md text-white-50"></i>
                     </span>
@@ -109,7 +110,6 @@
 </div>
 <!-- End of Page Wrapper -->
 
-<!-- Bootstrap core JavaScript-->
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
@@ -118,6 +118,9 @@
 
 <!-- Custom scripts for all pages-->
 <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+<script th:src="@{https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js}"></script>
+<script th:src="@{/js/updateStatus.js}"></script>
 
 </body>
 

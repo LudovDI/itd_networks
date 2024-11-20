@@ -12,13 +12,14 @@
     <title>Применяемые материалы</title>
 
     <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-            rel="stylesheet">
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/status.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i}"
+          rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css}" rel="stylesheet" />
 
 </head>
 
@@ -53,6 +54,7 @@
                 <table class="table table-bordered">
                     <thead class="bg-gray-300">
                     <tr>
+                        <th>Статус</th>
                         <th>Название материала</th>
                         <th>Название документа</th>
                         <th>Номер документа</th>
@@ -63,6 +65,18 @@
                     </thead>
                     <tbody>
                     <tr th:each="doc : ${materialsUsedList}">
+                        <td>
+                            <form th:action="'/materials-used-table/' + ${itdData.id} + '/update-status/' + ${doc.id}" method="post">
+                                <select name="status" class="status-select" onchange="updateStatus(this.form)">
+                                    <option value="Готов" th:selected="${doc.status == 'Готов'}"
+                                            data-image-url="/images/green.png"></option>
+                                    <option value="В процессе" th:selected="${doc.status == 'В процессе'}"
+                                            data-image-url="/images/yellow.png"></option>
+                                    <option value="Требует создания" th:selected="${doc.status == 'Требует создания'}"
+                                            data-image-url="/images/red.png"></option>
+                                </select>
+                            </form>
+                        </td>
                         <td th:text="${doc.nameMaterial}"></td>
                         <td>
                             <span th:each="accDoc : ${accompanyingDocumentsMap.get(doc.id)}">
@@ -89,10 +103,10 @@
                             </span>
                         </td>
                         <td>
-                            <a th:href="'/materials-used-table/' + ${doc.id} + '/materials-used-edit'"
+                            <a th:href="'/materials-used-table/' + ${itdData.id} + '/materials-used-edit/' + ${doc.id}"
                                class="btn btn-circle btn-sm btn-primary mr-2"><i
                                     class="fas fa-pencil-alt fa-sm text-white-50"></i></a>
-                            <form th:action="'/materials-used-table/' + ${doc.id} + '/materials-used-remove'" method="post">
+                            <form th:action="'/materials-used-table/' + ${itdData.id} + '/materials-used-remove/' + ${doc.id}" method="post">
                                 <button type="submit" class="btn btn-circle btn-sm btn-danger"><i
                                         class="fas fa-trash fa-sm text-white-50"></i></button>
                             </form>
@@ -101,7 +115,7 @@
                     </tbody>
                 </table>
 
-                <a th:href="@{/materials-used-add}" class="btn btn-primary btn-icon-split mt-3">
+                <a th:href="'/materials-used-add/' + ${itdData.id}" class="btn btn-primary btn-icon-split mt-3">
                     <span class="icon text-white-50">
                         <i class="fas fa-plus fa-md text-white-50"></i>
                     </span>
@@ -124,7 +138,6 @@
 </div>
 <!-- End of Page Wrapper -->
 
-<!-- Bootstrap core JavaScript-->
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
@@ -133,6 +146,9 @@
 
 <!-- Custom scripts for all pages-->
 <script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+<script th:src="@{https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js}"></script>
+<script th:src="@{/js/updateStatus.js}"></script>
 
 </body>
 

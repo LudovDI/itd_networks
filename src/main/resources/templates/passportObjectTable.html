@@ -12,13 +12,12 @@
     <title>Паспорт объекта</title>
 
     <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-            rel="stylesheet">
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i}"
+          rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
 
 </head>
 
@@ -41,12 +40,12 @@
             <!-- End of Topbar -->
 
             <!-- Begin Page Content -->
-            <div class="container-fluid" th:each="el : ${passportObjectList}">
+            <div class="container-fluid">
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h2 mb-0 text-primary">Паспорт объекта</h1>
-                    <a th:href="'/passport-object-table/' + ${el.id} + '/passport-object-edit'" class="btn btn-primary btn-icon-split">
+                    <a th:href="'/passport-object-table/' + ${itdData.id} + '/passport-object-edit/' + ${passportObject.id}" class="btn btn-primary btn-icon-split">
                         <span class="icon text-white-50">
                             <i class="fas fa-edit"></i>
                         </span>
@@ -81,25 +80,25 @@
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">Наименование объекта:</label>
                                 <div class="col-sm-8">
-                                    <p th:text="${el.nameObject}"></p>
+                                    <p th:text="${passportObject.nameObject}"></p>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">Адрес объекта:</label>
                                 <div class="col-sm-8">
-                                    <p th:text="${el.addressObject}"></p>
+                                    <p th:text="${passportObject.addressObject}"></p>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">Шифр объекта:</label>
                                 <div class="col-sm-8">
-                                    <p th:text="${el.projectCode}"></p>
+                                    <p th:text="${passportObject.projectCode}"></p>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">Наименование сети:</label>
-                                <div class="col-sm-8">
-                                    <p id="networkName"></p>
+                                <div class="col-sm-8" th:each="networkName : ${networkName}">
+                                    <p th:text="${networkName}"></p>
                                 </div>
                             </div>
                         </div>
@@ -111,25 +110,25 @@
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">Наименование заказчика:</label>
                                 <div class="col-sm-8">
-                                    <p th:text="${el.nameCustomer}"></p>
+                                    <p th:text="${passportObject.nameCustomer}"></p>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">ОГРН заказчика:</label>
                                 <div class="col-sm-8">
-                                    <p th:text="${el.ogrnCustomer}"></p>
+                                    <p th:text="${passportObject.ogrnCustomer}"></p>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">ИНН заказчика:</label>
                                 <div class="col-sm-8">
-                                    <p th:text="${el.innCustomer}"></p>
+                                    <p th:text="${passportObject.innCustomer}"></p>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">Адрес заказчика:</label>
                                 <div class="col-sm-8">
-                                    <p th:text="${el.addressCustomer}"></p>
+                                    <p th:text="${passportObject.addressCustomer}"></p>
                                 </div>
                             </div>
                         </div>
@@ -141,25 +140,25 @@
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">Наименование подрядчика:</label>
                                 <div class="col-sm-8">
-                                    <p th:text="${el.nameContractor}"></p>
+                                    <p th:text="${passportObject.nameContractor}"></p>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">ОГРН подрядчика:</label>
                                 <div class="col-sm-8">
-                                    <p th:text="${el.ogrnContractor}"></p>
+                                    <p th:text="${passportObject.ogrnContractor}"></p>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">ИНН подрядчика:</label>
                                 <div class="col-sm-8">
-                                    <p th:text="${el.innContractor}"></p>
+                                    <p th:text="${passportObject.innContractor}"></p>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">Адрес подрядчика:</label>
                                 <div class="col-sm-8">
-                                    <p th:text="${el.addressContractor}"></p>
+                                    <p th:text="${passportObject.addressContractor}"></p>
                                 </div>
                             </div>
                         </div>
@@ -171,25 +170,25 @@
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">Наименование проектировщика:</label>
                                 <div class="col-sm-8">
-                                    <p th:text="${el.nameDesigner}"></p>
+                                    <p th:text="${passportObject.nameDesigner}"></p>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">ОГРН проектировщика:</label>
                                 <div class="col-sm-8">
-                                    <p th:text="${el.ogrnDesigner}"></p>
+                                    <p th:text="${passportObject.ogrnDesigner}"></p>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">ИНН проектировщика:</label>
                                 <div class="col-sm-8">
-                                    <p th:text="${el.innDesigner}"></p>
+                                    <p th:text="${passportObject.innDesigner}"></p>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 font-weight-bold">Адрес подрядчика:</label>
                                 <div class="col-sm-8">
-                                    <p th:text="${el.addressDesigner}"></p>
+                                    <p th:text="${passportObject.addressDesigner}"></p>
                                 </div>
                             </div>
                         </div>

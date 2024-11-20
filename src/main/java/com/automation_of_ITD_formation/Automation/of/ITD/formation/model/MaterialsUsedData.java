@@ -23,6 +23,10 @@ public class MaterialsUsedData {
     @ManyToMany(mappedBy = "aosrToMaterials")
     private Set<AosrData> materialsToAosr = new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "itd_id")
+    private ItdData itdToMaterialsUsedData;
+
     public Long getId() {
         return id;
     }
@@ -69,6 +73,14 @@ public class MaterialsUsedData {
 
     public void setMaterialsToAosr(Set<AosrData> materialsToAosr) {
         this.materialsToAosr = materialsToAosr;
+    }
+
+    public ItdData getItdToMaterialsUsedData() {
+        return itdToMaterialsUsedData;
+    }
+
+    public void setItdToMaterialsUsedData(ItdData itdToMaterialsUsedData) {
+        this.itdToMaterialsUsedData = itdToMaterialsUsedData;
     }
 
     public MaterialsUsedData(String nameMaterial) {

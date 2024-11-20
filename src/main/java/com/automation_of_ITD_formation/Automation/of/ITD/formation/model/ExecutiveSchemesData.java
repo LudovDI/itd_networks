@@ -35,6 +35,10 @@ public class ExecutiveSchemesData {
     @OneToMany(mappedBy = "executiveSchemesData", cascade = CascadeType.ALL)
     private Set<AosrData> aosrs = new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "itd_id")
+    private ItdData itdToExecutiveSchemesData;
+
     public Long getId() {
         return id;
     }
@@ -229,6 +233,14 @@ public class ExecutiveSchemesData {
 
     public void setEndingPoint(String endingPoint) {
         this.endingPoint = endingPoint;
+    }
+
+    public ItdData getItdToExecutiveSchemesData() {
+        return itdToExecutiveSchemesData;
+    }
+
+    public void setItdToExecutiveSchemesData(ItdData itdToExecutiveSchemesData) {
+        this.itdToExecutiveSchemesData = itdToExecutiveSchemesData;
     }
 
     public ExecutiveSchemesData() {
