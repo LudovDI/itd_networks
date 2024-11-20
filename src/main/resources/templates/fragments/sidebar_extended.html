@@ -26,22 +26,22 @@
         <div class="sidebar-heading">Объекты</div>
 
         <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-            <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseActivePages"
-               aria-expanded="true" aria-controls="collapsePages">
-                <span>ИТД 1</span>
+        <li class="nav-item" th:each="itd : ${itdList}">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" th:data-target="'#collapseActivePages' + ${itd.number}"
+               aria-expanded="false" aria-controls="collapsePages">
+                <span th:text="'ИТД ' + ${itd.number}"></span>
             </a>
-            <div id="collapseActivePages" class="collapse show" aria-labelledby="headingPages"
+            <div th:id="'collapseActivePages' + ${itd.number}" class="collapse" aria-labelledby="headingPages"
                  data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="/passport-object-table">Паспорт объекта</a>
-                    <a class="collapse-item" href="/project-documentation-table">Проектная документация</a>
-                    <a class="collapse-item" href="/materials-used-table">Применяемые материалы</a>
-                    <a class="collapse-item" href="/executive-schemes-table">Исполнительные схемы</a>
-                    <a class="collapse-item" href="/protocols-gnb-table">Протоколы ГНБ</a>
-                    <a class="collapse-item" href="/acts-vic-table">Акты ВиК</a>
-                    <a class="collapse-item" href="/sealing-protocols-table">Протоколы уплотнения</a>
-                    <a class="collapse-item" href="/aosr-table">АОСР</a>
+                    <a class="collapse-item" th:href="'/passport-object-table/' + ${itd.id}">Паспорт объекта</a>
+                    <a class="collapse-item" th:href="'/project-documentation-table/' + ${itd.id}">Проектная документация</a>
+                    <a class="collapse-item" th:href="'/materials-used-table/' + ${itd.id}">Применяемые материалы</a>
+                    <a class="collapse-item" th:href="'/executive-schemes-table/' + ${itd.id}">Исполнительные схемы</a>
+                    <a class="collapse-item" th:href="'/protocols-gnb-table/' + ${itd.id}">Протоколы ГНБ</a>
+                    <a class="collapse-item" th:href="'/acts-vic-table/' + ${itd.id}">Акты ВиК</a>
+                    <a class="collapse-item" th:href="'/sealing-protocols-table/' + ${itd.id}">Протоколы уплотнения</a>
+                    <a class="collapse-item" th:href="'/aosr-table/' + ${itd.id}">АОСР</a>
                 </div>
             </div>
         </li>

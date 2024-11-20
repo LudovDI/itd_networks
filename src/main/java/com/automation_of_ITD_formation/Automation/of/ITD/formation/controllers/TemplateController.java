@@ -7,8 +7,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class TemplateController {
 
     @GetMapping("/new_abd")
-    public String index() {
+    public String newAbd() {
         return "new_abd/new_abd";
+    }
+
+    @GetMapping("/logs")
+    public String logs() {
+        return "logs";
+    }
+
+    @GetMapping("/bs_index")
+    public String bs_index() {
+        return "bs_index";
     }
 
     @GetMapping("/materials_used")
@@ -94,11 +104,6 @@ public class TemplateController {
     @GetMapping("/aocp_edit")
     public String aocpEdit() {
         return "AOCP/aocp_edit";
-    }
-
-    @GetMapping("/itd_info")
-    public String itdInfo() {
-        return "itd_info/itd_info";
     }
       
     @GetMapping("/passport")

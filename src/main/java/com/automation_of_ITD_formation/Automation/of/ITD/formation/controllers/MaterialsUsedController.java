@@ -5,6 +5,7 @@ import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.security.Principal;
 import java.util.stream.Collectors;
 
 import java.util.*;
@@ -19,20 +22,31 @@ import java.util.*;
 @Controller
 public class MaterialsUsedController {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ItdRepository itdRepository;
     @Autowired
     private MaterialsUsedRepository materialUsedRepository;
-
     @Autowired
     private AccompanyingDocumentRepository accompanyingDocumentRepository;
 
-    @GetMapping("/materials-used-table")
-    public String materialsUsedTable(Model model) {
-        Iterable<MaterialsUsedData> materialsUsedList = materialUsedRepository.findAll();
+    @GetMapping("/materials-used-table/{id}")
+    public String materialsUsedTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
+        String username = principal.getName();
+        UserData currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        model.addAttribute("userData", currentUser);
+        List<ItdData> itdDataList = currentUser.getItdData();
+        if (!itdDataList.isEmpty()) {
+            model.addAttribute("itdList", itdDataList);
+        } else {
+            model.addAttribute("itdList", List.of());
+        }
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
+        model.addAttribute("itdData", itdData);
+        Set<MaterialsUsedData> materialsUsedList = itdData.getMaterialsUsedData();
         model.addAttribute("materialsUsedList", materialsUsedList);
-
         Map<Long, List<AccompanyingDocumentData>> accompanyingDocumentsMap = new HashMap<>();
         for (MaterialsUsedData material : materialsUsedList) {
             List<AccompanyingDocumentData> accompanyingDocumentList = accompanyingDocumentRepository.findByMaterialsUsedData(material);
@@ -42,14 +56,28 @@ public class MaterialsUsedController {
         return "materialsUsedTable";
     }
 
-    @GetMapping("/materials-used-add")
-    public String materialsUsedAdd(Model model) {
+    @GetMapping("/materials-used-add/{id}")
+    public String materialsUsedAdd(@PathVariable(value = "id") long id, Model model, Principal principal) {
+        String username = principal.getName();
+        UserData currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        model.addAttribute("userData", currentUser);
+        List<ItdData> itdDataList = currentUser.getItdData();
+        if (!itdDataList.isEmpty()) {
+            model.addAttribute("itdList", itdDataList);
+        } else {
+            model.addAttribute("itdList", List.of());
+        }
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
+        model.addAttribute("itdData", itdData);
         return "materialsUsedAdd";
     }
 
-    @PostMapping("/materials-used-add")
-    public String postMaterialsUsedAdd(@RequestParam("material") String nameMaterial,
+    @PostMapping("/materials-used-add/{id}")
+    public String postMaterialsUsedAdd(@PathVariable(value = "id") long id,
+                                       @RequestParam("material") String nameMaterial,
                                        @RequestParam Map<String, String> formData) {
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
         List<AccompanyingDocumentData> accompanyingDocumentList = new ArrayList<>();
         formData.forEach((key, value) -> {
             if (key.startsWith("name")) {
@@ -65,29 +93,46 @@ public class MaterialsUsedController {
             }
         });
         MaterialsUsedData materialUsedData = new MaterialsUsedData(nameMaterial);
+        materialUsedData.setStatus("Требует создания");
+        materialUsedData.setItdToMaterialsUsedData(itdData);
         materialUsedRepository.save(materialUsedData);
         accompanyingDocumentList.forEach(accompanyingDocument -> accompanyingDocument.setMaterialsUsedData(materialUsedData));
         accompanyingDocumentRepository.saveAll(accompanyingDocumentList);
-        return "redirect:/materials-used-table";
+        return "redirect:/materials-used-table/" + id;
     }
 
-    @GetMapping("/materials-used-table/{id}/materials-used-edit")
-    public String materialsUsedEdit(@PathVariable(value = "id") long id, Model model) {
-        Optional<MaterialsUsedData> materialsUsedDataOptional = materialUsedRepository.findById(id);
-        if (!materialsUsedDataOptional.isPresent()) {
+    @GetMapping("/materials-used-table/{itdId}/materials-used-edit/{materialId}")
+    public String materialsUsedEdit(@PathVariable(value = "itdId") long itdId,
+                                    @PathVariable(value = "materialId") long materialId,
+                                    Model model, Principal principal) {
+        String username = principal.getName();
+        UserData currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        model.addAttribute("userData", currentUser);
+        List<ItdData> itdDataList = currentUser.getItdData();
+        if (!itdDataList.isEmpty()) {
+            model.addAttribute("itdList", itdDataList);
+        } else {
+            model.addAttribute("itdList", List.of());
+        }
+        ItdData itdData = itdRepository.findById(itdId).orElseThrow();
+        model.addAttribute("itdData", itdData);
+        if (!materialUsedRepository.existsById(materialId)) {
             return "redirect:/materials-used-table";
         }
+        Optional<MaterialsUsedData> materialsUsedDataOptional = materialUsedRepository.findById(materialId);
         MaterialsUsedData materialsUsedData = materialsUsedDataOptional.get();
         model.addAttribute("materialsUsedData", materialsUsedData);
         return "materialsUsedEdit";
     }
 
-    @PostMapping("/materials-used-table/{id}/materials-used-edit")
+    @PostMapping("/materials-used-table/{itdId}/materials-used-edit/{materialId}")
     @Transactional
-    public String postMaterialsUsedUpdate(@PathVariable(value = "id") long id,
+    public String postMaterialsUsedUpdate(@PathVariable(value = "itdId") long itdId,
+                                          @PathVariable(value = "materialId") long materialId,
                                           @RequestParam("material") String nameMaterial,
                                           @RequestParam Map<String, String> formData) {
-        MaterialsUsedData materialsUsedData = materialUsedRepository.findById(id).orElseThrow();
+        MaterialsUsedData materialsUsedData = materialUsedRepository.findById(materialId).orElseThrow();
 
         Set<Long> accDocIdsFromForm = new HashSet<>();
         Map<Long, AccompanyingDocumentData> accompanyingDocumentsMap = new HashMap<>();
@@ -136,23 +181,23 @@ public class MaterialsUsedController {
 
         materialsUsedData.setNameMaterial(nameMaterial);
         materialUsedRepository.save(materialsUsedData);
-        return "redirect:/materials-used-table";
+        return "redirect:/materials-used-table/" + itdId;
     }
 
-    @PostMapping("/materials-used-table/{id}/materials-used-remove")
-    public String postMaterialsUsedDelete(@PathVariable(value = "id") long id, Model model) {
-        MaterialsUsedData materialsUsedData = materialUsedRepository.findById(id).orElseThrow();
+    @PostMapping("/materials-used-table/{itdId}/materials-used-remove/{materialId}")
+    public String postMaterialsUsedDelete(@PathVariable(value = "itdId") long itdId, @PathVariable(value = "materialId") long materialId, Model model) {
+        MaterialsUsedData materialsUsedData = materialUsedRepository.findById(materialId).orElseThrow();
         List<AccompanyingDocumentData> accompanyingDocumentDataList = accompanyingDocumentRepository.findByMaterialsUsedData(materialsUsedData);
         accompanyingDocumentRepository.deleteAll(accompanyingDocumentDataList);
         materialUsedRepository.delete(materialsUsedData);
-        return "redirect:/materials-used-table";
+        return "redirect:/materials-used-table/" + itdId;
     }
 
-    @PostMapping("/materials-used-table/{id}/update-status")
-    public String updateStatus(@PathVariable("id") Long id, @RequestParam("status") String status) {
-        MaterialsUsedData material = materialUsedRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid act Id:" + id));
+    @PostMapping("/materials-used-table/{itdId}/update-status/{materialId}")
+    public String updateStatus(@PathVariable("itdId") Long itdId, @PathVariable("materialId") Long materialId, @RequestParam("status") String status) {
+        MaterialsUsedData material = materialUsedRepository.findById(materialId).orElseThrow(() -> new IllegalArgumentException("Invalid act Id:" + materialId));
         material.setStatus(status);
         materialUsedRepository.save(material);
-        return "redirect:/materials-used-table";
+        return "redirect:/materials-used-table/" + itdId;
     }
 }

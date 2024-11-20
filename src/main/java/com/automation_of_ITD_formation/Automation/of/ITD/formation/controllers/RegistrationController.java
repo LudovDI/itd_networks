@@ -36,11 +36,9 @@ public class RegistrationController {
             return "registration";
         }
 
-        user.setActive(true);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(Collections.singleton(Role.valueOf(role)));
         userRepository.save(user);
-
         return "redirect:/login";
     }
 }

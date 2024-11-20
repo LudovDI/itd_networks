@@ -68,12 +68,16 @@ public class AosrData {
     private PassportObjectData passportObjectData;
 
     @ManyToOne
-    @JoinColumn(name = "excavation_log_id")
-    private ExcavationLogData excavationLogData;
+    @JoinColumn(name = "itd_id")
+    private ItdData itdToAosrData;
 
-    @ManyToOne
-    @JoinColumn(name = "general_works_log_id")
-    private GeneralWorksLogData generalWorksLogData;
+//    @ManyToOne
+//    @JoinColumn(name = "excavation_log_id")
+//    private ExcavationLogData excavationLogData;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "general_works_log_id")
+//    private GeneralWorksLogData generalWorksLogData;
 
     @OneToMany(mappedBy = "actsToAosrData", cascade = CascadeType.ALL)
     private Set<ActsViCData> actsViCData = new HashSet<>();
@@ -196,21 +200,21 @@ public class AosrData {
         this.executiveSchemesData = executiveSchemesData;
     }
 
-    public ExcavationLogData getExcavationLogData() {
-        return excavationLogData;
-    }
-
-    public void setExcavationLogData(ExcavationLogData excavationLogData) {
-        this.excavationLogData = excavationLogData;
-    }
-
-    public GeneralWorksLogData getGeneralWorksLogData() {
-        return generalWorksLogData;
-    }
-
-    public void setGeneralWorksLogData(GeneralWorksLogData generalWorksLogData) {
-        this.generalWorksLogData = generalWorksLogData;
-    }
+//    public ExcavationLogData getExcavationLogData() {
+//        return excavationLogData;
+//    }
+//
+//    public void setExcavationLogData(ExcavationLogData excavationLogData) {
+//        this.excavationLogData = excavationLogData;
+//    }
+//
+//    public GeneralWorksLogData getGeneralWorksLogData() {
+//        return generalWorksLogData;
+//    }
+//
+//    public void setGeneralWorksLogData(GeneralWorksLogData generalWorksLogData) {
+//        this.generalWorksLogData = generalWorksLogData;
+//    }
 
     public AnotherPersonResponsibleData getAnotherPersonResponsibleData() {
         return anotherPersonResponsibleData;
@@ -250,6 +254,14 @@ public class AosrData {
 
     public void setSubcustomerResponsible2Data(SubcustomerResponsible2Data subcustomerResponsible2Data) {
         this.subcustomerResponsible2Data = subcustomerResponsible2Data;
+    }
+
+    public ItdData getItdToAosrData() {
+        return itdToAosrData;
+    }
+
+    public void setItdToAosrData(ItdData itdToAosrData) {
+        this.itdToAosrData = itdToAosrData;
     }
 
     public AosrData() {

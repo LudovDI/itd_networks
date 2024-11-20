@@ -3,6 +3,7 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,13 +11,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
 import java.util.*;
 
 @Controller
 public class PassportObjectController {
 
     @Autowired
+    private ItdRepository itdRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
     private PassportObjectRepository passportObjectRepository;
+    @Autowired
+    private ProjectDocumentationRepository projectDocumentationRepository;
     @Autowired
     private AnotherPersonResponsibleRepository anotherPersonResponsibleRepository;
     @Autowired
@@ -28,15 +36,48 @@ public class PassportObjectController {
     @Autowired
     private SubcustomerResponsible2Repository subcustomerResponsible2Repository;
 
-    @GetMapping("/passport-object-table")
-    public String passportObjectTable(Model model) {
-        Iterable<PassportObjectData> passportObjectList = passportObjectRepository.findAll();
-        model.addAttribute("passportObjectList", passportObjectList);
+    @GetMapping("/passport-object-table/{id}")
+    public String passportObjectTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
+        String username = principal.getName();
+        UserData currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        model.addAttribute("userData", currentUser);
+        List<ItdData> itdDataList = currentUser.getItdData();
+        if (!itdDataList.isEmpty()) {
+            model.addAttribute("itdList", itdDataList);
+        } else {
+            model.addAttribute("itdList", List.of());
+        }
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
+        model.addAttribute("itdData", itdData);
+        PassportObjectData passportObject = itdData.getPassportObjectData();
+        Set<ProjectDocumentationData> projectDocumentationList = itdData.getProjectDocumentationData();
+        String networkName;
+
+        if (!projectDocumentationList.isEmpty()) {
+            ProjectDocumentationData projDoc = projectDocumentationList.stream().toList().getFirst();
+            networkName = projDoc.getNetwork();
+        } else {
+            networkName = "";
+        }
+
+        model.addAttribute("networkName", networkName);
+        model.addAttribute("passportObject", passportObject);
         return "passportObjectTable";
     }
 
     @GetMapping("/passport-object-add")
-    public String passportObjectAdd(Model model) {
+    public String passportObjectAdd(Model model, Principal principal) {
+        String username = principal.getName();
+        UserData currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        model.addAttribute("userData", currentUser);
+        List<ItdData> itdDataList = currentUser.getItdData();
+        if (!itdDataList.isEmpty()) {
+            model.addAttribute("itdList", itdDataList);
+        } else {
+            model.addAttribute("itdList", List.of());
+        }
         return "passportObjectAdd";
     }
 
@@ -68,7 +109,13 @@ public class PassportObjectController {
                                         @RequestParam("nameOrganizationDesigner") String nameOrganizationDesigner,
                                         @RequestParam("ogrnOrganizationDesigner") String ogrnOrganizationDesigner,
                                         @RequestParam("innOrganizationDesigner") String innOrganizationDesigner,
-                                        @RequestParam Map<String, String> formData) {
+                                        @RequestParam Map<String, String> formData,
+                                        Principal principal) {
+        String username = principal.getName();
+
+        UserData currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
         PassportObjectData passportObjectData = new PassportObjectData(nameObject, addressObject,projectCode, nameCustomer,
                 ogrnCustomer, innCustomer, addressCustomer, phoneCustomer, nameOrganizationCustomer, ogrnOrganizationCustomer,
                 innOrganizationCustomer, nameContractor, ogrnContractor, innContractor, addressContractor, phoneContractor,
@@ -181,6 +228,7 @@ public class PassportObjectController {
                 anotherPersonResponsibleList.add(anotherPersonResponsibleData);
             }
         });
+
         passportObjectRepository.save(passportObjectData);
         customerResponsibleList.forEach(customerResponsibleData -> customerResponsibleData.setPassportObjectData(passportObjectData));
         customerResponsibleRepository.saveAll(customerResponsibleList);
@@ -192,13 +240,35 @@ public class PassportObjectController {
         designerResponsibleRepository.saveAll(designerResponsibleList);
         anotherPersonResponsibleList.forEach(anotherPersonResponsibleData -> anotherPersonResponsibleData.setPassportObjectData(passportObjectData));
         anotherPersonResponsibleRepository.saveAll(anotherPersonResponsibleList);
-        return "redirect:/passport-object-table";
+
+        long sequenceNumber = itdRepository.countByUserData(currentUser) + 1;
+
+        ItdData itdData = new ItdData();
+        itdData.setNumber(String.valueOf(sequenceNumber));
+        itdData.setStatus("В работе");
+        itdData.setUserData(currentUser);
+        itdData.setPassportObjectData(passportObjectData);
+
+        itdRepository.save(itdData);
+        return "redirect:/passport-object-table/" + itdData.getId();
     }
 
-    @GetMapping("/passport-object-table/{id}/passport-object-edit")
-    public String passportObjectEdit(@PathVariable(value = "id") long id, Model model) {
+    @GetMapping("/passport-object-table/{itdId}/passport-object-edit/{id}")
+    public String passportObjectEdit(@PathVariable(value = "itdId") long itdId,
+                                     @PathVariable(value = "id") long id,
+                                     Model model, Principal principal) {
+        String username = principal.getName();
+        UserData currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        model.addAttribute("userData", currentUser);
+        List<ItdData> itdDataList = currentUser.getItdData();
+        if (!itdDataList.isEmpty()) {
+            model.addAttribute("itdList", itdDataList);
+        } else {
+            model.addAttribute("itdList", List.of());
+        }
         if (!passportObjectRepository.existsById(id)) {
-            return "redirect:/passport-object-table";
+            return "redirect:/passport-object-table/" + itdId;
         }
         Optional<PassportObjectData> passportObjectDataOptional = passportObjectRepository.findById(id);
         ArrayList<PassportObjectData> res = new ArrayList<>();
@@ -213,8 +283,9 @@ public class PassportObjectController {
         return "passportObjectEdit";
     }
 
-    @PostMapping("/passport-object-table/{id}/passport-object-edit")
-    public String postPassportObjectUpdate(@PathVariable(value = "id") long id,
+    @PostMapping("/passport-object-table/{itdId}/passport-object-edit/{id}")
+    public String postPassportObjectUpdate(@PathVariable(value = "itdId") long itdId,
+                                           @PathVariable(value = "id") long id,
                                            @RequestParam("nameObject") String nameObject,
                                            @RequestParam("addressObject") String addressObject,
                                            @RequestParam("projectCode") String projectCode,
@@ -544,21 +615,14 @@ public class PassportObjectController {
         passportObjectData.setInnOrganizationDesigner(innOrganizationDesigner);
 
         passportObjectRepository.save(passportObjectData);
-        return "redirect:/passport-object-table";
+        return "redirect:/passport-object-table/" + itdId;
     }
 
-//    @PostMapping("/passport-object-table/{id}/passport-object-remove")
-//    public String postPassportObjectDelete(@PathVariable(value = "id") long id, Model model) {
-//        PassportObjectData passportObjectData = passportObjectRepository.findById(id).orElseThrow();
-//        passportObjectRepository.delete(passportObjectData);
-//        return "redirect:/passport-object-table";
-//    }
-
-    @PostMapping("/passport-object-table/{id}/update-status")
-    public String updateStatus(@PathVariable("id") Long id, @RequestParam("status") String status) {
+    @PostMapping("/passport-object-table/{itdId}/update-status/{id}")
+    public String updateStatus(@PathVariable("itdId") Long itdId, @PathVariable("id") Long id, @RequestParam("status") String status) {
         PassportObjectData passObj = passportObjectRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid act Id:" + id));
         passObj.setStatus(status);
         passportObjectRepository.save(passObj);
-        return "redirect:/passport-object-table";
+        return "redirect:/passport-object-table/" + itdId;
     }
 }

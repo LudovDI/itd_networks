@@ -21,6 +21,10 @@ public class ProjectDocumentationData {
     @ManyToMany(mappedBy = "aosrToProjDocs", cascade = CascadeType.ALL)
     private Set<AosrData> aosrs = new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "itd_id")
+    private ItdData itdToProjectDocumentationData;
+
     public Long getId() {
         return id;
     }
@@ -67,6 +71,14 @@ public class ProjectDocumentationData {
 
     public void setDrawingsList(List<DrawingsData> drawingsList) {
         this.drawingsList = drawingsList;
+    }
+
+    public ItdData getItdToProjectDocumentationData() {
+        return itdToProjectDocumentationData;
+    }
+
+    public void setItdToProjectDocumentationData(ItdData itdToProjectDocumentationData) {
+        this.itdToProjectDocumentationData = itdToProjectDocumentationData;
     }
 
     public ProjectDocumentationData() {
