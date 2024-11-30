@@ -699,8 +699,8 @@ public class AosrController {
         try {
             int indexAosr = 1;
             for (AosrData aosrData : aosrList) {
-//                File tempFile = GenerateFileUtils.generateAosrFile(aosrData, indexAosr, spMap, monthMap);
-//                tempFiles.add(tempFile);
+                File tempFile = GenerateFileUtils.generateAosrFile(aosrData, indexAosr, spMap, monthMap);
+                tempFiles.add(tempFile);
                 indexAosr++;
             }
 
