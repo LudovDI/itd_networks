@@ -63,12 +63,13 @@
                             <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-customer')">Заказчик</button>
                             <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-contractor')">Подрядчик</button>
                             <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-designer')">Проектировщик</button>
+                            <button type="button" class="btn btn-outline-primary" onclick="toggleSection('section-another-person')">Иное лицо</button>
                         </div>
                     </div>
                     <div class="card-body">
                         <!-- Form -->
-                        <div class="col-lg-8">
-                            <form id="itdForm" action="/submit" method="post">
+                        <div class="col-lg-8" th:each="el : ${passportObjectDataOptional}">
+                            <form id="itdForm" method="post">
 
                                 <!-- General Information Section -->
                                 <div id="section-general" class="form-section">
@@ -76,20 +77,20 @@
                                         <h4 class="h4 mb-0 text-gray-800">Общие сведения об объекте</h4>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="objectName" class="col-sm-4">Наименование объекта:</label>
-                                        <input type="text" id="objectName" name="objectName" required class="col-sm-8">
+                                        <label class="col-sm-4">Наименование объекта:</label>
+                                        <input type="text" th:value="${el.nameObject}" name="nameObject" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="objectAddress" class="col-sm-4">Адрес объекта:</label>
-                                        <input type="text" id="objectAddress" name="objectAddress" required class="col-sm-8">
+                                        <label class="col-sm-4">Адрес объекта:</label>
+                                        <input type="text" th:value="${el.addressObject}" name="addressObject" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="objectCode" class="col-sm-4">Шифр объекта:</label>
-                                        <input type="text" id="objectCode" name="objectCode" required class="col-sm-8">
+                                        <label class="col-sm-4">Шифр объекта:</label>
+                                        <input type="text" th:value="${el.projectCode}" name="projectCode" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="networkName" class="col-sm-4">Наименование сети:</label>
-                                        <input type="text" id="networkName" name="networkName" required class="col-sm-8">
+                                        <label class="col-sm-4">Наименование сети:</label>
+                                        <input type="text" class="col-sm-8">
                                     </div>
                                 </div>
 
@@ -99,90 +100,92 @@
                                         <h4 class="h4 mb-0 text-gray-800">Заказчик</h4>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="contractorName" class="col-sm-4">Наименование заказчика:</label>
-                                        <input type="text" id="contractorName" name="contractorName" required class="col-sm-8">
+                                        <label class="col-sm-4">Наименование заказчика:</label>
+                                        <input type="text" name="nameCustomer" th:value="${el.nameCustomer}" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="contractorOGRN" class="col-sm-4">ОГРН заказчика:</label>
-                                        <input type="text" id="contractorOGRN" name="contractorOGRN" required class="col-sm-8">
+                                        <label class="col-sm-4">ОГРН заказчика:</label>
+                                        <input type="text" name="ogrnCustomer" th:value="${el.ogrnCustomer}" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="contractorINN" class="col-sm-4">ИНН заказчика:</label>
-                                        <input type="text" id="contractorINN" name="contractorINN" required class="col-sm-8">
+                                        <label class="col-sm-4">ИНН заказчика:</label>
+                                        <input type="text" name="innCustomer" th:value="${el.innCustomer}" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="contractorAddress" class="col-sm-4">Адрес заказчика:</label>
-                                        <input type="text" id="contractorAddress" name="contractorAddress" required class="col-sm-8">
+                                        <label class="col-sm-4">Адрес заказчика:</label>
+                                        <input type="text" name="addressCustomer" th:value="${el.addressCustomer}" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="contractorPhone" class="col-sm-4">Телефон/факс заказчика:</label>
-                                        <input type="text" id="contractorPhone" name="contractorPhone" required class="col-sm-8">
+                                        <label class="col-sm-4">Телефон/факс заказчика:</label>
+                                        <input type="text" name="phoneCustomer" th:value="${el.phoneCustomer}" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="contractorPhone" class="col-sm-4">Наименование СРО заказчика:</label>
-                                        <input type="text" id="contractorCPO" name="contractorPhone" required class="col-sm-8">
+                                        <label class="col-sm-4">Наименование СРО заказчика:</label>
+                                        <input type="text" name="nameOrganizationCustomer" th:value="${el.nameOrganizationCustomer}" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="contractorPhone" class="col-sm-4">ОГРН СРО заказчика:</label>
-                                        <input type="text" id="contractorCPO_OGRN" name="contractorPhone" required class="col-sm-8">
+                                        <label class="col-sm-4">ОГРН СРО заказчика:</label>
+                                        <input type="text" name="ogrnOrganizationCustomer" th:value="${el.ogrnOrganizationCustomer}" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="contractorPhone" class="col-sm-4">ИНН СРО заказчика:</label>
-                                        <input type="text" id="contractorCPO_INN" name="contractorPhone" required class="col-sm-8">
+                                        <label class="col-sm-4">ИНН СРО заказчика:</label>
+                                        <input type="text" name="innOrganizationCustomer" th:value="${el.innOrganizationCustomer}" class="col-sm-8">
                                     </div>
 
                                     <!-- Контейнер для добавления новых полей для ответственных лиц -->
-                                    <div id="customerResponsiblesContainer">
+                                    <div id="customerResponsiblesContainer" th:each="customerRes : customerResponsibles">
                                         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                            <h4 class="h4 mb-0 text-gray-800">Представитель заказчика №1</h4>
+                                            <h4 class="h4 mb-0 text-gray-800">Представитель заказчика</h4>
                                         </div>
                                         <div class="form-group row">
-                                            <label for="customerResponsiblePosition_1" class="col-sm-4">Должность представителя заказчика:</label>
-                                            <input type="text" id="customerResponsiblePosition_1" name="responsiblePositionPosition_1" required class="col-sm-8">
+                                            <label class="col-sm-4">Должность представителя заказчика:</label>
+                                            <input type="text" th:name="'customerResponsiblePosition_' + ${customerRes.id}" th:value="${customerRes.position}" class="col-sm-8">
                                         </div>
                                         <div class="form-group row">
-                                            <label for="customerResponsibleName_1" class="col-sm-4">ФИО представителя заказчика:</label>
-                                            <input type="text" id="customerResponsibleName_1" name="customerResponsibleName_1" required class="col-sm-8">
+                                            <label class="col-sm-4">ФИО представителя заказчика:</label>
+                                            <input type="text" th:name="'customerResponsibleName_' + ${customerRes.id}" th:value="${customerRes.name}" class="col-sm-8">
                                         </div>
                                         <div class="form-group row">
-                                            <label for="customerResponsibleID_1" class="col-sm-6">Идентификационный номер в национальном реестре специалистов:</label>
-                                            <input type="text" id="customerResponsibleID_1" name="customerResponsibleID_1" required class="col-sm-6">
+                                            <label class="col-sm-6">Идентификационный номер в национальном реестре
+                                                специалистов:</label>
+                                            <input type="text" th:name="'customerResponsibleIdNumber_' + ${customerRes.id}" th:value="${customerRes.idNumber}" class="col-sm-6">
                                         </div>
                                         <div class="form-group row">
-                                            <label for="customerResponsibleDocument_1" class="col-sm-4">Распорядительный документ:</label>
-                                            <input type="text" id="customerResponsibleDocument_1" name="customerResponsibleDocument_1" required class="col-sm-8">
+                                            <label class="col-sm-4">Распорядительный документ:</label>
+                                            <input type="text" th:name="'customerResponsibleNameDocument_' + ${customerRes.id}" th:value="${customerRes.nameDocument}" class="col-sm-8">
                                         </div>
                                         <div class="form-group row">
-                                            <label for="customerResponsibleNumber_1" class="col-sm-4">Номер распорядительного документа:</label>
-                                            <input type="text" id="customerResponsibleNumber_1" name="customerResponsibleNumber_1" required class="col-sm-8">
+                                            <label class="col-sm-4">Номер распорядительного документа:</label>
+                                            <input type="text" th:name="'customerResponsibleNumberDocument_' + ${customerRes.id}" th:value="${customerRes.numberDocument}" class="col-sm-8">
                                         </div>
                                         <div class="form-group row">
-                                            <label for="customerResponsibleDate_1" class="col-sm-4">Дата распорядительного документа:</label>
-                                            <input type="text" id="customerResponsibleDate_1" name="customerResponsibleDate_1" required class="col-sm-8">
+                                            <label class="col-sm-4">Дата распорядительного документа:</label>
+                                            <input type="text" th:name="'customerResponsibleDateDocument_' + ${customerRes.id}" th:value="${customerRes.dateDocument}" class="col-sm-8">
                                         </div>
                                         <div class="form-group row">
-                                            <label for="customerResponsibleCompany_1" class="col-sm-6">Юридическое лицо представителя заказчика:</label>
-                                            <input type="text" id="customerResponsibleCompany_1" name="customerResponsibleCompany_1" required class="col-sm-6">
+                                            <label class="col-sm-6">Юридическое лицо представителя заказчика:</label>
+                                            <input type="text" th:name="'customerResponsibleNameCompany_' + ${customerRes.id}" th:value="${customerRes.nameCompany}" class="col-sm-6">
                                         </div>
                                         <div class="form-group row">
-                                            <label for="customerResponsibleOGRN_1" class="col-sm-4">ОГРН юридического лица:</label>
-                                            <input type="text" id="customerResponsibleOGRN_1" name="customerResponsibleOGRN_1" required class="col-sm-8">
+                                            <label class="col-sm-4">ОГРН юридического лица:</label>
+                                            <input type="text" th:name="'customerResponsibleOgrnCompany_' + ${customerRes.id}" th:value="${customerRes.ogrnCompany}" class="col-sm-8">
                                         </div>
                                         <div class="form-group row">
-                                            <label for="customerResponsibleINN_1" class="col-sm-4">ИНН юридического лица:</label>
-                                            <input type="text" id="customerResponsibleINN_1" name="customerResponsibleINN_1" required class="col-sm-8">
+                                            <label class="col-sm-4">ИНН юридического лица:</label>
+                                            <input type="text" th:name="'customerResponsibleInnCompany_' + ${customerRes.id}" th:value="${customerRes.innCompany}" class="col-sm-8">
                                         </div>
                                         <div class="form-group row">
-                                            <label for="customerResponsibleAddress_1" class="col-sm-4">Адрес юридического лица:</label>
-                                            <input type="text" id="customerResponsibleAddress_1" name="customerResponsibleAddress_1" required class="col-sm-8">
+                                            <label class="col-sm-4">Адрес юридического лица:</label>
+                                            <input type="text" th:name="'customerResponsibleAdrCompany_' + ${customerRes.id}" th:value="${customerRes.adrCompany}" class="col-sm-8">
                                         </div>
                                     </div>
 
                                     <!-- Кнопка добавления ответственного лица -->
-                                    <button type="button" class="btn btn-primary btn-icon-split mt-3" onclick="addCustomerResponsible()">
-                                <span class="icon text-white-50">
-                                    <i class="fas fa-plus"></i>
-                                </span>
+                                    <button type="button" class="btn btn-primary btn-icon-split mt-3"
+                                            onclick="addCustomerResponsible()">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-plus"></i>
+                                        </span>
                                         <span class="text">Добавить ответственное лицо</span>
                                     </button>
                                 </div>
@@ -193,62 +196,119 @@
                                         <h4 class="h4 mb-0 text-gray-800">Подрядчик</h4>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="subcontractorName" class="col-sm-4">Наименование подрядчика:</label>
-                                        <input type="text" id="subcontractorName" name="subcontractorName" required class="col-sm-8">
+                                        <label class="col-sm-4">Наименование подрядчика:</label>
+                                        <input type="text" name="nameContractor" th:value="${el.nameContractor}" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="subcontractorOGRN" class="col-sm-4">ОГРН подрядчика:</label>
-                                        <input type="text" id="subcontractorOGRN" name="subcontractorOGRN" required class="col-sm-8">
+                                        <label class="col-sm-4">ОГРН подрядчика:</label>
+                                        <input type="text" name="ogrnContractor" th:value="${el.ogrnContractor}" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="subcontractorINN" class="col-sm-4">ИНН подрядчика:</label>
-                                        <input type="text" id="subcontractorINN" name="subcontractorINN" required class="col-sm-8">
+                                        <label class="col-sm-4">ИНН подрядчика:</label>
+                                        <input type="text" name="innContractor" th:value="${el.innContractor}" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="subcontractorAddress" class="col-sm-4">Адрес подрядчика:</label>
-                                        <input type="text" id="subcontractorAddress" name="subcontractorAddress" required class="col-sm-8">
+                                        <label class="col-sm-4">Адрес подрядчика:</label>
+                                        <input type="text" name="addressContractor" th:value="${el.addressContractor}" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="subcontractorPhone" class="col-sm-4">Телефон/факс подрядчика:</label>
-                                        <input type="text" id="subcontractorPhone" name="subcontractorPhone" required class="col-sm-8">
+                                        <label class="col-sm-4">Телефон/факс подрядчика:</label>
+                                        <input type="text" name="phoneContractor" th:value="${el.phoneContractor}" class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4">Наименование саморегулируемой организации
+                                            подрядчика:</label>
+                                        <input type="text" name="nameOrganizationContractor" th:value="${el.nameOrganizationContractor}" class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4">ОГРН саморегулируемой организации подрядчика:</label>
+                                        <input type="text" name="ogrnOrganizationContractor" th:value="${el.ogrnOrganizationContractor}" class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4">ИНН саморегулируемой организации подрядчика:</label>
+                                        <input type="text" name="innOrganizationContractor" th:value="${el.innOrganizationContractor}" class="col-sm-8">
                                     </div>
 
                                     <!-- Контейнер для добавления новых полей для ответственных лиц -->
-                                    <div id="subcustomerResponsiblesContainer">
+                                    <div id="subcustomerResponsiblesContainer" th:each="subcustomerRes : subcustomerResponsibles">
                                         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                            <h4 class="h4 mb-0 text-gray-800">Представитель подрядчика №1</h4>
+                                            <h4 class="h4 mb-0 text-gray-800">Представитель подрядчика</h4>
                                         </div>
                                         <div class="form-group row">
-                                            <label for="subcustomerResponsiblePosition_1" class="col-sm-4">Должность представителя подрядчика:</label>
-                                            <input type="text" id="subcustomerResponsiblePosition_1" name="subcustomerResponsiblePosition_1" required class="col-sm-8">
+                                            <label class="col-sm-4">Должность представителя подрядчика:</label>
+                                            <input type="text" th:name="'subcustomerResponsiblePosition_' + ${subcustomerRes.id}" th:value="${subcustomerRes.position}" class="col-sm-8">
                                         </div>
                                         <div class="form-group row">
-                                            <label for="subcustomerResponsibleName_1" class="col-sm-4">ФИО представителя подрядчика:</label>
-                                            <input type="text" id="subcustomerResponsibleName_1" name="subcustomerResponsibleName_1" required class="col-sm-8">
+                                            <label class="col-sm-4">ФИО представителя подрядчика:</label>
+                                            <input type="text" th:name="'subcustomerResponsibleName_' + ${subcustomerRes.id}" th:value="${subcustomerRes.name}" class="col-sm-8">
                                         </div>
                                         <div class="form-group row">
-                                            <label for="subcustomerResponsibleID_1" class="col-sm-6">Идентификационный номер в национальном реестре специалистов:</label>
-                                            <input type="text" id="subcustomerResponsibleID_1" name="subcustomerResponsibleID_1" required class="col-sm-6">
+                                            <label class="col-sm-6">Идентификационный номер в национальном реестре
+                                                специалистов:</label>
+                                            <input type="text" th:name="'subcustomerResponsibleIdNumber_' + ${subcustomerRes.id}" th:value="${subcustomerRes.idNumber}" class="col-sm-6">
                                         </div>
                                         <div class="form-group row">
-                                            <label for="subcustomerResponsibleDocument_1" class="col-sm-4">Распорядительный документ:</label>
-                                            <input type="text" id="subcustomerResponsibleDocument_1" name="subcustomerResponsibleDocument_1" required class="col-sm-8">
+                                            <label class="col-sm-4">Распорядительный документ:</label>
+                                            <input type="text" th:name="'subcustomerResponsibleNameDocument_' + ${subcustomerRes.id}" th:value="${subcustomerRes.nameDocument}" class="col-sm-8">
                                         </div>
                                         <div class="form-group row">
-                                            <label for="subcustomerResponsibleNumber_1" class="col-sm-4">Номер распорядительного документа:</label>
-                                            <input type="text" id="subcustomerResponsibleNumber_1" name="subcustomerResponsibleNumber_1" required class="col-sm-8">
+                                            <label class="col-sm-4">Номер распорядительного документа:</label>
+                                            <input type="text" th:name="'subcustomerResponsibleNumberDocument_' + ${subcustomerRes.id}" th:value="${subcustomerRes.numberDocument}" class="col-sm-8">
                                         </div>
                                         <div class="form-group row">
-                                            <label for="subcustomerResponsibleDate_1" class="col-sm-4">Дата распорядительного документа:</label>
-                                            <input type="text" id="subcustomerResponsibleDate_1" name="subcustomerResponsibleDate_1" required class="col-sm-8">
+                                            <label class="col-sm-4">Дата распорядительного документа:</label>
+                                            <input type="text" th:name="'subcustomerResponsibleDateDocument_' + ${subcustomerRes.id}" th:value="${subcustomerRes.dateDocument}" class="col-sm-8">
                                         </div>
                                     </div>
 
                                     <!-- Кнопка добавления ответственного лица -->
-                                    <button type="button" class="btn btn-primary btn-icon-split mt-3" onclick="addSubcustomerResponsible()">
-                                <span class="icon text-white-50">
-                                    <i class="fas fa-plus"></i>
-                                </span>
+                                    <button type="button" class="btn btn-primary btn-icon-split mt-3"
+                                            onclick="addSubcustomerResponsible()">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-plus"></i>
+                                        </span>
+                                        <span class="text">Добавить ответственное лицо</span>
+                                    </button>
+
+                                    <!-- Контейнер для добавления новых полей для ответственных лиц -->
+                                    <div id="subcustomerResponsiblesContainer2" th:each="subcustomerRes2 : subcustomerResponsibles2">
+                                        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                            <h4 class="h4 mb-0 text-gray-800">Представитель подрядчика по вопросам
+                                                строительного контроля</h4>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">Должность представителя подрядчика:</label>
+                                            <input type="text" th:name="'subcustomerResponsible2Position_' + ${subcustomerRes2.id}" th:value="${subcustomerRes2.position}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">ФИО представителя подрядчика:</label>
+                                            <input type="text" th:name="'subcustomerResponsible2Name_' + ${subcustomerRes2.id}" th:value="${subcustomerRes2.name}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-6">Идентификационный номер в национальном реестре
+                                                специалистов:</label>
+                                            <input type="text" th:name="'subcustomerResponsible2IdNumber_' + ${subcustomerRes2.id}" th:value="${subcustomerRes2.idNumber}" class="col-sm-6">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">Распорядительный документ:</label>
+                                            <input type="text" th:name="'subcustomerResponsible2NameDocument_' + ${subcustomerRes2.id}" th:value="${subcustomerRes2.nameDocument}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">Номер распорядительного документа:</label>
+                                            <input type="text" th:name="'subcustomerResponsible2NumberDocument_' + ${subcustomerRes2.id}" th:value="${subcustomerRes2.numberDocument}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">Дата распорядительного документа:</label>
+                                            <input type="text" th:name="'subcustomerResponsible2DateDocument_' + ${subcustomerRes2.id}" th:value="${subcustomerRes2.dateDocument}" class="col-sm-8">
+                                        </div>
+                                    </div>
+
+                                    <!-- Кнопка добавления ответственного лица -->
+                                    <button type="button" class="btn btn-primary btn-icon-split mt-3"
+                                            onclick="addSubcustomerResponsible2()">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-plus"></i>
+                                        </span>
                                         <span class="text">Добавить ответственное лицо</span>
                                     </button>
                                 </div>
@@ -259,32 +319,149 @@
                                         <h4 class="h4 mb-0 text-gray-800">Проектировщик</h4>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="designerName" class="col-sm-4">Наименование проектировщика:</label>
-                                        <input type="text" id="designerName" name="designerName" required class="col-sm-8">
+                                        <label class="col-sm-4">Наименование проектировщика:</label>
+                                        <input type="text" name="nameDesigner" th:value="${el.nameDesigner}" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="designerOGRN" class="col-sm-4">ОГРН проектировщика:</label>
-                                        <input type="text" id="designerOGRN" name="designerOGRN" required class="col-sm-8">
+                                        <label class="col-sm-4">ОГРН проектировщика:</label>
+                                        <input type="text" name="ogrnDesigner" th:value="${el.ogrnDesigner}" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="designerINN" class="col-sm-4">ИНН проектировщика:</label>
-                                        <input type="text" id="designerINN" name="designerINN" required class="col-sm-8">
+                                        <label class="col-sm-4">ИНН проектировщика:</label>
+                                        <input type="text" name="innDesigner" th:value="${el.innDesigner}" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="designerAddress" class="col-sm-4">Адрес проектировщика:</label>
-                                        <input type="text" id="designerAddress" name="designerAddress" required class="col-sm-8">
+                                        <label class="col-sm-4">Адрес проектировщика:</label>
+                                        <input type="text" name="addressDesigner" th:value="${el.addressDesigner}" class="col-sm-8">
                                     </div>
                                     <div class="form-group row">
-                                        <label for="designerPhone" class="col-sm-4">Телефон/факс проектировщика:</label>
-                                        <input type="text" id="designerPhone" name="designerPhone" required class="col-sm-8">
+                                        <label class="col-sm-4">Телефон/факс проектировщика:</label>
+                                        <input type="text" name="phoneDesigner" th:value="${el.phoneDesigner}" class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4">Наименование саморегулируемой организации
+                                            проектировщика:</label>
+                                        <input type="text" name="nameOrganizationDesigner" th:value="${el.nameOrganizationDesigner}" class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4">ОГРН саморегулируемой организации
+                                            проектировщика:</label>
+                                        <input type="text" name="ogrnOrganizationDesigner" th:value="${el.ogrnOrganizationDesigner}" class="col-sm-8">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4">ИНН саморегулируемой организации проектировщика:</label>
+                                        <input type="text" name="innOrganizationDesigner" th:value="${el.innOrganizationDesigner}" class="col-sm-8">
                                     </div>
 
-                                    <div id="designerResponsiblesContainer"></div>
+                                    <div id="designerResponsiblesContainer" th:each="designerRes : designerResponsibles">
+                                        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                            <h4 class="h4 mb-0 text-gray-800">Представитель проектировщика</h4>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">Должность представителя проектировщика:</label>
+                                            <input type="text" th:name="'designerResponsiblePosition_' + ${designerRes.id}" th:value="${designerRes.position}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">ФИО представителя проектировщика:</label>
+                                            <input type="text" th:name="'designerResponsibleName_' + ${designerRes.id}" th:value="${designerRes.name}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-6">Идентификационный номер в национальном реестре
+                                                специалистов:</label>
+                                            <input type="text" th:name="'designerResponsibleIdNumber_' + ${designerRes.id}" th:value="${designerRes.idNumber}" class="col-sm-6">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">Распорядительный документ:</label>
+                                            <input type="text" th:name="'designerResponsibleNameDocument_' + ${designerRes.id}" th:value="${designerRes.nameDocument}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">Номер распорядительного документа:</label>
+                                            <input type="text" th:name="'designerResponsibleNumberDocument_' + ${designerRes.id}" th:value="${designerRes.numberDocument}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">Дата распорядительного документа:</label>
+                                            <input type="text" th:name="'designerResponsibleDateDocument_' + ${designerRes.id}" th:value="${designerRes.dateDocument}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-6">Юридическое лицо представителя проектировщика:</label>
+                                            <input type="text" th:name="'designerResponsibleNameCompany_' + ${designerRes.id}" th:value="${designerRes.nameCompany}" class="col-sm-6">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">ОГРН юридического лица:</label>
+                                            <input type="text" th:name="'designerResponsibleOgrnCompany_' + ${designerRes.id}" th:value="${designerRes.ogrnCompany}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">ИНН юридического лица:</label>
+                                            <input type="text" th:name="'designerResponsibleInnCompany_' + ${designerRes.id}" th:value="${designerRes.innCompany}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">Адрес юридического лица:</label>
+                                            <input type="text" th:name="'designerResponsibleAdrCompany_' + ${designerRes.id}" th:value="${designerRes.adrCompany}" class="col-sm-8">
+                                        </div>
+                                    </div>
                                     <!-- Кнопка добавления ответственного лица -->
-                                    <button type="button" class="btn btn-primary btn-icon-split mt-3" onclick="addDesignerResponsible()">
-                                <span class="icon text-white-50">
-                                    <i class="fas fa-plus"></i>
-                                </span>
+                                    <button type="button" class="btn btn-primary btn-icon-split mt-3"
+                                            onclick="addDesignerResponsible()">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-plus"></i>
+                                        </span>
+                                        <span class="text">Добавить ответственное лицо</span>
+                                    </button>
+                                </div>
+                                <!-- Designer Section -->
+                                <div id="section-another-person" class="form-section" style="display:none;">
+                                    <div id="anotherPersonResponsiblesContainer" th:each="anotherPersonRes : anotherPersonResponsibles">
+                                        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                            <h4 class="h4 mb-0 text-gray-800">Представитель иного лица</h4>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">Должность представителя иного лица:</label>
+                                            <input type="text" th:name="'anotherPersonResponsiblePosition_' + ${anotherPersonRes.id}" th:value="${anotherPersonRes.position}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">ФИО представителя иного лица:</label>
+                                            <input type="text" th:name="'anotherPersonResponsibleName_' + ${anotherPersonRes.id}" th:value="${anotherPersonRes.name}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-6">Идентификационный номер в национальном реестре
+                                                специалистов:</label>
+                                            <input type="text" th:name="'anotherPersonResponsibleIdNumber_' + ${anotherPersonRes.id}" th:value="${anotherPersonRes.idNumber}" class="col-sm-6">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">Распорядительный документ:</label>
+                                            <input type="text" th:name="'anotherPersonResponsibleNameDocument_' + ${anotherPersonRes.id}" th:value="${anotherPersonRes.nameDocument}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">Номер распорядительного документа:</label>
+                                            <input type="text" th:name="'anotherPersonResponsibleNumberDocument_' + ${anotherPersonRes.id}" th:value="${anotherPersonRes.numberDocument}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">Дата распорядительного документа:</label>
+                                            <input type="text" th:name="'anotherPersonResponsibleDateDocument_' + ${anotherPersonRes.id}" th:value="${anotherPersonRes.dateDocument}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-6">Юридическое лицо представителя иного лица:</label>
+                                            <input type="text" th:name="'anotherPersonResponsibleNameCompany_' + ${anotherPersonRes.id}" th:value="${anotherPersonRes.nameCompany}" class="col-sm-6">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">ОГРН юридического лица:</label>
+                                            <input type="text" th:name="'anotherPersonResponsibleOgrnCompany_' + ${anotherPersonRes.id}" th:value="${anotherPersonRes.ogrnCompany}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">ИНН юридического лица:</label>
+                                            <input type="text" th:name="'anotherPersonResponsibleInnCompany_' + ${anotherPersonRes.id}" th:value="${anotherPersonRes.innCompany}" class="col-sm-8">
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4">Адрес юридического лица:</label>
+                                            <input type="text" th:name="'anotherPersonResponsibleAdrCompany_' + ${anotherPersonRes.id}" th:value="${anotherPersonRes.adrCompany}" class="col-sm-8">
+                                        </div>
+                                    </div>
+                                    <!-- Кнопка добавления ответственного лица -->
+                                    <button type="button" class="btn btn-primary btn-icon-split mt-3"
+                                            onclick="addAnotherPersonResponsible()">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-plus"></i>
+                                        </span>
                                         <span class="text">Добавить ответственное лицо</span>
                                     </button>
                                 </div>
@@ -311,7 +488,7 @@
 <!-- End of Page Wrapper -->
 
 <!-- JavaScript для управления видимостью секций -->
-<script src="js/new_abd_toggle.js"></script>
+<script src="js/passportObjectEdit.js"></script>
 
 <!-- Bootstrap core JavaScript-->
 <script src="vendor/jquery/jquery.min.js"></script>

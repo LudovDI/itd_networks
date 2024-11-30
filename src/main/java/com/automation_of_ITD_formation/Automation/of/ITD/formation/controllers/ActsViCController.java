@@ -1,8 +1,13 @@
 package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.ActsViCData;
+import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.ItdData;
+import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.UserData;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.ActsViCRepository;
+import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.ItdRepository;
+import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,74 +15,124 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import java.security.Principal;
+import java.util.*;
 
 @Controller
 public class ActsViCController {
 
     @Autowired
     private ActsViCRepository actsViCRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ItdRepository itdRepository;
 
-    @GetMapping("/acts-vic-table")
-    public String actsVicTable(Model model) {
-        Iterable<ActsViCData> actsViCList = actsViCRepository.findAll();
+    @GetMapping("/acts-vic-table/{id}")
+    public String actsVicTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
+        String username = principal.getName();
+        UserData currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        model.addAttribute("userData", currentUser);
+        List<ItdData> itdDataList = currentUser.getItdData();
+        if (!itdDataList.isEmpty()) {
+            model.addAttribute("itdList", itdDataList);
+        } else {
+            model.addAttribute("itdList", List.of());
+        }
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
+        model.addAttribute("itdData", itdData);
+        Set<ActsViCData> actsViCList = itdData.getActsViCData();
         model.addAttribute("actsViCList", actsViCList);
         return "actsVicTable";
     }
 
-    @GetMapping("/acts-vic-add")
-    public String actsVicAdd(Model model) {
+    @GetMapping("/acts-vic-add/{id}")
+    public String actsVicAdd(@PathVariable(value = "id") long id, Model model, Principal principal) {
+        String username = principal.getName();
+        UserData currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        model.addAttribute("userData", currentUser);
+        List<ItdData> itdDataList = currentUser.getItdData();
+        if (!itdDataList.isEmpty()) {
+            model.addAttribute("itdList", itdDataList);
+        } else {
+            model.addAttribute("itdList", List.of());
+        }
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
+        model.addAttribute("itdData", itdData);
         return "actsVicAdd";
     }
 
-    @PostMapping("/acts-vic-add")
-    public String postActsVicAdd(@RequestParam("numberActViC") String numberActViC,
-                               @RequestParam("dataActViC") String dataActViC,
-                               @RequestParam("nameLaboratory") String nameLaboratory) {
+    @PostMapping("/acts-vic-add/{id}")
+    public String postActsVicAdd(@PathVariable(value = "id") long id,
+                                 @RequestParam("numberActViC") String numberActViC,
+                                 @RequestParam("dataActViC") String dataActViC,
+                                 @RequestParam("nameLaboratory") String nameLaboratory) {
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
         ActsViCData actsViCData = new ActsViCData(numberActViC, dataActViC, nameLaboratory);
+        actsViCData.setStatus("Требует создания");
+        actsViCData.setItdToActsViCData(itdData);
         actsViCRepository.save(actsViCData);
-        return "redirect:/acts-vic-table";
+        return "redirect:/acts-vic-table/" + id;
     }
 
-    @GetMapping("/acts-vic-table/{id}/acts-vic-edit")
-    public String actsVicEdit(@PathVariable(value = "id") long id, Model model) {
-        if (!actsViCRepository.existsById(id)) {
-            return "redirect:/acts-vic-table";
+    @GetMapping("/acts-vic-table/{itdId}/acts-vic-edit/{actId}")
+    public String actsVicEdit(@PathVariable(value = "itdId") long itdId,
+                              @PathVariable(value = "actId") long actId,
+                              Model model, Principal principal) {
+        String username = principal.getName();
+        UserData currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        model.addAttribute("userData", currentUser);
+        List<ItdData> itdDataList = currentUser.getItdData();
+        if (!itdDataList.isEmpty()) {
+            model.addAttribute("itdList", itdDataList);
+        } else {
+            model.addAttribute("itdList", List.of());
+        }
+        ItdData itdData = itdRepository.findById(itdId).orElseThrow();
+        model.addAttribute("itdData", itdData);
+        if (!actsViCRepository.existsById(actId)) {
+            return "redirect:/acts-vic-table/" + itdId;
         }
 
-        Optional<ActsViCData> actsViCDataOptional = actsViCRepository.findById(id);
+        Optional<ActsViCData> actsViCDataOptional = actsViCRepository.findById(actId);
         ArrayList<ActsViCData> res = new ArrayList<>();
         actsViCDataOptional.ifPresent(res::add);
         model.addAttribute("actsVicDataOptional", res);
         return "actsVicEdit";
     }
 
-    @PostMapping("/acts-vic-table/{id}/acts-vic-edit")
-    public String postActsVicUpdate(@PathVariable(value = "id") long id,
+    @PostMapping("/acts-vic-table/{itdId}/acts-vic-edit/{actId}")
+    public String postActsVicUpdate(@PathVariable(value = "itdId") long itdId,
+                                    @PathVariable(value = "actId") long actId,
                                     @RequestParam("numberActViC") String numberActViC,
                                     @RequestParam("dataActViC") String dataActViC,
                                     @RequestParam("nameLaboratory") String nameLaboratory) {
-        ActsViCData actsViCData = actsViCRepository.findById(id).orElseThrow();
+        ActsViCData actsViCData = actsViCRepository.findById(actId).orElseThrow();
         actsViCData.setNumberActViC(numberActViC);
         actsViCData.setDataActViC(dataActViC);
         actsViCData.setNameLaboratory(nameLaboratory);
         actsViCRepository.save(actsViCData);
-        return "redirect:/acts-vic-table";
+        return "redirect:/acts-vic-table/" + itdId;
     }
 
-    @PostMapping("/acts-vic-table/{id}/acts-vic-remove")
-    public String postActsVicDelete(@PathVariable(value = "id") long id, Model model) {
-        ActsViCData actsViCData = actsViCRepository.findById(id).orElseThrow();
+    @PostMapping("/acts-vic-table/{itdId}/acts-vic-remove/{actId}")
+    public String postActsVicDelete(@PathVariable(value = "itdId") long itdId,
+                                    @PathVariable(value = "actId") long actId) {
+        ActsViCData actsViCData = actsViCRepository.findById(actId).orElseThrow();
         actsViCRepository.delete(actsViCData);
-        return "redirect:/acts-vic-table";
+        return "redirect:/acts-vic-table/" + itdId;
     }
 
-    @PostMapping("/acts-vic-table/{id}/update-status")
-    public String updateStatus(@PathVariable("id") Long id, @RequestParam("status") String status) {
-        ActsViCData act = actsViCRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid act Id:" + id));
+    @PostMapping("/acts-vic-table/{itdId}/update-status/{actId}")
+    public String updateStatus(@PathVariable(value = "itdId") long itdId,
+                               @PathVariable(value = "actId") long actId,
+                               @RequestParam("status") String status) {
+        ActsViCData act = actsViCRepository.findById(actId).orElseThrow(() -> new IllegalArgumentException("Invalid act Id:" + actId));
         act.setStatus(status);
         actsViCRepository.save(act);
-        return "redirect:/acts-vic-table";
+        return "redirect:/acts-vic-table/" + itdId;
     }
 }

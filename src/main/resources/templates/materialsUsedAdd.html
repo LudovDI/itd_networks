@@ -12,13 +12,12 @@
     <title>Добавить материал</title>
 
     <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-            rel="stylesheet">
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i}"
+          rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
 
 </head>
 
@@ -54,13 +53,10 @@
                         <h6 class="m-0 font-weight-bold text-primary">Добавление материала</h6>
                     </div>
 
-                    <form action="/materials-used-add" method="post">
+                    <form th:action="'/materials-used-add/' + ${itdData.id}" method="post">
                         <div class="card-body">
                             <div class="row mb-4">
                                 <div class="col-lg-4 mb-3 pr-3">
-                                    <div class="mb-2">
-                                        <label/>
-                                    </div>
                                     <div>
                                         <label>Наименование материала</label>
                                         <input type="text" name="material" class="form-control">
@@ -110,7 +106,7 @@
 
                             <!-- Кнопки Отмена и Сохранить -->
                             <div class="d-flex justify-content-between mt-4 mt-0 mr-5 ml-5">
-                                <a href="/materials-used-table" role="button" class="btn btn-light btn-icon-split">
+                                <a th:href="'/materials-used-table/' + ${itdData.id}" role="button" class="btn btn-light btn-icon-split">
                                     <span class="icon text-gray-600">
                                         <i class="fas fa-arrow-right"></i>
                                     </span>

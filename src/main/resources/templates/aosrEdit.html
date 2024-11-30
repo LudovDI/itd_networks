@@ -12,13 +12,12 @@
     <title>Редактирование акта ОСР</title>
 
     <!-- Custom fonts for this template-->
-    <link href="../../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-            rel="stylesheet">
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i}"
+          rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="../../css/sb-admin-2.min.css" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
 
 </head>
 
@@ -69,26 +68,19 @@
                                                                    name="query"
                                                                    placeholder="Введите название материала">
                                                             <input type="hidden" name="sourcePage" value="aosrEdit">
-                                                            <button type="submit" formaction="/aosr-search-materials"
-                                                                    formmethod="get" onclick="saveInputData()"
+                                                            <input type="hidden" name="id" th:value="${el.id}">
+                                                            <button type="submit" th:formaction="'/aosr-search-materials/' + ${itdData.id}" formmethod="get" onclick="saveInputData()"
                                                                     class="btn btn-success border-white ml-3">Искать
                                                             </button>
                                                         </div>
-                                                        <div th:each="material : ${selectedMaterialsList}">
-                                                            <input type="hidden" name="selectedMaterials"
-                                                                   th:value="${material.id}">
-                                                            <input type="checkbox" th:checked="true" disabled
-                                                                   th:text="${material.nameMaterial} + '. ' + ${material.accompanyingDocuments[0].name} + ' № ' + ${material.accompanyingDocuments[0].number} + ' от ' + ${material.accompanyingDocuments[0].date} + ' г.'">
-                                                            <button type="button" onclick="removeDiv(this)"
-                                                                    class="btn btn-success border-white mt-3 me-5">
-                                                                Удалить
-                                                            </button>
+                                                        <div th:each="selMaterial : ${selectedMaterialsList}">
+                                                            <input type="checkbox" checked="checked" th:name="'selectedMaterials' + ${selMaterial.id}" th:value="${selMaterial.id}"
+                                                                   th:text="${selMaterial.nameMaterial} + '. ' + ${selMaterial.accompanyingDocuments[0].name} + ' № ' + ${selMaterial.accompanyingDocuments[0].number} + ' от ' + ${selMaterial.accompanyingDocuments[0].date} + ' г.'">
                                                         </div>
                                                         <div id="searchResults" th:if="${foundMaterialsList}">
-                                                            <div th:each="material : ${foundMaterialsList}">
-                                                                <input type="checkbox" name="selectedMaterials"
-                                                                       th:value="${material.id}"
-                                                                       th:text="${material.nameMaterial} + ' - ' + ${material.accompanyingDocuments[0].name} + ' № ' + ${material.accompanyingDocuments[0].number} + ' от ' + ${material.accompanyingDocuments[0].date} + ' г.'">
+                                                            <div th:each="foundMaterial : ${foundMaterialsList}">
+                                                                <input type="checkbox" th:name="'selectedMaterials' + ${foundMaterial.id}" th:value="${foundMaterial.id}"
+                                                                       th:text="${foundMaterial.nameMaterial} + ' - ' + ${foundMaterial.accompanyingDocuments[0].name} + ' № ' + ${foundMaterial.accompanyingDocuments[0].number} + ' от ' + ${foundMaterial.accompanyingDocuments[0].date} + ' г.'">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -98,8 +90,8 @@
                                         <div class="card mb-3">
                                             <div class="card-body">
                                                 <label class="p-0">Работы выполнены по проектной документации:</label>
-                                                <div id="projectSectionContainer">
-                                                    <div class="row mb-3" th:each="projSection, iterStat : ${projectSectionList}"
+                                                    <div id="projectSectionContainer">
+                                                    <div class="row" th:each="projSection, iterStat : ${projectSectionList}"
                                                          th:id="'projectSectionRow' + ${iterStat.index + 1}">
                                                         <div class="col-lg-4 pt-1 pb-1">
                                                             <div class="card ml-4 mr-4">
@@ -231,11 +223,12 @@
                                                 <label class="p-0">Протокол ГНБ:</label>
                                                 <select id="protocolGnbSelect" name="protocolGnbSelect"
                                                         class="form-control">
-                                                    <option value="-1">---</option>
+                                                    <option value="-1"
+                                                            th:selected="${-1 == protocolGnbId}">---</option>
                                                     <option th:each="protocol : ${protocolsGnbList}"
                                                             th:value="${protocol.id}"
                                                             th:text="'Протокол ГНБ № ' + ${protocol.numberProtocolGnb} + ' от ' + ${protocol.dataProtocolGnb} + ' г.'"
-                                                            th:selected="${protocol.id == el.protocolsGnbData.id}"></option>
+                                                            th:selected="${protocol.id == protocolGnbId}"></option>
                                                 </select>
                                             </div>
                                         </div>
@@ -263,11 +256,12 @@
                                                 <label class="p-0">Протокол уплотнения:</label>
                                                 <select id="sealingProtocolSelect" name="sealingProtocolSelect"
                                                         class="form-control">
-                                                    <option value="-1">---</option>
+                                                    <option value="-1"
+                                                            th:selected="${-1 == protocolSealingId}">---</option>
                                                     <option th:each="protocol : ${sealingProtocolsList}"
                                                             th:value="${protocol.id}"
                                                             th:text="'Протокол уплотнения № ' + ${protocol.numberSealingProtocols} + ' от ' + ${protocol.dataSealingProtocols} + ' г.'"
-                                                            th:selected="${protocol.id == el.sealingProtocolsData.id}"></option>
+                                                            th:selected="${protocol.id == protocolSealingId}"></option>
                                                 </select>
                                             </div>
                                         </div>
@@ -281,11 +275,12 @@
                                                 <label class="p-0">Приказ на представителя заказчика:</label>
                                                 <select id="customerResponsibleSelect" name="customerResponsibleSelect"
                                                         class="form-control">
-                                                    <option value="-1">---</option>
+                                                    <option value="-1"
+                                                            th:selected="${-1 == customerResId}">---</option>
                                                     <option th:each="customer : ${customerResponsibleList}"
                                                             th:value="${customer.id}"
                                                             th:text="${customer.position} + ' ' + ${customer.name}"
-                                                            th:selected="${customer.id == el.customerResponsibleData.id}"></option>
+                                                            th:selected="${customer.id == customerResId}"></option>
                                                 </select>
                                             </div>
                                         </div>
@@ -295,11 +290,12 @@
                                                 <select id="subcustomerResponsibleSelect"
                                                         name="subcustomerResponsibleSelect"
                                                         class="form-control">
-                                                    <option value="-1">---</option>
+                                                    <option value="-1"
+                                                            th:selected="${-1 == subcustomerResId}">---</option>
                                                     <option th:each="subcustomer : ${subcustomerResponsibleList}"
                                                             th:value="${subcustomer.id}"
                                                             th:text="${subcustomer.position} + ' ' + ${subcustomer.name}"
-                                                            th:selected="${subcustomer.id == el.subcustomerResponsibleData.id}"></option>
+                                                            th:selected="${subcustomer.id == subcustomerResId}"></option>
                                                 </select>
                                             </div>
                                         </div>
@@ -310,11 +306,12 @@
                                                 <select id="subcustomerResponsible2Select"
                                                         name="subcustomerResponsible2Select"
                                                         class="form-control">
-                                                    <option value="-1">---</option>
+                                                    <option value="-1"
+                                                            th:selected="${-1 == subcustomerRes2Id}">---</option>
                                                     <option th:each="subcustomer2 : ${subcustomerResponsible2List}"
                                                             th:value="${subcustomer2.id}"
                                                             th:text="${subcustomer2.position} + ' ' + ${subcustomer2.name}"
-                                                            th:selected="${subcustomer2.id == el.subcustomerResponsible2Data.id}"></option>
+                                                            th:selected="${subcustomer2.id == subcustomerRes2Id}"></option>
                                                 </select>
                                             </div>
                                         </div>
@@ -323,11 +320,12 @@
                                                 <label class="p-0">Приказ на представителя проектировщика:</label>
                                                 <select id="designerResponsibleSelect" name="designerResponsibleSelect"
                                                         class="form-control">
-                                                    <option value="-1">---</option>
+                                                    <option value="-1"
+                                                            th:selected="${-1 == designerResId}">---</option>
                                                     <option th:each="designer : ${designerResponsibleList}"
                                                             th:value="${designer.id}"
                                                             th:text="${designer.position} + ' ' + ${designer.name}"
-                                                            th:selected="${designer.id == el.designerResponsibleData.id}"></option>
+                                                            th:selected="${designer.id == designerResId}"></option>
                                                 </select>
                                             </div>
                                         </div>
@@ -337,11 +335,12 @@
                                                 <select id="anotherPersonResponsibleSelect"
                                                         name="anotherPersonResponsibleSelect"
                                                         class="form-control">
-                                                    <option value="-1">---</option>
+                                                    <option value="-1"
+                                                            th:selected="${-1 == anotherPersonResId}">---</option>
                                                     <option th:each="anotherPerson : ${anotherPersonResponsibleList}"
                                                             th:value="${anotherPerson.id}"
                                                             th:text="${anotherPerson.position} + ' ' + ${anotherPerson.name}"
-                                                            th:selected="${anotherPerson.id == el.anotherPersonResponsibleData?.id}"></option>
+                                                            th:selected="${anotherPerson.id == anotherPersonResId}"></option>
                                                 </select>
                                             </div>
                                         </div>
@@ -387,7 +386,7 @@
 
                                 <!-- Кнопки Отмена и Сохранить -->
                                 <div class="d-flex justify-content-between mt-4 mr-5 ml-5">
-                                    <a href="/aosr-table" role="button" class="btn btn-light btn-icon-split"
+                                    <a th:href="'/aosr-table/' + ${itdData.id}" role="button" class="btn btn-light btn-icon-split"
                                        onclick="clearInputData()">
                                     <span class="icon text-gray-600">
                                         <i class="fas fa-arrow-right"></i>

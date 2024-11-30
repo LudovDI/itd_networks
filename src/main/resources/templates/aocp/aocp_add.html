@@ -49,7 +49,221 @@
                 </div>
                 <hr>
 
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Добавление акта ОСР</h6>
+                    </div>
 
+                    <form action="/aosr-add" method="post">
+                        <div class="card-body">
+                            <div class="row justify-content-between mb-2">
+                                <!-- Левая часть -->
+                                <div class="col-lg-5 mb-3 ml-4">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <label class="p-0">При выполнении работ применены:</label>
+                                            <div class="row">
+                                                <div class="col-lg-9">
+                                                    <div>
+                                                        <input class="w-50" type="text" id="searchInput" name="query"
+                                                               placeholder="Введите название материала">
+                                                        <input type="hidden" name="sourcePage" value="aosrAdd">
+                                                        <button type="submit" formaction="/search-materials"
+                                                                formmethod="get" onclick="saveInputData()"
+                                                                class="btn btn-success border-white ms-5">Искать
+                                                        </button>
+                                                    </div>
+                                                    <div th:each="material : ${selectedMaterialsList}">
+                                                        <input type="hidden" name="selectedMaterials"
+                                                               th:value="${material.id}">
+                                                        <input type="checkbox" th:checked="true" disabled
+                                                               th:text="${material.nameMaterial} + '. ' + ${material.accompanyingDocuments[0].name} + ' № ' + ${material.accompanyingDocuments[0].number} + ' от ' + ${material.accompanyingDocuments[0].date} + ' г.'">
+                                                        <button type="button" onclick="removeMaterial(this)"
+                                                                class="btn btn-success border-white mt-3 me-5">Удалить
+                                                        </button>
+                                                    </div>
+                                                    <div id="searchResults" th:if="${foundMaterialsList}">
+                                                        <div th:each="material : ${foundMaterialsList}">
+                                                            <input type="checkbox" name="selectedMaterials"
+                                                                   th:value="${material.id}"
+                                                                   th:text="${material.nameMaterial} + ' - ' + ${material.accompanyingDocuments[0].name} + ' № ' + ${material.accompanyingDocuments[0].number} + ' от ' + ${material.accompanyingDocuments[0].date} + ' г.'">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <label class="p-0">Работы выполнены по проектной документации:</label>
+                                            <div id="projectSectionContainer">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <select class="btn btn-light dropdown-toggle"
+                                                                name="projectSectionSelect1">
+                                                            <option th:each="data : ${projectDocumentationList}"
+                                                                    th:value="${data.projectSection}"
+                                                                    th:text="${data.projectSection}"></option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="card">
+                                                            <!-- Card Header - Accordion -->
+                                                            <a href="#collapseCardExample"
+                                                               class="d-block card-header btn-light pr-3 pl-3 pt-3 collapsed"
+                                                               data-toggle="collapse" role="button"
+                                                               aria-expanded="false"
+                                                               aria-controls="collapseCardExample">
+                                                                <h6 class="m-0">Выбор чертежей</h6>
+                                                            </a>
+                                                            <!-- Card Content - Collapse -->
+                                                            <div class="collapse" id="collapseCardExample" style="">
+                                                                <div class="card-body">
+                                                                    <div th:each="drawing : ${drawingsList}">
+                                                                        <input type="checkbox"
+                                                                               th:name="'drawingCheckbox' + ${drawing.id}"
+                                                                               th:value="${drawing.projDocToDrawings.projectSection}">
+                                                                        <span th:text="${drawing.drawing}"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-end">
+                                                    <button type="button"
+                                                            class="bg-success btn btn-success border-white mt-3 me-5"
+                                                            onclick="addProjectSection()">
+                                                        Добавить раздел
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <label class="p-0">К освидетельствованию предъявлены следующие
+                                                работы:</label>
+                                            <select id="work1" name="work1" class="form-control" onchange="addSelect()">
+                                                <option th:each="typeOfWork : ${typeOfWorkSet}" th:value="${typeOfWork}"
+                                                        th:text="${typeOfWork}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <label class="p-0">Участки:</label>
+                                            <select id="execSchemSelect" name="execSchemSelect" class="form-control">
+                                                <option th:each="data : ${executiveSchemesList}" th:value="${data.id}"
+                                                        th:text="${data.section}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <label class="p-0">Протокол ГНБ:</label>
+                                            <select id="protocolGnbSelect" name="protocolGnbSelect"
+                                                    class="form-control">
+                                                <option value="-1">---</option>
+                                                <option th:each="protocol : ${protocolsGnbList}"
+                                                        th:value="${protocol.id}"
+                                                        th:text="'Протокол ГНБ № ' + ${protocol.numberProtocolGnb} + ' от ' + ${protocol.dataProtocolGnb} + ' г.'"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Правая часть -->
+                                <div class="col-lg-6 mb-3 mr-4">
+
+                                    <div class="card mb-3">
+                                        <a href="#collapseCardExample2"
+                                           class="d-block card-header pr-3 pl-3 pt-3 collapsed" data-toggle="collapse"
+                                           role="button" aria-expanded="false" aria-controls="collapseCardExample">
+                                            <h6 class="m-0 text-secondary">Акты ВиК:</h6>
+                                        </a>
+                                        <!-- Card Content - Collapse -->
+                                        <div class="collapse" id="collapseCardExample2">
+                                            <div class="card-body">
+                                                <div th:each="act : ${actsViCList}">
+                                                    <input class="mx-1" type='checkbox' th:value="${act.id}"
+                                                           th:text="'Акт ВиК № ' + ${act.numberActViC} + ' от ' + ${act.dataActViC} + ' г.'">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <label class="p-0">Протокол уплотнения:</label>
+                                            <select id="sealingProtocolSelect" name="sealingProtocolSelect"
+                                                    class="form-control">
+                                                <option value="-1">---</option>
+                                                <option th:each="protocol : ${sealingProtocolsList}"
+                                                        th:value="${protocol.id}"
+                                                        th:text="'Протокол уплотнения № ' + ${protocol.numberSealingProtocols} + ' от ' + ${protocol.dataSealingProtocols} + ' г.'"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <h5 class="h5 mb-0">Даты:</h5>
+                                            <!-- Строки с датами: начало работ -->
+                                            <div class="form-group row">
+                                                <label class="col-lg-4 col-form-label">Начало работ:</label>
+                                                <div class="col-lg-8 d-flex justify-content-between align-items-center">
+                                                    <input type="text" name="dayStart" placeholder="день"
+                                                           class="form-control mr-2">
+                                                    <input type="text" name="monthStart" placeholder="месяц"
+                                                           class="form-control mr-2">
+                                                    <label class="text m-0">20</label>
+                                                    <input type="text" name="yearStart" placeholder="год"
+                                                           class="form-control">
+                                                </div>
+                                            </div>
+                                            <!-- Строки с датами: окончание работ -->
+                                            <div class="form-group row">
+                                                <label class="col-lg-4 col-form-label">Окончание работ:</label>
+                                                <div class="col-lg-8 d-flex justify-content-between align-items-center">
+                                                    <input type="text" name="dayEnd" placeholder="день"
+                                                           class="form-control mr-2">
+                                                    <input type="text" name="monthEnd" placeholder="месяц"
+                                                           class="form-control mr-2">
+                                                    <label class="text m-0">20</label>
+                                                    <input type="text" name="yearEnd" placeholder="год"
+                                                           class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <label>Разрешается производство последующих работ:</label>
+                                            <select id="work2" name="work2" class="form-control"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Кнопки Отмена и Сохранить -->
+                            <div class="d-flex justify-content-between mt-4 mr-5 ml-5">
+                                <a href="aosr-table" role="button" class="btn btn-light btn-icon-split">
+                                    <span class="icon text-gray-600">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </span>
+                                    <span class="text">Отмена</span>
+                                </a>
+                                <button type="submit" class="btn btn-success btn-icon-split">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                    <span class="text">Сохранить</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+
+                </div>
 
             </div>
             <!-- /.container-fluid -->
@@ -67,18 +281,17 @@
 </div>
 <!-- End of Page Wrapper -->
 
-<!-- JavaScript для управления видимостью секций -->
-<script src="js/new_abd_toggle.js"></script>
+<script th:src="@{/js/aosrAdd.js}"></script>
 
 <!-- Bootstrap core JavaScript-->
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
 <!-- Core plugin JavaScript-->
-<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
 
 <!-- Custom scripts for all pages-->
-<script src="js/sb-admin-2.min.js"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
 
 </body>
 

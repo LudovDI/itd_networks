@@ -1,68 +1,132 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
     <title>Проектная документация</title>
-    <link href="../static/css/status.css" th:href="@{/css/status.css}" rel="stylesheet"
-          type="text/css"/>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <link href="../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}" rel="stylesheet"
-          type="text/css">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="../static/js/updateStatus.js" th:src="@{/js/updateStatus.js}"
-            type="text/javascript"></script>
+
+    <!-- Custom fonts for this template-->
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/status.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i}"
+          rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css}" rel="stylesheet" />
 </head>
-<body>
-<h1 id="headerText" hidden>Проектная документация</h1>
-<header th:insert="blocks/header :: header"></header>
-<div class="table-responsive">
-    <table class="table table-success table-striped table-hover table-bordered">
-        <tr class="text-center">
-            <th>Статус</th>
-            <th>Сеть</th>
-            <th>Раздел проекта</th>
-            <th>Чертежи</th>
-            <th th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}">Действия</th>
-        </tr>
-        <tr th:each="doc : ${projectDocumentationList}">
-            <td>
-                <form th:action="'/project-documentation-table/' + ${doc.id} + '/update-status'" method="post">
-                    <select name="status" class="status-select" onchange="updateStatus(this.form)">
-                        <option value="Готов" th:selected="${doc.status == 'Готов'}"
-                                data-image-url="/images/green.png"></option>
-                        <option value="В процессе" th:selected="${doc.status == 'В процессе'}"
-                                data-image-url="/images/yellow.png"></option>
-                        <option value="Требует создания" th:selected="${doc.status == 'Требует создания'}"
-                                data-image-url="/images/red.png"></option>
-                    </select>
-                </form>
-            </td>
-            <td th:text="${doc.network}"></td>
-            <td th:text="${doc.projectSection}"></td>
-            <td>
-            <span th:each="drawing : ${doc.drawingsList}">
-                <span th:text="${drawing.drawing}"></span>
-                <br>
-            </span>
-            </td>
-            <td th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}"
-                class="d-flex justify-content-start text-white">
-                <a th:href="'/project-documentation-table/' + ${doc.id} + '/project-documentation-edit'" role="button"
-                   class="bg-primary btn-sm btn border-white">Редактировать</a>
-                <form th:action="'/project-documentation-table/' + ${doc.id} + '/project-documentation-remove'"
-                      method="post">
-                    <button type="submit" class="bg-primary btn-sm btn border-white ms-2">Удалить</button>
-                </form>
-            </td>
-        </tr>
-    </table>
+
+<body id="page-top" class="vsc-initialized">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar_extended :: sidebar_extended}"></div>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h2 mb-0 text-primary">Проектная документация</h1>
+                </div>
+                <hr>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="bg-gray-300">
+                        <tr>
+                            <th>Статус</th>
+                            <th>Сеть</th>
+                            <th>Раздел проекта</th>
+                            <th>Чертежи</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="doc : ${projectDocumentationList}">
+                            <td>
+                                <form th:action="'/project-documentation-table/' + ${itdData.id} + '/update-status/' + ${doc.id}" method="post">
+                                    <select name="status" class="status-select" onchange="updateStatus(this.form)">
+                                        <option value="Готов" th:selected="${doc.status == 'Готов'}"
+                                                data-image-url="/images/green.png"></option>
+                                        <option value="В процессе" th:selected="${doc.status == 'В процессе'}"
+                                                data-image-url="/images/yellow.png"></option>
+                                        <option value="Требует создания" th:selected="${doc.status == 'Требует создания'}"
+                                                data-image-url="/images/red.png"></option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td th:text="${doc.network}"></td>
+                            <td th:text="${doc.projectSection}"></td>
+                            <td>
+                                <span th:each="drawing : ${doc.drawingsList}">
+                                    <span th:text="${drawing.drawing}"></span>
+                                    <br>
+                                </span>
+                            </td>
+                            <td>
+                                <a th:href="'/project-documentation-table/' + ${itdData.id} + '/project-documentation-edit/' + ${doc.id}" class="btn btn-circle btn-sm btn-primary mr-2"><i class="fas fa-pencil-alt fa-sm text-white-50"></i></a>
+                                <form th:action="'/project-documentation-table/' + ${itdData.id} + '/project-documentation-remove/' + ${doc.id}" method="post">
+                                    <button type="submit" class="btn btn-circle btn-sm btn-danger"><i class="fas fa-trash fa-sm text-white-50"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <a th:href="'/project-documentation-add/' + ${itdData.id}" class="btn btn-primary btn-icon-split mt-3">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-plus fa-md text-white-50"></i>
+                    </span>
+                    <span class="text">Добавить раздел</span>
+                </a>
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <div th:replace="~{fragments/footer :: footer}"></div>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
 </div>
-<div class="text-white">
-    <a th:href="@{/project-documentation-add}"
-       th:if="${#authentication.principal.authorities.?[authority == 'USER'].size() > 0}" role="button"
-       class="bg-primary btn border-white mt-3 ms-5">Добавить раздел</a>
-</div>
+<!-- End of Page Wrapper -->
+
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Core plugin JavaScript-->
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+<!-- Custom scripts for all pages-->
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+<script th:src="@{https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js}"></script>
+<script th:src="@{/js/updateStatus.js}"></script>
+
 </body>
+
 </html>

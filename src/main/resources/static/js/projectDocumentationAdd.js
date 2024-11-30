@@ -43,10 +43,8 @@ function addDrawing() {
 }
 
 function removeDrawing(button) {
-    var inputToRemove = button.previousSibling;
-    if (inputToRemove && inputToRemove.tagName.toLowerCase() === 'input') {
-        inputToRemove.previousSibling.remove();
-        inputToRemove.remove();
-        button.remove();
+    var parentDiv = button.closest('.d-flex.mb-3');
+    if (parentDiv) {
+        parentDiv.remove();
     }
 }

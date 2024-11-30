@@ -28,14 +28,41 @@ public class ReplacePlaceholderUtils {
         for (XWPFRun run : runs) {
             String text = run.getText(0);
             if (text != null && text.contains(placeholder)) {
-                String[] parts = replacement.split(" ");
-                StringBuilder newText = new StringBuilder();
+                String[] lines = replacement.split("\n"); // Разделяем по переносам строки
                 XWPFRun currentRun = run;
                 int lineLengthLimit = startLineLengthLimit;
-                for (String part : parts) {
-                    if (newText.length() + part.length() > lineLengthLimit) {
-                        currentRun.setText(newText.toString(), 0);
-                        newText = new StringBuilder(part).append(" ");
+
+                for (String line : lines) {
+                    String[] parts = line.split(" ");
+                    StringBuilder newText = new StringBuilder();
+
+                    for (String part : parts) {
+                        if (newText.length() + part.length() > lineLengthLimit) {
+                            // Устанавливаем текст в текущую строку и переходим к следующей
+                            currentRun.setText(newText.toString().trim(), 0);
+                            newText = new StringBuilder(part).append(" ");
+
+                            // Переход к следующей строке таблицы
+                            startRowIndex++;
+                            if (startRowIndex < table.getRows().size()) {
+                                XWPFTableRow nextRow = table.getRow(startRowIndex);
+                                XWPFTableCell nextCell = nextRow.getCell(0);
+                                nextCell.setText(""); // Очищаем ячейку перед вставкой нового текста
+                                paragraph = nextCell.getParagraphArray(0);
+                                runs = paragraph.getRuns();
+                                currentRun = runs.isEmpty() ? paragraph.createRun() : runs.get(0);
+                                copyRunFormat(run, currentRun, 9, false);
+                                lineLengthLimit = nextLineLengthLimit;
+                            }
+                        } else {
+                            newText.append(part).append(" ");
+                        }
+                    }
+                    // Устанавливаем остаток текста после обработки всех частей
+                    currentRun.setText(newText.toString().trim(), 0);
+
+                    // Переход к новой строке таблицы, если есть перенос строки (\n)
+                    if (!line.equals(lines[lines.length - 1])) {  // Проверяем, что это не последняя строка
                         startRowIndex++;
                         if (startRowIndex < table.getRows().size()) {
                             XWPFTableRow nextRow = table.getRow(startRowIndex);
@@ -43,19 +70,12 @@ public class ReplacePlaceholderUtils {
                             nextCell.setText("");
                             paragraph = nextCell.getParagraphArray(0);
                             runs = paragraph.getRuns();
-                            if (runs.isEmpty()) {
-                                currentRun = paragraph.createRun();
-                            } else {
-                                currentRun = runs.get(0);
-                            }
+                            currentRun = runs.isEmpty() ? paragraph.createRun() : runs.get(0);
                             copyRunFormat(run, currentRun, 9, false);
                             lineLengthLimit = nextLineLengthLimit;
                         }
-                    } else {
-                        newText.append(part).append(" ");
                     }
                 }
-                currentRun.setText(newText.toString().trim(), 0);
             }
         }
     }

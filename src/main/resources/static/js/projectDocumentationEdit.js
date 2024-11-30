@@ -54,7 +54,7 @@ function addDrawing() {
 }
 
 function removeDrawing(button) {
-    var parentDiv = button.parentElement;
+    var parentDiv = button.closest('.d-flex.mb-3');
     if (parentDiv) {
         parentDiv.remove();
     }
