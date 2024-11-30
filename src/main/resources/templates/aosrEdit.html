@@ -71,7 +71,7 @@
                                                             <input type="hidden" name="sourcePage" value="aosrEdit">
                                                             <button type="submit" formaction="/aosr-search-materials"
                                                                     formmethod="get" onclick="saveInputData()"
-                                                                    class="btn btn-success border-white ms-5">Искать
+                                                                    class="btn btn-success border-white ml-3">Искать
                                                             </button>
                                                         </div>
                                                         <div th:each="material : ${selectedMaterialsList}">
@@ -99,16 +99,18 @@
                                             <div class="card-body">
                                                 <label class="p-0">Работы выполнены по проектной документации:</label>
                                                 <div id="projectSectionContainer">
-                                                    <div class="row" th:each="projSection, iterStat : ${projectSectionList}"
+                                                    <div class="row mb-3" th:each="projSection, iterStat : ${projectSectionList}"
                                                          th:id="'projectSectionRow' + ${iterStat.index + 1}">
-                                                        <div class="col-lg-6">
-                                                            <select class="btn btn-light dropdown-toggle"
-                                                                    th:name="'projectSectionSelect' + ${iterStat.index + 1}">
-                                                                <option th:each="data : ${projectDocumentationList}"
-                                                                        th:value="${data.projectSection}"
-                                                                        th:text="${data.projectSection}"
-                                                                        th:selected="${data.projectSection == projSection}"></option>
-                                                            </select>
+                                                        <div class="col-lg-4 pt-1 pb-1">
+                                                            <div class="card ml-4 mr-4">
+                                                                <select class="btn btn-light dropdown-toggle"
+                                                                        th:name="'projectSectionSelect' + ${iterStat.index + 1}">
+                                                                    <option th:each="data : ${projectDocumentationList}"
+                                                                            th:value="${data.projectSection}"
+                                                                            th:text="${data.projectSection}"
+                                                                            th:selected="${data.projectSection == projSection}"></option>
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                         <div class="col-lg-6">
                                                             <div class="card">
@@ -135,9 +137,13 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <button type="button" onclick="removeDiv(this)"
-                                                                class="btn btn-success border-white mt-3 me-5">Удалить
-                                                        </button>
+                                                        <div class="col-lg-2 pt-1">
+                                                            <button type="button" onclick="removeDiv(this)" class="btn btn-danger btn-icon-split border-white me-5">
+                                                            <span class="icon text-white-50">
+                                                                <i class="fas fa-trash"></i>
+                                                            </span>
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                     <div th:each="formData : ${aosrFormData}"
                                                          th:id="'projectSectionRow' + ${formData}">
