@@ -16,6 +16,7 @@ public class GenerateStringUtils {
     }
 
     public static String generateCustomer(PassportObjectData passportObjectData) {
+
         return passportObjectData.getNameCustomer() + ", ОГРН " +
                 passportObjectData.getOgrnCustomer() + ", ИНН " +
                 passportObjectData.getInnCustomer() + ", " +
@@ -316,7 +317,7 @@ public class GenerateStringUtils {
 //        stringBuilder.append("\n").append("сеть ").append(projectDocumentationData.getNetwork());
 //        return stringBuilder.toString();
 //    }
-
+  
     public static String generateBoundaries(AosrData aosrData) {
         StringBuilder stringBuilder = new StringBuilder();
         ExecutiveSchemesData executiveSchemesData = aosrData.getExecutiveSchemesData();
