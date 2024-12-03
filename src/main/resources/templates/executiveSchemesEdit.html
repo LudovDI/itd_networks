@@ -60,8 +60,10 @@
                                     <div class="card mb-4">
                                         <div class="card-body p-3 pr-5">
                                             <div class="form-group row mb-0 align-items-center">
-                                                <label class="col-lg-5 text-center">Название исполнительной схемы</label>
-                                                <input class="col-lg-7 form-control" th:value="${el.nameScheme}" type="text" name="nameScheme">
+                                                <label class="col-lg-5 text-center">Название исполнительной
+                                                    схемы</label>
+                                                <input class="col-lg-7 form-control" th:value="${el.nameScheme}"
+                                                       type="text" name="nameScheme">
                                             </div>
                                         </div>
                                     </div>
@@ -77,11 +79,13 @@
                                                 <div class="col-lg-8">
                                                     <div>
                                                         <label class="">X =</label>
-                                                        <input type="text" class="" name="startCoordinateX" th:value="${el.startCoordinateX}">
+                                                        <input type="text" class="" name="startCoordinateX"
+                                                               th:value="${el.startCoordinateX}">
                                                     </div>
                                                     <div>
                                                         <label class="">Y =</label>
-                                                        <input type="text" class="" name="startCoordinateY" th:value="${el.startCoordinateY}">
+                                                        <input type="text" class="" name="startCoordinateY"
+                                                               th:value="${el.startCoordinateY}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -92,11 +96,13 @@
                                                 <div class="col-lg-8">
                                                     <div>
                                                         <label class="">X =</label>
-                                                        <input type="text" class="" name="endCoordinateX" th:value="${el.endCoordinateX}">
+                                                        <input type="text" class="" name="endCoordinateX"
+                                                               th:value="${el.endCoordinateX}">
                                                     </div>
                                                     <div>
                                                         <label class="">Y =</label>
-                                                        <input type="text" class="" name="endCoordinateY" th:value="${el.endCoordinateY}">
+                                                        <input type="text" class="" name="endCoordinateY"
+                                                               th:value="${el.endCoordinateY}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -107,11 +113,13 @@
                                                 <div class="col-lg-8">
                                                     <div>
                                                         <label class="">X =</label>
-                                                        <input type="text" class="" name="wellCenterX" th:value="${el.wellCenterX}">
+                                                        <input type="text" class="" name="wellCenterX"
+                                                               th:value="${el.wellCenterX}">
                                                     </div>
                                                     <div>
                                                         <label class="">Y =</label>
-                                                        <input type="text" class="" name="wellCenterY" th:value="${el.wellCenterY}">
+                                                        <input type="text" class="" name="wellCenterY"
+                                                               th:value="${el.wellCenterY}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -122,11 +130,13 @@
                                                 <div class="col-lg-8">
                                                     <div>
                                                         <label class="">начальная отметка</label>
-                                                        <input type="text" class="" name="startingPoint" th:value="${el.startingPoint}">
+                                                        <input type="text" class="" name="startingPoint"
+                                                               th:value="${el.startingPoint}">
                                                     </div>
                                                     <div>
                                                         <label class="">конечная отметка</label>
-                                                        <input type="text" class="" name="endingPoint" th:value="${el.endingPoint}">
+                                                        <input type="text" class="" name="endingPoint"
+                                                               th:value="${el.endingPoint}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -136,19 +146,22 @@
                                         <div class="card-body p-3 pr-5">
                                             <div class="form-group row align-items-top mb-0">
                                                 <div class="col-lg-6">
-                                                    <label class="mt-1">Раздел проекта, номер чертежа, по которым выполнены работы</label>
+                                                    <label class="mt-1">Раздел проекта, номер чертежа, по которым
+                                                        выполнены работы</label>
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <div class="row align-items-center">
-                                                        <div class="col-lg-6">
-                                                            <select class="btn btn-light dropdown-toggle"
-                                                                    id="projectSectionSelect"
-                                                                    name="projectSectionSelect">
-                                                                <option th:each="data : ${projectDocumentationList}"
-                                                                        th:value="${data.projectSection}"
-                                                                        th:text="${data.projectSection}"
-                                                                        th:selected="${data.projectSection == el.projectSection}"></option>
-                                                            </select>
+                                                        <div class="col-lg-6 pt-1 pb-1">
+                                                            <div class="card ml-3 mr-4">
+                                                                <select class="btn btn-light dropdown-toggle pt-2 pb-2"
+                                                                        id="projectSectionSelect"
+                                                                        name="projectSectionSelect">
+                                                                    <option th:each="data : ${projectDocumentationList}"
+                                                                            th:value="${data.projectSection}"
+                                                                            th:text="${data.projectSection}"
+                                                                            th:selected="${data.projectSection == el.projectSection}"></option>
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                         <div class="col-lg-6">
                                                             <div class="card">
@@ -186,7 +199,8 @@
                                         <div class="card-body p-3 pr-5">
                                             <div class="form-group row mb-0 align-items-center">
                                                 <label class="col-lg-2 text-center">Участок</label>
-                                                <input class="col-lg-10 form-control" type="text" name="section" th:value="${el.section}">
+                                                <input class="col-lg-10 form-control" type="text" name="section"
+                                                       th:value="${el.section}">
                                             </div>
                                         </div>
                                     </div>
@@ -202,7 +216,8 @@
                                                             <label class="">Разработка грунта</label>
                                                         </div>
                                                         <div class="col-lg-7">
-                                                            <input type="text" class="" name="soilDevelopment" th:value="${el.soilDevelopment}">
+                                                            <input type="text" class="" name="soilDevelopment"
+                                                                   th:value="${el.soilDevelopment}">
                                                             <label class="">м³</label>
                                                         </div>
                                                     </div>
@@ -213,7 +228,8 @@
                                                             <label class="">Песчаное основание</label>
                                                         </div>
                                                         <div class="col-lg-7">
-                                                            <input type="text" class="" name="sandyBase" th:value="${el.sandyBase}">
+                                                            <input type="text" class="" name="sandyBase"
+                                                                   th:value="${el.sandyBase}">
                                                             <label class="">м³</label>
                                                         </div>
                                                     </div>
@@ -224,7 +240,8 @@
                                                             <label class="">Шурфовка</label>
                                                         </div>
                                                         <div class="col-lg-7">
-                                                            <input type="text" class="" name="shoofing" th:value="${el.shoofing}">
+                                                            <input type="text" class="" name="shoofing"
+                                                                   th:value="${el.shoofing}">
                                                             <label class="">м³</label>
                                                         </div>
                                                     </div>
@@ -235,7 +252,8 @@
                                                             <label class="">Засыпка шурфовки</label>
                                                         </div>
                                                         <div class="col-lg-7">
-                                                            <input type="text" class="" name="backfillingShoofing" th:value="${el.backfillingShoofing}">
+                                                            <input type="text" class="" name="backfillingShoofing"
+                                                                   th:value="${el.backfillingShoofing}">
                                                             <label class="">м³</label>
                                                         </div>
                                                     </div>
@@ -246,7 +264,8 @@
                                                             <label class="">Засыпка: песок</label>
                                                         </div>
                                                         <div class="col-lg-7">
-                                                            <input type="text" class="" name="sand" th:value="${el.sand}">
+                                                            <input type="text" class="" name="sand"
+                                                                   th:value="${el.sand}">
                                                             <label class="">м³</label>
                                                         </div>
                                                     </div>
@@ -257,7 +276,8 @@
                                                             <label class="">Засыпка: грунт</label>
                                                         </div>
                                                         <div class="col-lg-7">
-                                                            <input type="text" class="" name="priming" th:value="${el.priming}">
+                                                            <input type="text" class="" name="priming"
+                                                                   th:value="${el.priming}">
                                                             <label class="">м³</label>
                                                         </div>
                                                     </div>
@@ -268,7 +288,8 @@
                                                             <label class="">Укладка трубопровода открытым способом</label>
                                                         </div>
                                                         <div class="col-lg-7">
-                                                            <input type="text" class="" name="layingPipeline" th:value="${el.layingPipeline}">
+                                                            <input type="text" class="" name="layingPipeline"
+                                                                   th:value="${el.layingPipeline}">
                                                             <label class="">м</label>
                                                         </div>
                                                     </div>
@@ -279,7 +300,8 @@
                                                             <label class="">Прокладка трубопровода методом ГНБ</label>
                                                         </div>
                                                         <div class="col-lg-7">
-                                                            <input type="text" class="" name="layingPipelineGNB" th:value="${el.layingPipelineGNB}">
+                                                            <input type="text" class="" name="layingPipelineGNB"
+                                                                   th:value="${el.layingPipelineGNB}">
                                                             <label class="">м</label>
                                                         </div>
                                                     </div>
@@ -290,21 +312,27 @@
                                     <div class="card mb-4">
                                         <div class="card-body p-3 pr-5">
                                             <div class="form-group row align-items-top mb-0">
-                                                <div class="col-lg-6">
+                                                <div class="col-lg-5">
                                                     <label class="mt-1">Применяемые материалы</label>
                                                 </div>
-                                                <div class="col-lg-6">
+                                                <div class="col-lg-7">
                                                     <div class="row align-items-center">
-                                                        <div class="col-lg-6">
-                                                            <div>
-                                                                <input class="w-50" type="text" id="searchInput" name="query"
+                                                        <div class="row pb-3">
+                                                            <div class="col-lg-9 pr-0">
+                                                                <input class="w-100 form-control" type="text"
+                                                                       id="searchInput" name="query"
                                                                        placeholder="Введите название материала">
-                                                                <input type="hidden" name="sourcePage" value="executiveSchemesEdit">
+                                                                <input type="hidden" name="sourcePage"
+                                                                       value="executiveSchemesEdit">
                                                                 <input type="hidden" name="id" th:value="${el.id}">
+                                                            </div>
+                                                            <div class="col-lg-3 pl-4">
                                                                 <button type="submit" th:formaction="'/exec-search-materials/' + ${itdData.id}" formmethod="get" onclick="saveInputData()"
-                                                                        class="btn btn-success border-white ms-5">Искать
+                                                                        class="btn btn-primary border-white ms-5">Искать
                                                                 </button>
                                                             </div>
+                                                        </div>
+                                                        <div class="row">
                                                             <div th:each="selMaterial : ${selectedMaterialsList}">
                                                                 <input type="checkbox" checked="checked" th:name="'selectedMaterials' + ${selMaterial.id}" th:value="${selMaterial.id}"
                                                                        th:text="${selMaterial.nameMaterial} + '. ' + ${selMaterial.accompanyingDocuments[0].name} + ' № ' + ${selMaterial.accompanyingDocuments[0].number} + ' от ' + ${selMaterial.accompanyingDocuments[0].date} + ' г.'">
