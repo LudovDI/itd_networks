@@ -27,11 +27,11 @@
 
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item" th:each="itd : ${itdList}">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" th:data-target="'#collapseActivePages' + ${itd.number}"
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" th:data-target="'#collapseActivePages' + ${itd.name}"
                aria-expanded="false" aria-controls="collapsePages">
-                <span th:text="'ИТД ' + ${itd.number}"></span>
+                <span th:text="'ИТД ' + ${itd.name}"></span>
             </a>
-            <div th:id="'collapseActivePages' + ${itd.number}" class="collapse" aria-labelledby="headingPages"
+            <div th:id="'collapseActivePages' + ${itd.name}" class="collapse" aria-labelledby="headingPages"
                  data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <a class="collapse-item" th:href="'/passport-object-table/' + ${itd.id}">Паспорт объекта</a>

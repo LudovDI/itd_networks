@@ -5,15 +5,22 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.time.format.DateTimeFormatter;
 
 @Entity
-public class AosrData {
+public class AosrData extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String typeOfWork, permittedFollowingWork, status;
+    private String number, typeOfWork, permittedFollowingWork, status;
     private LocalDate startDate, endDate;
+
+    @Transient
+    private String formattedStartDate;
+
+    @Transient
+    private String formattedEndDate;
 
     @ManyToMany
     @JoinTable(
@@ -104,6 +111,14 @@ public class AosrData {
         this.status = status;
     }
 
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
     public ProtocolsGnbData getProtocolsGnbData() {
         return protocolsGnbData;
     }
@@ -158,6 +173,28 @@ public class AosrData {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public void setFormattedDates() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        this.formattedStartDate = (startDate != null) ? startDate.format(formatter) : null;
+        this.formattedEndDate = (endDate != null) ? endDate.format(formatter) : null;
+    }
+
+    public String getFormattedStartDate() {
+        return formattedStartDate;
+    }
+
+    public void setFormattedStartDate(String formattedStartDate) {
+        this.formattedStartDate = formattedStartDate;
+    }
+
+    public String getFormattedEndDate() {
+        return formattedEndDate;
+    }
+
+    public void setFormattedEndDate(String formattedEndDate) {
+        this.formattedEndDate = formattedEndDate;
     }
 
     public String getTypeOfWork() {
@@ -267,7 +304,8 @@ public class AosrData {
     public AosrData() {
     }
 
-    public AosrData(String typeOfWork, String permittedFollowingWork, LocalDate startDate, LocalDate endDate) {
+    public AosrData(String number, String typeOfWork, String permittedFollowingWork, LocalDate startDate, LocalDate endDate) {
+        this.number = number;
         this.typeOfWork = typeOfWork;
         this.permittedFollowingWork = permittedFollowingWork;
         this.startDate = startDate;

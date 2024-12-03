@@ -67,6 +67,7 @@
                         <thead class="bg-gray-300">
                         <tr>
                             <th>Статус</th>
+                            <th>Номер</th>
                             <th>Виды работ</th>
                             <th>Последующие работы</th>
                             <th>Дата начала работ</th>
@@ -92,10 +93,11 @@
                                     </select>
                                 </form>
                             </td>
+                            <td th:text="${doc.number}"></td>
                             <td th:text="${doc.typeOfWork}"></td>
                             <td th:text="${doc.permittedFollowingWork}"></td>
-                            <td th:text="${doc.startDate}"></td>
-                            <td th:text="${doc.endDate}"></td>
+                            <td th:text="${doc.formattedStartDate}"></td>
+                            <td th:text="${doc.formattedEndDate}"></td>
                             <td>
                                 <span th:each="projectDoc : ${doc.aosrToProjDocs}">
                                     <span th:text="${projectDoc.projectSection}"></span>

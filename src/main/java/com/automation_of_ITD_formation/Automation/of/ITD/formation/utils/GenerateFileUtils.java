@@ -126,7 +126,7 @@ public class GenerateFileUtils {
         replacePlaceholderInTable(document, "monthEnd", monthEnd.toString(), 10, 10);
         replacePlaceholderInTable(document, "yearE", yearEnd, 10, 10);
 
-        File tempFile = File.createTempFile("Aosr_" + indexAosr, ".docx");
+        File tempFile = new File(System.getProperty("java.io.tmpdir"), "Aosr_" + indexAosr + ".docx");
         try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
             document.write(outputStream);
         }

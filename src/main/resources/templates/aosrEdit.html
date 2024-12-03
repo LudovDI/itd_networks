@@ -70,14 +70,18 @@
                                                             <input type="hidden" name="sourcePage" value="aosrEdit">
                                                             <input type="hidden" name="id" th:value="${el.id}">
                                                             <button type="submit" th:formaction="'/aosr-search-materials/' + ${itdData.id}" formmethod="get" onclick="saveInputData()"
-                                                                    class="btn btn-success border-white ml-3">Искать
+                                                                    class="btn btn-primary btn-icon-split border-white ml-3">
+                                                                <span class="icon text-white-50">
+                                                                    <i class="fas fa-search"></i>
+                                                                </span>
+                                                                <span class="text">Искать</span>
                                                             </button>
                                                         </div>
-                                                        <div th:each="selMaterial : ${selectedMaterialsList}">
+                                                        <div th:each="selMaterial : ${selectedMaterialsList}" class="col-lg-3">
                                                             <input type="checkbox" checked="checked" th:name="'selectedMaterials' + ${selMaterial.id}" th:value="${selMaterial.id}"
                                                                    th:text="${selMaterial.nameMaterial} + '. ' + ${selMaterial.accompanyingDocuments[0].name} + ' № ' + ${selMaterial.accompanyingDocuments[0].number} + ' от ' + ${selMaterial.accompanyingDocuments[0].date} + ' г.'">
                                                         </div>
-                                                        <div id="searchResults" th:if="${foundMaterialsList}">
+                                                        <div id="searchResults" th:if="${foundMaterialsList}" class="col-lg-3">
                                                             <div th:each="foundMaterial : ${foundMaterialsList}">
                                                                 <input type="checkbox" th:name="'selectedMaterials' + ${foundMaterial.id}" th:value="${foundMaterial.id}"
                                                                        th:text="${foundMaterial.nameMaterial} + ' - ' + ${foundMaterial.accompanyingDocuments[0].name} + ' № ' + ${foundMaterial.accompanyingDocuments[0].number} + ' от ' + ${foundMaterial.accompanyingDocuments[0].date} + ' г.'">
@@ -93,16 +97,15 @@
                                                     <div id="projectSectionContainer">
                                                     <div class="row" th:each="projSection, iterStat : ${projectSectionList}"
                                                          th:id="'projectSectionRow' + ${iterStat.index + 1}">
-                                                        <div class="col-lg-4 pt-1 pb-1">
-                                                            <div class="card ml-4 mr-4">
-                                                                <select class="btn btn-light dropdown-toggle"
-                                                                        th:name="'projectSectionSelect' + ${iterStat.index + 1}">
-                                                                    <option th:each="data : ${projectDocumentationList}"
-                                                                            th:value="${data.projectSection}"
-                                                                            th:text="${data.projectSection}"
-                                                                            th:selected="${data.projectSection == projSection}"></option>
-                                                                </select>
-                                                            </div>
+                                                        <div class="col-lg-6">
+                                                            <select class="btn btn-light dropdown-toggle"
+                                                                    th:name="'projectSectionSelect' + ${iterStat.index + 1}">
+                                                                <option th:each="data : ${projectDocumentationList}"
+                                                                        th:value="${data.id}"
+                                                                        th:selected="${data.projectSection == projSection}">
+                                                                    <span th:text="${data.projectSection}"></span>
+                                                                </option>
+                                                            </select>
                                                         </div>
                                                         <div class="col-lg-6">
                                                             <div class="card">
@@ -121,7 +124,7 @@
                                                                         <div th:each="drawing : ${drawingsList}">
                                                                             <input type="checkbox"
                                                                                    th:name="'drawingCheckbox' + ${drawing.id} + '-' + ${iterStat.index + 1}"
-                                                                                   th:value="${drawing.projDocToDrawings.projectSection}"
+                                                                                   th:value="${drawing.projDocToDrawings.id}"
                                                                                    th:checked="${drawingIds.contains(drawing.id)}">
                                                                             <span th:text="${drawing.drawing}"></span>
                                                                         </div>
@@ -208,12 +211,12 @@
                                         </div>
                                         <div class="card mb-3">
                                             <div class="card-body">
-                                                <label class="p-0">Участки:</label>
+                                                <label class="p-0">Исполнительная схема:</label>
                                                 <select id="execSchemSelect" name="execSchemSelect"
                                                         class="form-control">
                                                     <option th:each="data : ${executiveSchemesList}"
                                                             th:value="${data.id}"
-                                                            th:text="${data.section}"
+                                                            th:text="${data.section != null && !data.section.isEmpty() ? data.nameScheme + ' на участке ' + data.section : data.nameScheme}"
                                                             th:selected="${data.id == el.executiveSchemesData.id}"></option>
                                                 </select>
                                             </div>
@@ -346,31 +349,27 @@
                                         </div>
                                         <div class="card mb-3">
                                             <div class="card-body">
+                                                <label>Номер АОСР:</label>
+                                                <input name="number" class="form-control" th:value="${el.number}" required>
+                                            </div>
+                                        </div>
+                                        <div class="card mb-3">
+                                            <div class="card-body">
                                                 <h5 class="h5 mb-0">Даты:</h5>
                                                 <!-- Строки с датами: начало работ -->
                                                 <div class="form-group row">
                                                     <label class="col-lg-4 col-form-label">Начало работ:</label>
                                                     <div class="col-lg-8 d-flex justify-content-between align-items-center">
-                                                        <input type="text" name="dayStart" placeholder="день" th:value="${dayStart}"
+                                                        <input type="text" name="dateStart" th:value="${el.formattedStartDate}"
                                                                class="form-control mr-2" required>
-                                                        <input type="text" name="monthStart" placeholder="месяц" th:value="${monthStart}"
-                                                               class="form-control mr-2" required>
-                                                        <label class="text m-0">20</label>
-                                                        <input type="text" name="yearStart" placeholder="год" th:value="${yearStart}"
-                                                               class="form-control" required>
                                                     </div>
                                                 </div>
                                                 <!-- Строки с датами: окончание работ -->
                                                 <div class="form-group row">
                                                     <label class="col-lg-4 col-form-label">Окончание работ:</label>
                                                     <div class="col-lg-8 d-flex justify-content-between align-items-center">
-                                                        <input type="text" name="dayEnd" placeholder="день" th:value="${dayEnd}"
+                                                        <input type="text" name="dateEnd" th:value="${el.formattedEndDate}"
                                                                class="form-control mr-2" required>
-                                                        <input type="text" name="monthEnd" placeholder="месяц" th:value="${monthEnd}"
-                                                               class="form-control mr-2" required>
-                                                        <label class="text m-0">20</label>
-                                                        <input type="text" name="yearEnd" placeholder="год" th:value="${yearEnd}"
-                                                               class="form-control" required>
                                                     </div>
                                                 </div>
                                             </div>

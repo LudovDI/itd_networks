@@ -57,6 +57,7 @@
                             <th>Номер акта ВИК</th>
                             <th>Дата акта ВИК</th>
                             <th>Название лаборатории</th>
+                            <th>Номер АОСР</th>
                             <th></th>
                         </tr>
                         </thead>
@@ -77,6 +78,7 @@
                             <td th:text="${el.numberActViC}"></td>
                             <td th:text="${el.dataActViC}"></td>
                             <td th:text="${el.nameLaboratory}"></td>
+                            <td th:text="${el.actsToAosrData != null ? el.actsToAosrData.number : 'Нет АОСР'}"></td>
                             <td>
                                 <a th:href="'/acts-vic-table/' + ${itdData.id} + '/acts-vic-edit/' + ${el.id}" class="btn btn-circle btn-sm btn-primary mr-2"><i class="fas fa-pencil-alt fa-sm text-white-50"></i></a>
                                 <form th:action="'/acts-vic-table/' + ${itdData.id} + '/acts-vic-remove/' + ${el.id}" method="post">

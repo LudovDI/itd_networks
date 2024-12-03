@@ -1,9 +1,7 @@
 package com.automation_of_ITD_formation.Automation.of.ITD.formation.model;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +11,7 @@ public class ItdData extends Auditable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String number, status;
+    private String name, status;
 
     @Transient
     private String formattedDateTime;
@@ -79,12 +77,12 @@ public class ItdData extends Auditable {
         this.status = status;
     }
 
-    public String getNumber() {
-        return number;
+    public String getName() {
+        return name;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public PassportObjectData getPassportObjectData() {
