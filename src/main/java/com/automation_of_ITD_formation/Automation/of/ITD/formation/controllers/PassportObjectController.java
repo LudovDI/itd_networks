@@ -109,6 +109,7 @@ public class PassportObjectController {
                                         @RequestParam("nameOrganizationDesigner") String nameOrganizationDesigner,
                                         @RequestParam("ogrnOrganizationDesigner") String ogrnOrganizationDesigner,
                                         @RequestParam("innOrganizationDesigner") String innOrganizationDesigner,
+                                        @RequestParam("nameItd") String nameItd,
                                         @RequestParam Map<String, String> formData,
                                         Principal principal) {
         String username = principal.getName();
@@ -241,10 +242,13 @@ public class PassportObjectController {
         anotherPersonResponsibleList.forEach(anotherPersonResponsibleData -> anotherPersonResponsibleData.setPassportObjectData(passportObjectData));
         anotherPersonResponsibleRepository.saveAll(anotherPersonResponsibleList);
 
-        long sequenceNumber = itdRepository.countByUserData(currentUser) + 1;
-
         ItdData itdData = new ItdData();
-        itdData.setNumber(String.valueOf(sequenceNumber));
+        if (nameItd != null && !nameItd.isEmpty()) {
+            itdData.setName(nameItd);
+        } else {
+            int randomFourDigitNumber = 1000 + (int) (Math.random() * 9000);
+            itdData.setName(String.valueOf(randomFourDigitNumber));
+        }
         itdData.setStatus("В работе");
         itdData.setUserData(currentUser);
         itdData.setPassportObjectData(passportObjectData);
@@ -267,6 +271,8 @@ public class PassportObjectController {
         } else {
             model.addAttribute("itdList", List.of());
         }
+        ItdData itdData = itdRepository.findById(itdId).orElseThrow();
+        model.addAttribute("itdData", itdData);
         if (!passportObjectRepository.existsById(id)) {
             return "redirect:/passport-object-table/" + itdId;
         }
@@ -313,7 +319,16 @@ public class PassportObjectController {
                                            @RequestParam("nameOrganizationDesigner") String nameOrganizationDesigner,
                                            @RequestParam("ogrnOrganizationDesigner") String ogrnOrganizationDesigner,
                                            @RequestParam("innOrganizationDesigner") String innOrganizationDesigner,
+                                           @RequestParam("nameItd") String nameItd,
                                            @RequestParam Map<String, String> formData) {
+        ItdData itdData = itdRepository.findById(itdId).orElseThrow();
+        if (nameItd != null && !nameItd.isEmpty()) {
+            itdData.setName(nameItd);
+        } else {
+            int randomFourDigitNumber = 1000 + (int) (Math.random() * 9000);
+            itdData.setName(String.valueOf(randomFourDigitNumber));
+        }
+
         PassportObjectData passportObjectData = passportObjectRepository.findById(id).orElseThrow();
 
         Set<Long> anotherPersonResIdsFromForm = new HashSet<>();

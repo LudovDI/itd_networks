@@ -70,11 +70,11 @@ public class ProjectDocumentationController {
     }
 
     @PostMapping("/project-documentation-add/{itdId}")
-    public String postProjectDocumentationAdd(@PathVariable(value = "id") long id,
+    public String postProjectDocumentationAdd(@PathVariable(value = "itdId") long itdId,
                                               @RequestParam("projectSection") String projectSection,
                                               @RequestParam("network") String network,
                                               @RequestParam Map<String, String> formData) {
-        ItdData itdData = itdRepository.findById(id).orElseThrow();
+        ItdData itdData = itdRepository.findById(itdId).orElseThrow();
         ProjectDocumentationData projectDocumentationData = new ProjectDocumentationData(projectSection, network);
         List<DrawingsData> drawingsForSection = new ArrayList<>();
         formData.forEach((key, value) -> {
@@ -88,7 +88,7 @@ public class ProjectDocumentationController {
         projectDocumentationData.setItdToProjectDocumentationData(itdData);
         projectDocumentationRepository.save(projectDocumentationData);
         drawingsRepository.saveAll(drawingsForSection);
-        return "redirect:/project-documentation-table/" + id;
+        return "redirect:/project-documentation-table/" + itdId;
     }
 
     @GetMapping("/project-documentation-table/{itdId}/project-documentation-edit/{projDocId}")

@@ -143,7 +143,7 @@ public class GenerateStringUtils {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(work1);
         if (executiveSchemesData != null) {
-            stringBuilder.append(" на участках в районе ");
+            stringBuilder.append(" на участках ");
             stringBuilder.append(executiveSchemesData.getSection()).append(" в координатах X=");
             if (!executiveSchemesData.getStartCoordinateX().isEmpty()) {
                 stringBuilder.append(executiveSchemesData.getStartCoordinateX()).append(", Y=")
@@ -203,7 +203,7 @@ public class GenerateStringUtils {
         if (executiveSchemesData != null) {
             String code = generateExecutiveSchemesCode(passportObjectData, index);
             stringBuilder.append("Исполнительная схема № ").append(code).append(" ")
-                    .append(executiveSchemesData.getNameScheme()).append(" в районе ")
+                    .append(executiveSchemesData.getNameScheme()).append(" ")
                     .append(executiveSchemesData.getSection()).append(", сеть ")
                     .append(nameNetwork);
         } else {
@@ -255,7 +255,7 @@ public class GenerateStringUtils {
     public static String generateEngineeringSupportNetworks(String work2, ExecutiveSchemesData executiveSchemesData, String nameNetwork) {
         StringBuilder stringBuilder = new StringBuilder();
         if (executiveSchemesData != null) {
-            stringBuilder.append(work2).append(" на участке в районе ").append(executiveSchemesData.getSection()).append(", сеть ")
+            stringBuilder.append(work2).append(" на участке ").append(executiveSchemesData.getSection()).append(", сеть ")
                     .append(nameNetwork);
         } else {
             stringBuilder.append("---");
@@ -346,7 +346,7 @@ public class GenerateStringUtils {
             if (index < 10) {
                 stringBuilder.append("0");
             }
-            stringBuilder.append(index).append("\n").append(work1).append(" на участках в районе ");
+            stringBuilder.append(index).append("\n").append(work1).append(" на участках ");
             stringBuilder.append(execSchemes.getSection()).append(" в координатах X=");
             if (!execSchemes.getStartCoordinateX().isEmpty()) {
                 stringBuilder.append(execSchemes.getStartCoordinateX()).append(", Y=")
@@ -395,7 +395,7 @@ public class GenerateStringUtils {
     public static String generateAosrForRegistryString(ProjectDocumentationData projDoc, String work1, ExecutiveSchemesData execSchemes) {
         StringBuilder stringBuilder = new StringBuilder();
         if (execSchemes != null) {
-            stringBuilder.append("АОСР ").append(work1).append(" на участке в районе ");
+            stringBuilder.append("АОСР ").append(work1).append(" на участке ");
             stringBuilder.append(execSchemes.getSection()).append(" в координатах X=");
             if (!execSchemes.getStartCoordinateX().isEmpty()) {
                 stringBuilder.append(execSchemes.getStartCoordinateX()).append(", Y=")

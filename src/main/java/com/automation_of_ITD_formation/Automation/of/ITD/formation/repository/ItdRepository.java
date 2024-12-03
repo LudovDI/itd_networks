@@ -7,5 +7,4 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface ItdRepository extends CrudRepository<ItdData, Long> {
-    long countByUserData(UserData userData);
 }

@@ -67,17 +67,28 @@
                                                         <input class="w-50" type="text" id="searchInput" name="query"
                                                                placeholder="Введите название материала">
                                                         <input type="hidden" name="sourcePage" value="aosrAdd">
-                                                        <button type="submit" th:formaction="'/aosr-search-materials/' + ${itdData.id}" formmethod="get" onclick="saveInputData()"
-                                                                class="btn btn-success border-white ms-5">Искать
+                                                        <button type="submit"
+                                                                th:formaction="'/aosr-search-materials/' + ${itdData.id}"
+                                                                formmethod="get" onclick="saveInputData()"
+                                                                class="btn btn-primary btn-icon-split border-white ml-3">
+                                                            <span class="icon text-white-50">
+                                                                <i class="fas fa-search"></i>
+                                                            </span>
+                                                            <span class="text">Искать</span>
                                                         </button>
                                                     </div>
                                                     <div th:each="selMaterial : ${selectedMaterialsList}">
-                                                        <input type="checkbox" checked="checked" th:name="'selectedMaterials' + ${selMaterial.id}" th:value="${selMaterial.id}"
+                                                        <input type="checkbox" checked="checked"
+                                                               th:name="'selectedMaterials' + ${selMaterial.id}"
+                                                               th:value="${selMaterial.id}"
                                                                th:text="${selMaterial.nameMaterial} + '. ' + ${selMaterial.accompanyingDocuments[0].name} + ' № ' + ${selMaterial.accompanyingDocuments[0].number} + ' от ' + ${selMaterial.accompanyingDocuments[0].date} + ' г.'">
                                                     </div>
-                                                    <div id="searchResults" th:if="${foundMaterialsList}">
+                                                    <div id="searchResults" th:if="${foundMaterialsList}"
+                                                         class="col-lg-3">
                                                         <div th:each="foundMaterial : ${foundMaterialsList}">
-                                                            <input type="checkbox" th:name="'selectedMaterials' + ${foundMaterial.id}" th:value="${foundMaterial.id}"
+                                                            <input type="checkbox"
+                                                                   th:name="'selectedMaterials' + ${foundMaterial.id}"
+                                                                   th:value="${foundMaterial.id}"
                                                                    th:text="${foundMaterial.nameMaterial} + ' - ' + ${foundMaterial.accompanyingDocuments[0].name} + ' № ' + ${foundMaterial.accompanyingDocuments[0].number} + ' от ' + ${foundMaterial.accompanyingDocuments[0].date} + ' г.'">
                                                         </div>
                                                     </div>
@@ -87,16 +98,19 @@
                                     </div>
                                     <div class="card mb-3">
                                         <div class="card-body">
-                                            <label class="p-0">Работы выполнены по проектной документации:</label>
+                                            <label class="p-0 mb-3">Работы выполнены по проектной документации:</label>
                                             <div id="projectSectionContainer">
-                                                <div class="row" id="projectSectionRow1">
-                                                    <div class="col-lg-6">
-                                                        <select class="btn btn-light dropdown-toggle"
-                                                                name="projectSectionSelect1">
-                                                            <option th:each="data : ${projectDocumentationList}"
-                                                                    th:value="${data.projectSection}"
-                                                                    th:text="${data.projectSection}"></option>
-                                                        </select>
+                                                <div id="projectSectionRow1" class="row mb-3">
+                                                    <div class="col-lg-4 pt-1 pb-1">
+                                                        <div class="card ml-4 mr-4">
+                                                            <select name="projectSectionSelect1"
+                                                                    class="btn btn-light dropdown-toggle pb-2 pt-2">
+                                                                <option th:each="data : ${projectDocumentationList}"
+                                                                        th:value="${data.id}"><span
+                                                                        th:text="${data.projectSection}"></span>
+                                                                </option>
+                                                            </select>
+                                                        </div>
                                                     </div>
                                                     <div class="col-lg-6">
                                                         <div class="card">
@@ -114,7 +128,7 @@
                                                                     <div th:each="drawing : ${drawingsList}">
                                                                         <input type="checkbox"
                                                                                th:name="'drawingCheckbox' + ${drawing.id} + '-1'"
-                                                                               th:value="${drawing.projDocToDrawings.projectSection}">
+                                                                               th:value="${drawing.projDocToDrawings.id}">
                                                                         <span th:text="${drawing.drawing}"></span>
                                                                     </div>
                                                                 </div>
@@ -125,7 +139,8 @@
                                                             class="btn btn-success border-white mt-3 me-5">Удалить
                                                     </button>
                                                 </div>
-                                                <div th:each="formData : ${aosrFormData}" th:id="'projectSectionRow' + ${formData}">
+                                                <div th:each="formData : ${aosrFormData}"
+                                                     th:id="'projectSectionRow' + ${formData}">
                                                     <input type="hidden" th:name="'projectSectionHidden' + ${formData}"
                                                            th:value="${formData}">
                                                     <div class="row">
@@ -133,7 +148,7 @@
                                                             <select class="btn btn-light dropdown-toggle"
                                                                     th:name="'projectSectionSelect' + ${formData}">
                                                                 <option th:each="data : ${projectDocumentationList}"
-                                                                        th:value="${data.projectSection}"
+                                                                        th:value="${data.id}"
                                                                         th:text="${data.projectSection}"></option>
                                                             </select>
                                                         </div>
@@ -148,7 +163,9 @@
                                                                     <h6 class="m-0">Выбор чертежей</h6>
                                                                 </a>
                                                                 <!-- Card Content - Collapse -->
-                                                                <div class="collapse" th:id="'collapseCardDrawings' + ${formData}" style="">
+                                                                <div class="collapse"
+                                                                     th:id="'collapseCardDrawings' + ${formData}"
+                                                                     style="">
                                                                     <div class="card-body">
                                                                         <div th:each="drawing : ${drawingsList}">
                                                                             <input type="checkbox"
@@ -187,10 +204,10 @@
                                     </div>
                                     <div class="card mb-3">
                                         <div class="card-body">
-                                            <label class="p-0">Участки:</label>
+                                            <label class="p-0">Исполнительная схема:</label>
                                             <select id="execSchemSelect" name="execSchemSelect" class="form-control">
                                                 <option th:each="data : ${executiveSchemesList}" th:value="${data.id}"
-                                                        th:text="${data.section}"></option>
+                                                        th:text="${data.section != null && !data.section.isEmpty() ? data.nameScheme + ' на участке ' + data.section : data.nameScheme}"></option>
                                             </select>
                                         </div>
                                     </div>
@@ -216,7 +233,8 @@
                                         <div class="collapse" id="collapseCardActVik">
                                             <div class="card-body">
                                                 <div th:each="act : ${actsViCList}">
-                                                    <input class="mx-1" type='checkbox' th:value="${act.id}" th:name="'actViCCheckbox' + ${act.id}"
+                                                    <input class="mx-1" type='checkbox' th:value="${act.id}"
+                                                           th:name="'actViCCheckbox' + ${act.id}"
                                                            th:text="'Акт ВиК № ' + ${act.numberActViC} + ' от ' + ${act.dataActViC} + ' г.'">
                                                 </div>
                                             </div>
@@ -254,7 +272,8 @@
                                     <div class="card mb-3">
                                         <div class="card-body">
                                             <label class="p-0">Приказ на представителя подрядчика:</label>
-                                            <select id="subcustomerResponsibleSelect" name="subcustomerResponsibleSelect"
+                                            <select id="subcustomerResponsibleSelect"
+                                                    name="subcustomerResponsibleSelect"
                                                     class="form-control">
                                                 <option value="-1">---</option>
                                                 <option th:each="subcustomer : ${subcustomerResponsibleList}"
@@ -265,8 +284,10 @@
                                     </div>
                                     <div class="card mb-3">
                                         <div class="card-body">
-                                            <label class="p-0">Приказ на представителя подрядчика по вопросам строительного контроля:</label>
-                                            <select id="subcustomerResponsible2Select" name="subcustomerResponsible2Select"
+                                            <label class="p-0">Приказ на представителя подрядчика по вопросам
+                                                строительного контроля:</label>
+                                            <select id="subcustomerResponsible2Select"
+                                                    name="subcustomerResponsible2Select"
                                                     class="form-control">
                                                 <option value="-1">---</option>
                                                 <option th:each="subcustomer2 : ${subcustomerResponsible2List}"
@@ -290,7 +311,8 @@
                                     <div class="card mb-3">
                                         <div class="card-body">
                                             <label class="p-0">Приказ на представителя иного лица:</label>
-                                            <select id="anotherPersonResponsibleSelect" name="anotherPersonResponsibleSelect"
+                                            <select id="anotherPersonResponsibleSelect"
+                                                    name="anotherPersonResponsibleSelect"
                                                     class="form-control">
                                                 <option value="-1">---</option>
                                                 <option th:each="anotherPerson : ${anotherPersonResponsibleList}"
@@ -301,31 +323,27 @@
                                     </div>
                                     <div class="card mb-3">
                                         <div class="card-body">
+                                            <label>Номер АОСР:</label>
+                                            <input name="number" class="form-control" placeholder="Номер акта" required>
+                                        </div>
+                                    </div>
+                                    <div class="card mb-3">
+                                        <div class="card-body">
                                             <h5 class="h5 mb-0">Даты:</h5>
                                             <!-- Строки с датами: начало работ -->
                                             <div class="form-group row">
                                                 <label class="col-lg-4 col-form-label">Начало работ:</label>
                                                 <div class="col-lg-8 d-flex justify-content-between align-items-center">
-                                                    <input type="text" name="dayStart" placeholder="день"
+                                                    <input type="text" name="dateStart" placeholder="ДД.ММ.ГГГГ"
                                                            class="form-control mr-2" required>
-                                                    <input type="text" name="monthStart" placeholder="месяц"
-                                                           class="form-control mr-2" required>
-                                                    <label class="text m-0" >20</label>
-                                                    <input type="text" name="yearStart" placeholder="год"
-                                                           class="form-control" required>
                                                 </div>
                                             </div>
                                             <!-- Строки с датами: окончание работ -->
                                             <div class="form-group row">
                                                 <label class="col-lg-4 col-form-label">Окончание работ:</label>
                                                 <div class="col-lg-8 d-flex justify-content-between align-items-center">
-                                                    <input type="text" name="dayEnd" placeholder="день"
+                                                    <input type="text" name="dateEnd" placeholder="ДД.ММ.ГГГГ"
                                                            class="form-control mr-2" required>
-                                                    <input type="text" name="monthEnd" placeholder="месяц"
-                                                           class="form-control mr-2" required>
-                                                    <label class="text m-0">20</label>
-                                                    <input type="text" name="yearEnd" placeholder="год"
-                                                           class="form-control" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -341,7 +359,8 @@
 
                             <!-- Кнопки Отмена и Сохранить -->
                             <div class="d-flex justify-content-between mt-4 mr-5 ml-5">
-                                <a th:href="'/aosr-table/' + ${itdData.id}" role="button" class="btn btn-light btn-icon-split" onclick="clearInputData()">
+                                <a th:href="'/aosr-table/' + ${itdData.id}" role="button"
+                                   class="btn btn-light btn-icon-split" onclick="clearInputData()">
                                     <span class="icon text-gray-600">
                                         <i class="fas fa-arrow-right"></i>
                                     </span>

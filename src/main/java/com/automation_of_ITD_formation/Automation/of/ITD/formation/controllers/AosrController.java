@@ -138,6 +138,9 @@ public class AosrController {
     private void populateModel(Model model, ItdData itdData) {
         Set<ProjectDocumentationData> projectDocumentationList = itdData.getProjectDocumentationData();
         Set<ExecutiveSchemesData> executiveSchemesList = itdData.getExecutiveSchemesData();
+        List<ExecutiveSchemesData> sortedExecutiveSchemesList = new ArrayList<>(executiveSchemesList);
+        sortedExecutiveSchemesList.sort(Comparator.comparing(ExecutiveSchemesData::getNameScheme));
+
         Set<MaterialsUsedData> materialsUsedList = itdData.getMaterialsUsedData();
         Set<ActsViCData> actsViCList = itdData.getActsViCData();
         Set<SealingProtocolsData> sealingProtocolsList = itdData.getSealingProtocolsData();
@@ -157,7 +160,7 @@ public class AosrController {
         model.addAttribute("sealingProtocolsList", sealingProtocolsList);
         model.addAttribute("protocolsGnbList", protocolsGnbList);
         model.addAttribute("materialsUsedList", materialsUsedList);
-        model.addAttribute("executiveSchemesList", executiveSchemesList);
+        model.addAttribute("executiveSchemesList", sortedExecutiveSchemesList);
         model.addAttribute("projectDocumentationList", projectDocumentationList);
         model.addAttribute("anotherPersonResponsibleList", anotherPersonResponsibleList);
         model.addAttribute("customerResponsibleList", customerResponsibleList);
@@ -180,10 +183,8 @@ public class AosrController {
             actsVicIds = new HashSet<>(0);
         }
         List<String> projectSectionList = new ArrayList<>();
-        for (DrawingsData drawing : aosrData.getAosrToDrawings()) {
-            if (!projectSectionList.contains(drawing.getProjDocToDrawings().getProjectSection())) {
-                projectSectionList.add(drawing.getProjDocToDrawings().getProjectSection());
-            }
+        for (ProjectDocumentationData projectDocumentationData : aosrData.getAosrToProjDocs()) {
+            projectSectionList.add(projectDocumentationData.getProjectSection());
         }
         Long protocolGnbId = (aosrData.getProtocolsGnbData() != null) ? aosrData.getProtocolsGnbData().getId() : -1;
         Long protocolSealingId = (aosrData.getSealingProtocolsData() != null) ? aosrData.getSealingProtocolsData().getId() : -1;
@@ -193,31 +194,8 @@ public class AosrController {
         Long designerResId = (aosrData.getDesignerResponsibleData() != null) ? aosrData.getDesignerResponsibleData().getId() : -1;
         Long anotherPersonResId = (aosrData.getAnotherPersonResponsibleData() != null) ? aosrData.getAnotherPersonResponsibleData().getId() : -1;
 
-        LocalDate dateStart = aosrData.getStartDate();
-        LocalDate dateEnd = aosrData.getEndDate();
+        aosrData.setFormattedDates();
 
-        String dayStart = Integer.toString(dateStart.getDayOfMonth());
-        String yearStart = Integer.toString(dateStart.getYear()).substring(2, 4);
-        String dayEnd = Integer.toString(dateEnd.getDayOfMonth());
-        String yearEnd = Integer.toString(dateEnd.getYear()).substring(2, 4);
-        StringBuilder monthStart = new StringBuilder();
-        StringBuilder monthEnd = new StringBuilder();
-        monthMap.forEach((key, value) -> {
-            if (value.equals(dateStart.getMonthValue()) && value.equals(dateEnd.getMonthValue())) {
-                monthStart.append(key);
-                monthEnd.append(key);
-            } else if (value.equals(dateStart.getMonthValue())) {
-                monthStart.append(key);
-            } else if (value.equals(dateEnd.getMonthValue())) {
-                monthEnd.append(key);
-            }
-        });
-        model.addAttribute("dayStart", dayStart);
-        model.addAttribute("yearStart", yearStart);
-        model.addAttribute("dayEnd", dayEnd);
-        model.addAttribute("yearEnd", yearEnd);
-        model.addAttribute("monthStart", monthStart);
-        model.addAttribute("monthEnd", monthEnd);
         model.addAttribute("projectSectionList", projectSectionList);
         model.addAttribute("drawingIds", drawingIds);
         model.addAttribute("actsVicIds", actsVicIds);
@@ -246,7 +224,11 @@ public class AosrController {
         }
         ItdData itdData = itdRepository.findById(id).orElseThrow();
         model.addAttribute("itdData", itdData);
-        Set<AosrData> aosrList = itdData.getAosrData();
+        List<AosrData> aosrList = new ArrayList<>(itdData.getAosrData());
+        for (AosrData aosrData : aosrList) {
+            aosrData.setFormattedDates();
+        }
+        aosrList.sort(Comparator.comparing(AosrData::getNumber));
         model.addAttribute("aosrList", aosrList);
         return "aosrTable";
     }
@@ -336,14 +318,11 @@ public class AosrController {
 
     @PostMapping("/aosr-add/{id}")
     public String postAosrAdd(@PathVariable(value = "id") long id,
+                              @RequestParam("number") String number,
                               @RequestParam("work1") String work1,
                               @RequestParam("work2") String work2,
-                              @RequestParam("dayStart") String dayStart,
-                              @RequestParam("monthStart") String monthStart,
-                              @RequestParam("yearStart") String yearStart,
-                              @RequestParam("dayEnd") String dayEnd,
-                              @RequestParam("monthEnd") String monthEnd,
-                              @RequestParam("yearEnd") String yearEnd,
+                              @RequestParam("dateStart") String dateStart,
+                              @RequestParam("dateEnd") String dateEnd,
                               @RequestParam("execSchemSelect") Long execSchemId,
                               @RequestParam("protocolGnbSelect") Long protocolGnbId,
                               @RequestParam("sealingProtocolSelect") Long sealingProtocolId,
@@ -354,16 +333,14 @@ public class AosrController {
                               @RequestParam("anotherPersonResponsibleSelect") Long anotherPersonResId,
                               @RequestParam Map<String, String> formData) {
         ItdData itdData = itdRepository.findById(id).orElseThrow();
-        yearStart = "20" + yearStart;
-        yearEnd = "20" + yearEnd;
 
-        int monthStartNum = monthMap.get(monthStart.toLowerCase());
-        int monthEndNum = monthMap.get(monthEnd.toLowerCase());
+        String[] splitDateStart = dateStart.split("\\.");
+        String[] splitDateEnd = dateEnd.split("\\.");
 
-        LocalDate startDate = LocalDate.of(Integer.parseInt(yearStart), monthStartNum, Integer.parseInt(dayStart));
-        LocalDate endDate = LocalDate.of(Integer.parseInt(yearEnd), monthEndNum, Integer.parseInt(dayEnd));
+        LocalDate startDate = LocalDate.of(Integer.parseInt(splitDateStart[2]), Integer.parseInt(splitDateStart[1]), Integer.parseInt(splitDateStart[0]));
+        LocalDate endDate = LocalDate.of(Integer.parseInt(splitDateEnd[2]), Integer.parseInt(splitDateEnd[1]), Integer.parseInt(splitDateEnd[0]));
 
-        AosrData aosrData = new AosrData(work1, work2, startDate, endDate);
+        AosrData aosrData = new AosrData(number, work1, work2, startDate, endDate);
 
         Set<MaterialsUsedData> materials = new HashSet<>();
         Set<DrawingsData> drawingsSet = new HashSet<>();
@@ -377,9 +354,6 @@ public class AosrController {
                     Long drawingId = Long.parseLong(parts[0].replace("drawingCheckbox", ""));
                     DrawingsData drawing = drawingsRepository.findById(drawingId).orElseThrow();
                     drawingsSet.add(drawing);
-
-                    ProjectDocumentationData projDoc = drawing.getProjDocToDrawings();
-                    projectDocumentationSet.add(projDoc);
                 }
             }
             if (key.startsWith("actViCCheckbox")) {
@@ -392,6 +366,11 @@ public class AosrController {
                 Long selectedMaterialId = Long.parseLong(key.substring("selectedMaterials".length()));
                 MaterialsUsedData material = materialsUsedRepository.findById(selectedMaterialId).orElseThrow();
                 materials.add(material);
+            }
+            if (key.startsWith("projectSectionSelect")) {
+                Long selectedProjectSectionId = Long.parseLong(value);
+                ProjectDocumentationData projDoc = projectDocumentationRepository.findById(selectedProjectSectionId).orElseThrow();
+                projectDocumentationSet.add(projDoc);
             }
         });
         aosrData.setAosrToMaterials(materials);
@@ -471,14 +450,11 @@ public class AosrController {
     @Transactional
     public String postAosrUpdate(@PathVariable(value = "itdId") long itdId,
                                  @PathVariable(value = "aosrId") long aosrId,
+                                 @RequestParam("number") String number,
                                  @RequestParam("work1") String work1,
                                  @RequestParam("work2") String work2,
-                                 @RequestParam("dayStart") String dayStart,
-                                 @RequestParam("monthStart") String monthStart,
-                                 @RequestParam("yearStart") String yearStart,
-                                 @RequestParam("dayEnd") String dayEnd,
-                                 @RequestParam("monthEnd") String monthEnd,
-                                 @RequestParam("yearEnd") String yearEnd,
+                                 @RequestParam("dateStart") String dateStart,
+                                 @RequestParam("dateEnd") String dateEnd,
                                  @RequestParam("execSchemSelect") Long execSchemId,
                                  @RequestParam("protocolGnbSelect") Long protocolGnbId,
                                  @RequestParam("sealingProtocolSelect") Long sealingProtocolId,
@@ -523,8 +499,8 @@ public class AosrController {
                 }
             }
             if (key.startsWith("projectSectionSelect")) {
-                ProjectDocumentationData projDoc = projectDocumentationRepository.findByProjectSection(value)
-                        .orElseThrow(() -> new NoSuchElementException("ProjectDocumentationData with section " + value + " not found"));
+                Long projDocId = Long.parseLong(value);
+                ProjectDocumentationData projDoc = projectDocumentationRepository.findById(projDocId).orElseThrow();
                 if (projDoc.getAosrs() == null) {
                     projDoc.setAosrs(new HashSet<>());
                 }
@@ -677,17 +653,15 @@ public class AosrController {
 
         ExecutiveSchemesData executiveSchemesData = executiveSchemesRepository.findById(execSchemId).orElseThrow();
         aosrData.setExecutiveSchemesData(executiveSchemesData);
+        aosrData.setNumber(number);
         aosrData.setTypeOfWork(work1);
         aosrData.setPermittedFollowingWork(work2);
 
-        yearStart = "20" + yearStart;
-        yearEnd = "20" + yearEnd;
+        String[] splitDateStart = dateStart.split("\\.");
+        String[] splitDateEnd = dateEnd.split("\\.");
 
-        int monthStartNum = monthMap.get(monthStart.toLowerCase());
-        int monthEndNum = monthMap.get(monthEnd.toLowerCase());
-
-        LocalDate startDate = LocalDate.of(Integer.parseInt(yearStart), monthStartNum, Integer.parseInt(dayStart));
-        LocalDate endDate = LocalDate.of(Integer.parseInt(yearEnd), monthEndNum, Integer.parseInt(dayEnd));
+        LocalDate startDate = LocalDate.of(Integer.parseInt(splitDateStart[2]), Integer.parseInt(splitDateStart[1]), Integer.parseInt(splitDateStart[0]));
+        LocalDate endDate = LocalDate.of(Integer.parseInt(splitDateEnd[2]), Integer.parseInt(splitDateEnd[1]), Integer.parseInt(splitDateEnd[0]));
 
         aosrData.setStartDate(startDate);
         aosrData.setEndDate(endDate);
@@ -800,7 +774,9 @@ public class AosrController {
             response.flushBuffer();
 
             for (File file : tempFiles) {
-                file.delete();
+                if (file.exists()) {
+                    file.delete();
+                }
             }
             zipFile.delete();
 
