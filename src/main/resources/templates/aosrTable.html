@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Акты ОСР</title>
+    <title>АОСР</title>
 
     <!-- Custom fonts for this template-->
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
@@ -46,7 +46,7 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h2 mb-0 text-primary">Акты ВиК</h1>
+                    <h1 class="h2 mb-0 text-primary">АОСР</h1>
                     <div>
                         <form th:action="'/aosr-table/' + ${itdData.id}" method="post">
                             <div class="text-white">
@@ -78,7 +78,7 @@
                             <th></th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="text-left">
                         <tr th:each="doc : ${aosrList}">
                             <td>
                                 <form th:action="'/aosr-table/' + ${itdData.id} + '/update-status/' + ${doc.id}" method="post">
