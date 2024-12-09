@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Изменение акта ВиК</title>
+    <title>Изменение наименования работ</title>
 
     <!-- Custom fonts for this template-->
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
@@ -44,58 +44,90 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h2 mb-0 text-primary">Акты ВиК</h1>
+                    <h1 class="h2 mb-0 text-primary">Наименование работ</h1>
                 </div>
                 <hr>
 
                 <div class="card shadow">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Изменение акта ВиК</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Изменение наименования работ</h6>
                     </div>
-                    <div th:each="el : ${actsVicDataOptional}">
+                    <div th:each="el : ${nameWorksDataOptional}">
                         <form method="post">
                             <div class="card-body">
                                 <div class="row justify-content-between mb-2">
                                     <div class="d-flex col-lg-5 card mb-3 ml-4">
                                         <div class="d-flex card-body align-items-center p-3">
                                             <div class="col-lg-6">
-                                                <label class="m-0">Номер акта ВиК</label>
+                                                <label class="m-0">Наименование работ</label>
                                             </div>
                                             <div class="col-lg-6">
-                                                <input type="text" name="numberActViC" th:value="${el.numberActViC}"
+                                                <input type="text" name="nameWorks" th:value="${el.name}"
                                                        class="form-control">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="d-flex col-lg-5 card mb-3 mr-4">
-                                        <div class="d-flex card-body align-items-center p-3">
+                                    <div id="normativeContainer" class="d-flex col-lg-5 card mb-3 mr-4">
+                                        <div class="d-flex card-body align-items-center p-3" th:each="normative : ${el.normativeList}">
                                             <div class="col-lg-6">
-                                                <label class="m-0">Дата акта ВиК</label>
+                                                <label class="m-0">Нормативка</label>
                                             </div>
                                             <div class="col-lg-6">
-                                                <input type="text" name="dataActViC" th:value="${el.dataActViC}"
+                                                <input type="text" th:name="'normative' + ${normative.id}" th:value="${normative.name}"
                                                        class="form-control">
                                             </div>
+                                            <div class="col-lg-4">
+                                                <button type="button" onclick="removeDiv(this)" class="btn btn-danger align-self-end">
+                                                    <span class="icon text-white-50">
+                                                        <i class="fas fa-trash"></i>
+                                                    </span>
+                                                    <span class="text">Удалить</span>
+                                                </button>
+                                            </div>
                                         </div>
+                                    </div>
+                                    <div>
+                                        <button type="button" onclick="addNormative()" class="btn btn-primary btn-icon-split">
+                                            <span class="icon text-white-50">
+                                                <i class="fas fa-plus"></i>
+                                            </span>
+                                            <span class="text">Добавить нормативку</span>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="row justify-content-between mb-3">
-                                    <div class="d-flex col-lg-5 card mb-3 ml-4">
-                                        <div class="d-flex card-body align-items-center p-3">
+                                    <div id="nextNameWorksContainer" class="d-flex col-lg-5 card mb-3 ml-4">
+                                        <div class="d-flex card-body align-items-center p-3" th:each="nextNameWorks : ${el.nextNameWorksList}">
                                             <div class="col-lg-6">
-                                                <label class="m-0">Название лаборатории</label>
+                                                <label class="m-0">Наименование последующих работ</label>
                                             </div>
                                             <div class="col-lg-6">
-                                                <input type="text" name="nameLaboratory" th:value="${el.nameLaboratory}"
+                                                <input type="text" th:name="'nextNameWorks' + ${nextNameWorks.id}" th:value="${nextNameWorks.name}"
                                                        class="form-control">
                                             </div>
+                                            <div class="col-lg-4">
+                                                <button type="button" onclick="removeDiv(this)" class="btn btn-danger align-self-end">
+                                                    <span class="icon text-white-50">
+                                                        <i class="fas fa-trash"></i>
+                                                    </span>
+                                                    <span class="text">Удалить</span>
+                                                </button>
+                                            </div>
                                         </div>
+                                    </div>
+                                    <div>
+                                        <button type="button" onclick="addNextNameWorks()" class="btn btn-primary btn-icon-split">
+                                            <span class="icon text-white-50">
+                                                <i class="fas fa-plus"></i>
+                                            </span>
+                                            <span class="text">Добавить наименование последующей работы</span>
+                                        </button>
                                     </div>
                                 </div>
 
                                 <!-- Кнопки Отмена и Сохранить -->
                                 <div class="d-flex justify-content-between mt-4 mt-0 mr-5 ml-5">
-                                    <a th:href="'/acts-vic-table/' + ${itdData.id}" role="button" class="btn btn-light btn-icon-split">
+                                    <a th:href="'/name-works-table/' + ${itdData.id}" role="button" class="btn btn-light btn-icon-split">
                                     <span class="icon text-gray-600">
                                         <i class="fas fa-arrow-right"></i>
                                     </span>
@@ -140,6 +172,7 @@
 
 <!-- Custom scripts for all pages-->
 <script th:src="@{/js/sb-admin-2.min.js}"></script>
+<script th:src="@{/js/nameWorks.js}"></script>
 
 </body>
 

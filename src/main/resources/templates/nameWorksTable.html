@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Протоколы ГНБ</title>
+    <title>Наименование работ</title>
 
     <!-- Custom fonts for this template-->
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
@@ -46,8 +46,7 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h2 mb-0 text-primary">Протоколы ГНБ</h1>
-
+                    <h1 class="h2 mb-0 text-primary">Наименования работ</h1>
                 </div>
                 <hr>
                 <div class="table-responsive">
@@ -55,15 +54,16 @@
                         <thead class="bg-gray-300">
                         <tr>
                             <th>Статус</th>
-                            <th>Номер протокола ГНБ</th>
-                            <th>Дата протокола ГНБ</th>
+                            <th>Наименование работ</th>
+                            <th>Нормативка</th>
+                            <th>Следующие работы</th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="el : ${protocolsGnbList}">
+                        <tr th:each="el : ${nameWorksList}">
                             <td>
-                                <form th:action="'/protocols-gnb-table/' + ${itdData.id} + '/update-status/' + ${el.id}" method="post">
+                                <form th:action="'/name-works-table/' + ${itdData.id} + '/update-status/' + ${el.id}" method="post">
                                     <select name="status" class="status-select" onchange="updateStatus(this.form)">
                                         <option value="Готов" th:selected="${el.status == 'Готов'}"
                                                 data-image-url="/images/green.png"></option>
@@ -74,12 +74,23 @@
                                     </select>
                                 </form>
                             </td>
-                            <td th:text="${el.numberProtocolGnb}"></td>
-                            <td th:text="${el.dataProtocolGnb}"></td>
+                            <td th:text="${el.name}"></td>
                             <td>
-                                <a th:href="'/protocols-gnb-table/' + ${itdData.id} + '/protocols-gnb-edit/' + ${el.id}" class="btn btn-circle btn-sm btn-primary mr-2"><i class="fas fa-pencil-alt fa-sm text-white-50"></i></a>
-                                <form th:action="'/protocols-gnb-table/' + ${itdData.id} + '/protocols-gnb-remove/' + ${el.id}" method="post">
-                                    <button class="btn btn-circle btn-sm btn-danger"><i class="fas fa-trash fa-sm text-white-50"></i></button>
+                                <span th:each="normative : ${el.normativeList}">
+                                    <span th:text="${normative.name}"></span>
+                                    <br>
+                                </span>
+                            </td>
+                            <td>
+                                <span th:each="nextNameWorks : ${el.nextNameWorksList}">
+                                    <span th:text="${nextNameWorks.name}"></span>
+                                    <br>
+                                </span>
+                            </td>
+                            <td>
+                                <a th:href="'/name-works-table/' + ${itdData.id} + '/name-works-edit/' + ${el.id}" class="btn btn-circle btn-sm btn-primary mr-2"><i class="fas fa-pencil-alt fa-sm text-white-50"></i></a>
+                                <form th:action="'/name-works-table/' + ${itdData.id} + '/name-works-remove/' + ${el.id}" method="post">
+                                    <button type="submit" class="btn btn-circle btn-sm btn-danger"><i class="fas fa-trash fa-sm text-white-50"></i></button>
                                 </form>
                             </td>
                         </tr>
@@ -87,11 +98,18 @@
                     </table>
                 </div>
 
-                <a th:href="'/protocols-gnb-add/' + ${itdData.id}" class="btn btn-primary btn-icon-split mt-3">
+                <a th:href="'/name-works-add/' + ${itdData.id}" class="btn btn-primary btn-icon-split mt-3">
                     <span class="icon text-white-50">
                         <i class="fas fa-plus fa-md text-white-50"></i>
                     </span>
-                    <span class="text">Добавить протокол</span>
+                    <span class="text">Добавить наименование работ</span>
+                </a>
+
+                <a th:href="'/name-works-add-from-itd/' + ${itdData.id}" class="btn btn-primary btn-icon-split mt-3">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-plus fa-md text-white-50"></i>
+                    </span>
+                    <span class="text">Скопировать наименования работ из других ИТД</span>
                 </a>
 
             </div>
@@ -110,6 +128,8 @@
 </div>
 <!-- End of Page Wrapper -->
 
+
+<!-- Bootstrap core JavaScript-->
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
@@ -121,7 +141,6 @@
 
 <script th:src="@{https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js}"></script>
 <script th:src="@{/js/updateStatus.js}"></script>
-
 </body>
 
 </html>

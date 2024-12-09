@@ -45,6 +45,9 @@ public class ItdData extends Auditable {
     @OneToMany(mappedBy = "itdToAosrData", cascade = CascadeType.ALL)
     private Set<AosrData> aosrData = new HashSet<>();
 
+    @OneToMany(mappedBy = "itdToNameWorksData", cascade = CascadeType.ALL)
+    private Set<NameWorksData> nameWorksData = new HashSet<>();
+
     public Long getId() {
         return id;
     }
@@ -147,6 +150,14 @@ public class ItdData extends Auditable {
 
     public void setAosrData(Set<AosrData> aosrData) {
         this.aosrData = aosrData;
+    }
+
+    public Set<NameWorksData> getNameWorksData() {
+        return nameWorksData;
+    }
+
+    public void setNameWorksData(Set<NameWorksData> nameWorksData) {
+        this.nameWorksData = nameWorksData;
     }
 
     public ItdData() {
