@@ -310,17 +310,19 @@
                                                                 </button>
                                                             </div>
                                                         </div>
-                                                        <div class="row">
-                                                            <div th:each="selMaterial : ${selectedMaterialsList}">
-                                                                <input type="checkbox" checked="checked" th:name="'selectedMaterials' + ${selMaterial.id}" th:value="${selMaterial.id}"
-                                                                       th:text="${selMaterial.nameMaterial} + '. ' + ${selMaterial.accompanyingDocuments[0].name} + ' № ' + ${selMaterial.accompanyingDocuments[0].number} + ' от ' + ${selMaterial.accompanyingDocuments[0].date} + ' г.'">
-                                                            </div>
-                                                            <div id="searchResults" th:if="${foundMaterialsList}">
-                                                                <div th:each="foundMaterial : ${foundMaterialsList}">
-                                                                    <input type="checkbox" th:name="'selectedMaterials' + ${foundMaterial.id}" th:value="${foundMaterial.id}"
-                                                                           th:text="${foundMaterial.nameMaterial} + ' - ' + ${foundMaterial.accompanyingDocuments[0].name} + ' № ' + ${foundMaterial.accompanyingDocuments[0].number} + ' от ' + ${foundMaterial.accompanyingDocuments[0].date} + ' г.'">
-                                                                </div>
-                                                            </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div th:each="selMaterial : ${selectedMaterialsList}">
+                                                        <input type="checkbox" checked="checked" th:name="'selectedMaterials' + ${selMaterial.id}" th:value="${selMaterial.id}"
+                                                               th:text="${selMaterial.nameMaterial} + '. ' + ${selMaterial.accompanyingDocuments[0].name} + ' № ' + ${selMaterial.accompanyingDocuments[0].number} + ' от ' + ${selMaterial.accompanyingDocuments[0].date} + ' г.'">
+                                                    </div>
+                                                    <div id="searchResults" th:if="${foundMaterialsList}">
+                                                        <div th:each="foundMaterial : ${foundMaterialsList}">
+                                                            <input type="checkbox" th:name="'selectedMaterials' + ${foundMaterial.id}" th:value="${foundMaterial.id}"
+                                                                   th:text="${foundMaterial.nameMaterial} + ' - ' + ${foundMaterial.accompanyingDocuments[0].name} + ' № ' + ${foundMaterial.accompanyingDocuments[0].number} + ' от ' + ${foundMaterial.accompanyingDocuments[0].date} + ' г.'">
                                                         </div>
                                                     </div>
                                                 </div>
