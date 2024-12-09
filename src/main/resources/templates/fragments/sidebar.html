@@ -1,5 +1,5 @@
 <div th:fragment="sidebar" class="d-flex">
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar_extended sidebar-dark accordion" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/index">
@@ -23,54 +23,31 @@
         <hr class="sidebar-divider">
 
         <!-- Heading -->
-
-
-        <!-- Nav Item - Pages Collapse Menu -->
-
-
-        <!-- Heading -->
-        <div class="sidebar-heading">Проекты</div>
+        <div class="sidebar-heading">Объекты</div>
 
         <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseActivePages"
-               aria-expanded="true" aria-controls="collapsePages">
-                <i class="fas fa-fw fa-table"></i>
-                <span>Объекты</span>
+        <li class="nav-item" th:each="itd : ${itdList}">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" th:data-target="'#collapseActivePages' + ${itd.name}"
+               aria-expanded="false" aria-controls="collapsePages">
+                <span th:text="'ИТД ' + ${itd.name}"></span>
             </a>
-            <div id="collapseActivePages" class="collapse" aria-labelledby="headingPages"
+            <div th:id="'collapseActivePages' + ${itd.name}" class="collapse" aria-labelledby="headingPages"
                  data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="itd_info">ИТД 1</a>
-                </div>
-            </div>
-        </li>
-
-        <!-- Nav Item - Charts -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseArchivePages"
-               aria-expanded="true" aria-controls="collapsePages">
-                <i class="fas fa-fw fa-folder"></i>
-                <span>Архив</span>
-            </a>
-            <div id="collapseArchivePages" class="collapse" aria-labelledby="headingPages"
-                 data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="itd_info">ИТД 2</a>
-                    <a class="collapse-item" href="itd_info">ИТД 3</a>
-                    <a class="collapse-item" href="itd_info">ИТД 4</a>
-                    <a class="collapse-item" href="itd_info">ИТД 5</a>
+                    <a class="collapse-item" th:href="'/passport-object-table/' + ${itd.id}">Паспорт объекта</a>
+                    <a class="collapse-item" th:href="'/project-documentation-table/' + ${itd.id}">Проектная документация</a>
+                    <a class="collapse-item" th:href="'/materials-used-table/' + ${itd.id}">Применяемые материалы</a>
+                    <a class="collapse-item" th:href="'/executive-schemes-table/' + ${itd.id}">Исполнительные схемы</a>
+                    <a class="collapse-item" th:href="'/protocols-gnb-table/' + ${itd.id}">Протоколы ГНБ</a>
+                    <a class="collapse-item" th:href="'/acts-vic-table/' + ${itd.id}">Акты ВиК</a>
+                    <a class="collapse-item" th:href="'/sealing-protocols-table/' + ${itd.id}">Протоколы уплотнения</a>
+                    <a class="collapse-item" th:href="'/name-works-table/' + ${itd.id}">Наименования работ</a>
+                    <a class="collapse-item" th:href="'/aosr-table/' + ${itd.id}">АОСР</a>
                 </div>
             </div>
         </li>
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
-
-        <!-- Sidebar Toggler (Sidebar) -->
-        <div class="text-center d-none d-md-inline">
-            <button class="rounded-circle border-0" id="sidebarToggle"></button>
-        </div>
-
     </ul>
 </div>

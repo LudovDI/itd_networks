@@ -116,7 +116,7 @@ function addProjectSection() {
 }
 
 function removeDiv(button) {
-    var parentDiv = button.parentElement;
+    var parentDiv = button.closest('.row.mb-2');
     if (parentDiv) {
         parentDiv.remove();
     }

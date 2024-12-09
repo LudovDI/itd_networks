@@ -4,6 +4,8 @@ import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.GenerateFileUtils;
 import jakarta.servlet.http.HttpServletResponse;
+import org.docx4j.Docx4J;
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
@@ -15,10 +17,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import javax.print.*;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.text.Collator;
 import java.time.LocalDate;
@@ -248,7 +249,9 @@ public class AosrController {
         ItdData itdData = itdRepository.findById(id).orElseThrow();
         model.addAttribute("itdData", itdData);
         populateModel(model, itdData);
-        model.addAttribute("aosrFormData", new ArrayList<String>());
+        List<String> aosrFormData = new ArrayList<>();
+        aosrFormData.add("1");
+        model.addAttribute("aosrFormData", aosrFormData);
         return "aosrAdd";
     }
 
@@ -738,13 +741,12 @@ public class AosrController {
     public void postAosrTable(@PathVariable(value = "itdId") long itdId, HttpServletResponse response) {
         ItdData itdData = itdRepository.findById(itdId).orElseThrow();
         List<File> tempFiles = new ArrayList<>();
-        Set<AosrData> aosrList = itdData.getAosrData();
+        List<AosrData> aosrList = new ArrayList<>(itdData.getAosrData());
+        aosrList.sort(Comparator.comparing(AosrData::getNumber));
         try {
-            int indexAosr = 1;
             for (AosrData aosrData : aosrList) {
-                File tempFile = GenerateFileUtils.generateAosrFile(aosrData, indexAosr, spMap, monthMap);
+                File tempFile = GenerateFileUtils.generateAosrFile(aosrData, spMap, monthMap);
                 tempFiles.add(tempFile);
-                indexAosr++;
             }
 
             File zipFile = File.createTempFile("AosrDocs", ".zip");
@@ -782,6 +784,78 @@ public class AosrController {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @GetMapping("/aosr-table/{itdId}/aosr-preview/{aosrId}")
+    public void getAosrPreview(@PathVariable(value = "itdId") long itdId,
+                               @PathVariable(value = "aosrId") long aosrId,
+                               HttpServletResponse response) {
+        AosrData aosrData = aosrRepository.findById(aosrId).orElseThrow();
+
+        try {
+            File tempFile = GenerateFileUtils.generateAosrFile(aosrData, spMap, monthMap);
+
+            try (InputStream docxInputStream = new FileInputStream(tempFile);
+                 OutputStream pdfOutputStream = response.getOutputStream()) {
+                response.setContentType("application/pdf");
+                response.setHeader("Content-Disposition", "inline; filename=preview.pdf");
+
+                WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(docxInputStream);
+
+                Docx4J.toPDF(wordMLPackage, pdfOutputStream);
+
+                pdfOutputStream.flush();
+            }
+
+            tempFile.delete();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @PostMapping("/aosr-table/{itdId}/aosr-print/{aosrId}")
+    public void postAosrPrint(@PathVariable(value = "itdId") long itdId,
+                              @PathVariable(value = "aosrId") long aosrId,
+                              HttpServletResponse response) {
+        AosrData aosrData = aosrRepository.findById(aosrId).orElseThrow();
+
+        try {
+            File tempFile = GenerateFileUtils.generateAosrFile(aosrData, spMap, monthMap);
+
+            PrintService printService = PrintServiceLookup.lookupDefaultPrintService();
+            if (printService == null) {
+                throw new IllegalStateException("Принтер по умолчанию не найден");
+            }
+
+            DocPrintJob printJob = printService.createPrintJob();
+            Doc doc = new SimpleDoc(new FileInputStream(tempFile), DocFlavor.INPUT_STREAM.AUTOSENSE, null);
+
+            printJob.print(doc, null);
+
+            tempFile.delete();
+            response.setContentType("text/html; charset=UTF-8");
+            response.setCharacterEncoding("UTF-8");
+
+            try (OutputStream outputStream = response.getOutputStream();
+                 Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
+                writer.write("<html><body>Документ отправлен на печать.</body></html>");
+            }
+        } catch (PrintException | IOException e) {
+            e.printStackTrace();
+            try {
+                response.setContentType("text/html; charset=UTF-8");
+                response.setCharacterEncoding("UTF-8");
+
+                try (OutputStream outputStream = response.getOutputStream();
+                     Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
+                    writer.write("<html><body>Ошибка при отправке на печать: " + e.getMessage() + "</body></html>");
+                }
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         }
     }
 }

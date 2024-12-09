@@ -35,6 +35,10 @@ public class AosrData extends Auditable {
     private ExecutiveSchemesData executiveSchemesData;
 
     @ManyToOne
+    @JoinColumn(name = "name_works_id")
+    private NameWorksData nameWorksToAosr;
+
+    @ManyToOne
     @JoinColumn(name = "another_person_res_id")
     private AnotherPersonResponsibleData anotherPersonResponsibleData;
 
@@ -151,14 +155,6 @@ public class AosrData extends Auditable {
         this.passportObjectData = passportObjectData;
     }
 
-    public String getPermittedFollowingWork() {
-        return permittedFollowingWork;
-    }
-
-    public void setPermittedFollowingWork(String permittedFollowingWork) {
-        this.permittedFollowingWork = permittedFollowingWork;
-    }
-
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -195,14 +191,6 @@ public class AosrData extends Auditable {
 
     public void setFormattedEndDate(String formattedEndDate) {
         this.formattedEndDate = formattedEndDate;
-    }
-
-    public String getTypeOfWork() {
-        return typeOfWork;
-    }
-
-    public void setTypeOfWork(String typeOfWork) {
-        this.typeOfWork = typeOfWork;
     }
 
     public Set<DrawingsData> getAosrToDrawings() {
@@ -299,6 +287,30 @@ public class AosrData extends Auditable {
 
     public void setItdToAosrData(ItdData itdToAosrData) {
         this.itdToAosrData = itdToAosrData;
+    }
+
+    public NameWorksData getNameWorksToAosr() {
+        return nameWorksToAosr;
+    }
+
+    public void setNameWorksToAosr(NameWorksData nameWorksToAosr) {
+        this.nameWorksToAosr = nameWorksToAosr;
+    }
+
+    public String getTypeOfWork() {
+        return typeOfWork;
+    }
+
+    public void setTypeOfWork(String typeOfWork) {
+        this.typeOfWork = typeOfWork;
+    }
+
+    public String getPermittedFollowingWork() {
+        return permittedFollowingWork;
+    }
+
+    public void setPermittedFollowingWork(String permittedFollowingWork) {
+        this.permittedFollowingWork = permittedFollowingWork;
     }
 
     public AosrData() {

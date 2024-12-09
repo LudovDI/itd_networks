@@ -17,7 +17,7 @@ import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.
 
 public class GenerateFileUtils {
 
-    public static File generateAosrFile(AosrData aosrData, int indexAosr, Map<List<String>, String> spMap, Map<String, Integer> monthMap) throws IOException {
+    public static File generateAosrFile(AosrData aosrData, Map<List<String>, String> spMap, Map<String, Integer> monthMap) throws IOException {
         FileInputStream inputStream = new FileInputStream("E:\\javaProjects\\itd_networks\\src\\main\\resources\\files\\АОСР.docx");
         XWPFDocument document = new XWPFDocument(inputStream);
         inputStream.close();
@@ -53,6 +53,7 @@ public class GenerateFileUtils {
         String work2 = aosrData.getPermittedFollowingWork();
         Set<DrawingsData> drawingsDataSet = aosrData.getAosrToDrawings();
         Set<MaterialsUsedData> materialsUsedDataSet = aosrData.getAosrToMaterials();
+        int aosrNumber = Integer.parseInt(aosrData.getNumber());
 
         String capitalConstructionProject = GenerateStringUtils.generateCapitalConstructionProject(passportObjectData);
         replacePlaceholderInTable(document, "CapitalConstructionProject", capitalConstructionProject, 110, 110);
@@ -62,7 +63,7 @@ public class GenerateFileUtils {
         replacePlaceholderInTable(document, "InfoContractor", contractor, 100, 100);
         String designer = GenerateStringUtils.generateDesigner(passportObjectData);
         replacePlaceholderInTable(document, "InfoDesigner", designer, 100, 100);
-        String projectCode = GenerateStringUtils.generateProjectCode(passportObjectData, indexAosr);
+        String projectCode = GenerateStringUtils.generateProjectCode(passportObjectData, aosrNumber);
         replacePlaceholderInTable(document, "ProjectCode", projectCode, 30, 30);
         String customerRes = GenerateStringUtils.generateCustomerResponsible(customerResponsibleData);
         replacePlaceholderInTable(document, "InfoResCustomer", customerRes, 100, 100);
@@ -82,9 +83,9 @@ public class GenerateFileUtils {
         replacePlaceholderInTable(document, "Drawings", drawings, 70, 135);
         String materials = GenerateStringUtils.generateMaterials(materialsUsedDataSet);
         replacePlaceholderInTable(document, "Materials", materials, 80, 115);
-        String executiveSchemes = GenerateStringUtils.generateExecSchemesActsProtocols(aosrData, executiveSchemesData, nameNetwork, passportObjectData, indexAosr);
+        String executiveSchemes = GenerateStringUtils.generateExecSchemesActsProtocols(aosrData, executiveSchemesData, nameNetwork, passportObjectData, aosrNumber);
         replacePlaceholderInTable(document, "ExecutiveSchemes", executiveSchemes, 120, 120);
-        String spAndProjectDocumentations = GenerateStringUtils.generateSpAndProjectDocumentations(work1, drawingsDataSet, spMap);
+        String spAndProjectDocumentations = GenerateStringUtils.generateSpAndProjectDocumentations(work1, projectDocumentationSet, spMap);
         replacePlaceholderInTable(document, "ProjectDocumentations", spAndProjectDocumentations, 80, 120);
         String engineeringSupportNetworks = GenerateStringUtils.generateEngineeringSupportNetworks(work2, executiveSchemesData, nameNetwork);
         replacePlaceholderInTable(document, "EngineeringSupportNetworks", engineeringSupportNetworks, 70, 120);
@@ -126,7 +127,7 @@ public class GenerateFileUtils {
         replacePlaceholderInTable(document, "monthEnd", monthEnd.toString(), 10, 10);
         replacePlaceholderInTable(document, "yearE", yearEnd, 10, 10);
 
-        File tempFile = new File(System.getProperty("java.io.tmpdir"), "Aosr_" + indexAosr + ".docx");
+        File tempFile = new File(System.getProperty("java.io.tmpdir"), "Aosr_" + aosrNumber + ".docx");
         try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
             document.write(outputStream);
         }

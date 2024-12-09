@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Добавить протокол ГНБ</title>
+    <title>Добавление наименования работ из других ИТД</title>
 
     <!-- Custom fonts for this template-->
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
@@ -44,43 +44,50 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h2 mb-0 text-primary">Протоколы ГНБ</h1>
+                    <h1 class="h2 mb-0 text-primary">Наименование работ</h1>
                 </div>
                 <hr>
 
                 <div class="card shadow">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Добавление протокола</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Добавление наименования работ</h6>
                     </div>
 
-                    <form th:action="'/protocols-gnb-add/' + ${itdData.id}" method="post">
-                        <div class="card-body">
-                            <div class="row justify-content-between mb-4">
-                                <div class="d-flex col-lg-5 card mb-3 ml-4">
-                                    <div class="d-flex card-body align-items-center">
-                                        <div class="col-lg-6">
-                                            <label>Номер протокола</label>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <input type="text" name="numberProtocolGnb" class="form-control">
-                                        </div>
+                    <form th:action="'/name-works-add-from-itd/' + ${itdData.id}" method="post">
+                            <div th:each="itd : ${itdList}" class="" th:if="${!itd.nameWorksData.isEmpty() and itd.id != itdData.id}" th:id="'itd' + ${itd.name}">
+                                <h3 th:text="'ИТД ' + ${itd.name}"></h3>
+                                <button type="button" class="btn btn-outline-primary"
+                                        th:data-id="'itd' + ${itd.name}"
+                                        onclick="selectButton(this.getAttribute('data-id'))">Выбрать все
+                                </button>
+                                <div th:each="nameWorks : ${itd.nameWorksData}" class="">
+                                    <div class="">
+                                        <label class="">Наименование работ</label>
                                     </div>
-                                </div>
-                                <div class="d-flex col-lg-5 card mb-3 mr-4">
-                                    <div class="d-flex card-body align-items-center">
-                                        <div class="col-lg-6">
-                                            <label>Дата протокола ГНБ</label>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <input type="text" name="dataProtocolGnb" class="form-control">
-                                        </div>
+                                    <div class="">
+                                        <input type="checkbox" th:name="'nameWorks' + ${nameWorks.id}"
+                                               th:value="${nameWorks.id}" class="form-control">
+                                        <span th:text="${nameWorks.name}"></span>
+                                    </div>
+                                    <div class="">
+                                        <label class="">Нормативка</label>
+                                    </div>
+                                    <div class="" th:each="normative : ${nameWorks.normativeList}">
+                                        <span th:text="${normative.name}" class="form-control"></span>
+                                    </div>
+                                    <div class="">
+                                        <label class="">Наименование последующей работы</label>
+                                    </div>
+                                    <div class="" th:each="nextNameWorks : ${nameWorks.nextNameWorksList}">
+                                        <span th:text="${nextNameWorks.name}" class="form-control"></span>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Кнопки Отмена и Сохранить -->
                             <div class="d-flex justify-content-between mt-4 mt-0 mr-5 ml-5">
-                                <a th:href="'/protocols-gnb-table/' + ${itdData.id}" role="button" class="btn btn-light btn-icon-split">
+                                <a th:href="'/name-works-table/' + ${itdData.id}" role="button"
+                                   class="btn btn-light btn-icon-split">
                                     <span class="icon text-gray-600">
                                         <i class="fas fa-arrow-right"></i>
                                     </span>
@@ -91,10 +98,9 @@
                                     <span class="icon text-white-50">
                                         <i class="fas fa-check"></i>
                                     </span>
-                                    <span class="text">Сохранить</span>
+                                    <span class="text">Добавить</span>
                                 </button>
                             </div>
-                        </div>
                     </form>
 
                 </div>
@@ -124,7 +130,7 @@
 
 <!-- Custom scripts for all pages-->
 <script th:src="@{/js/sb-admin-2.min.js}"></script>
-
+<script th:src="@{/js/selectButton.js}"></script>
 </body>
 
 </html>
