@@ -23,21 +23,20 @@ var newNextNameWorksNumber = maxNextNameWorksNumber + 1;
 
 function addNormative() {
     const newDiv = document.createElement('div');
-    newDiv.classList.add('d-flex', 'card-body', 'align-items-center', 'p-3');
+    newDiv.classList.add('row', 'col-lg-12', 'mb-3');
 
     newDiv.innerHTML = `
         <div class="col-lg-6">
             <label class="m-0">Нормативка</label>
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-5">
             <input type="text" name="normative${newNormativeNumber}" class="form-control">
         </div>
-        <div class="col-lg-4">
-            <button type="button" onclick="removeDiv(this)" class="btn btn-danger align-self-end">
-                    <span class="icon text-white-50">
-                        <i class="fas fa-trash"></i>
-                    </span>
-                <span class="text">Удалить</span>
+        <div class="col-lg-1">
+            <button type="button" onclick="removeDiv(this)" class="btn btn-danger">
+            <span class="icon text-white-50">
+                <i class="fas fa-trash"></i>
+            </span>
             </button>
         </div>
     `;
@@ -47,21 +46,20 @@ function addNormative() {
 }
 function addNextNameWorks() {
     const newDiv = document.createElement('div');
-    newDiv.classList.add('d-flex', 'card-body', 'align-items-center', 'p-3');
+    newDiv.classList.add('row', 'col-lg-12', 'mb-3');
 
     newDiv.innerHTML = `
         <div class="col-lg-6">
             <label class="m-0">Наименование последующей работы</label>
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-5">
             <input type="text" name="nextNameWorks${newNextNameWorksNumber}" class="form-control">
         </div>
-        <div class="col-lg-4">
-            <button type="button" onclick="removeDiv(this)" class="btn btn-danger align-self-end">
-                    <span class="icon text-white-50">
-                        <i class="fas fa-trash"></i>
-                    </span>
-                <span class="text">Удалить</span>
+        <div class="col-lg-1">
+            <button type="button" onclick="removeDiv(this)" class="btn btn-danger">
+            <span class="icon text-white-50">
+                <i class="fas fa-trash"></i>
+            </span>
             </button>
         </div>
     `;
