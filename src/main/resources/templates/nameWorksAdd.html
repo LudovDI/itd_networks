@@ -52,87 +52,127 @@
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary">Добавление наименования работ</h6>
                     </div>
-
-                    <form th:action="'/name-works-add/' + ${itdData.id}" method="post">
+                    <form action="/name-works-add/1" method="post">
                         <div class="card-body">
-                            <div class="row justify-content-between mb-2">
-                                <div class="d-flex col-lg-5 card mb-3 ml-4">
-                                    <div class="d-flex card-body align-items-center p-3">
-                                        <div class="col-lg-6">
-                                            <label class="m-0">Наименование работ</label>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <input type="text" name="nameWorks" class="form-control">
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <button type="button" onclick="removeDiv(this)" class="btn btn-danger align-self-end">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-trash"></i>
-                                                    </span>
-                                                <span class="text">Удалить</span>
-                                            </button>
+                            <!-- Поле "Наименование работ" -->
+                            <div class="row justify-content-left mb-4">
+                                <div class="col-lg-8">
+                                    <div class="card">
+                                        <div class="d-flex card-body align-items-center p-3">
+                                            <div class="col-lg-4">
+                                                <label class="m-0">Наименование работ</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input type="text" name="nameWorks" class="form-control">
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div id="normativeContainer" class="d-flex col-lg-5 card mb-3 mr-4">
-                                    <div class="d-flex card-body align-items-center p-3">
-                                        <div class="col-lg-6">
-                                            <label class="m-0">Нормативка</label>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <input type="text" name="normative1" class="form-control">
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <button type="button" onclick="removeDiv(this)" class="btn btn-danger align-self-end">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-trash"></i>
-                                                    </span>
-                                                <span class="text">Удалить</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <button type="button" onclick="addNormative()" class="btn btn-primary btn-icon-split">
-                                            <span class="icon text-white-50">
-                                                <i class="fas fa-plus"></i>
-                                            </span>
-                                        <span class="text">Добавить нормативку</span>
-                                    </button>
                                 </div>
                             </div>
-                            <div class="row justify-content-between mb-3">
-                                <div id="nextNameWorksContainer" class="d-flex col-lg-5 card mb-3 ml-4">
-                                    <div class="d-flex card-body align-items-center p-3">
-                                        <div class="col-lg-6">
-                                            <label class="m-0">Наименование последующей работы</label>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <input type="text" name="nextNameWorks1" class="form-control">
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <button type="button" onclick="removeDiv(this)" class="btn btn-danger align-self-end">
+
+                            <!-- Две колонки -->
+                            <div class="row justify-content-between">
+                                <!-- Колонка с последующими работами -->
+                                <div class="col-lg-6">
+                                    <div class="card mb-3">
+                                        <div class="d-flex card-body align-items-center p-3">
+                                            <div class="row w-100">
+                                                <div class="row col-lg-12 m-0 mb-3 pr-0" id="nextNameWorksContainer">
+                                                    <div class="row col-lg-12 mb-3">
+                                                        <div class="col-lg-6">
+                                                            <label class="m-0">Наименование последующей работы</label>
+                                                        </div>
+                                                        <div class="col-lg-5">
+                                                            <input type="text" name="nextNameWorks1" class="form-control">
+                                                        </div>
+                                                        <div class="col-lg-1">
+                                                            <button type="button" onclick="removeDiv(this)" class="btn btn-danger">
+                                                            <span class="icon text-white-50">
+                                                                <i class="fas fa-trash"></i>
+                                                            </span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row justify-content-center col-lg-12 mt-2">
+                                                    <button type="button" onclick="addNextNameWorks()" class="btn btn-primary btn-icon-split mb-3">
                                                     <span class="icon text-white-50">
-                                                        <i class="fas fa-trash"></i>
+                                                        <i class="fas fa-plus"></i>
                                                     </span>
-                                                <span class="text">Удалить</span>
-                                            </button>
+                                                        <span class="text">Добавить</span>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <button type="button" onclick="addNextNameWorks()" class="btn btn-primary btn-icon-split">
-                                            <span class="icon text-white-50">
-                                                <i class="fas fa-plus"></i>
-                                            </span>
-                                        <span class="text">Добавить наименование последующей работы</span>
-                                    </button>
+
+                                <!-- Колонка с нормативками -->
+                                <div class="col-lg-6">
+                                    <div class="card mb-3">
+                                        <div class="d-flex card-body align-items-center p-3">
+                                            <div class="row w-100">
+                                                <div class="row col-lg-12 m-0 mb-3 pr-0" id="normativeContainer">
+                                                    <div class="row col-lg-12 mb-3">
+                                                        <div class="col-lg-6">
+                                                            <label class="m-0">Нормативка</label>
+                                                        </div>
+                                                        <div class="col-lg-5">
+                                                            <input type="text" name="normative1" class="form-control">
+                                                        </div>
+                                                        <div class="col-lg-1">
+                                                            <button type="button" onclick="removeDiv(this)" class="btn btn-danger">
+                                                            <span class="icon text-white-50">
+                                                                <i class="fas fa-trash"></i>
+                                                            </span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row justify-content-center col-lg-12 mt-2">
+                                                    <button type="button" onclick="addNormative()" class="btn btn-primary btn-icon-split mb-3">
+                                                    <span class="icon text-white-50">
+                                                        <i class="fas fa-plus"></i>
+                                                    </span>
+                                                        <span class="text">Добавить</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
+
+<!--                                <div class="col-lg-6">-->
+<!--                                    <div id="normativeContainer" class="card mb-3">-->
+<!--                                        <div class="d-flex card-body align-items-center p-3">-->
+<!--                                            <div class="col-lg-6">-->
+<!--                                                <label class="m-0">Нормативка</label>-->
+<!--                                            </div>-->
+<!--                                            <div class="col-lg-6">-->
+<!--                                                <input type="text" name="normative1" class="form-control">-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="d-flex justify-content-end p-3">-->
+<!--                                            <button type="button" onclick="removeDiv(this)" class="btn btn-danger">-->
+<!--                                                <span class="icon text-white-50">-->
+<!--                                                    <i class="fas fa-trash"></i>-->
+<!--                                                </span>-->
+<!--                                                <span class="text">Удалить</span>-->
+<!--                                            </button>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <button type="button" onclick="addNormative()" class="btn btn-primary btn-icon-split mb-3">-->
+<!--                                        <span class="icon text-white-50">-->
+<!--                                            <i class="fas fa-plus"></i>-->
+<!--                                        </span>-->
+<!--                                        <span class="text">Добавить</span>-->
+<!--                                    </button>-->
+<!--                                </div>-->
                             </div>
 
                             <!-- Кнопки Отмена и Сохранить -->
                             <div class="d-flex justify-content-between mt-4 mt-0 mr-5 ml-5">
-                                <a th:href="'/name-works-table/' + ${itdData.id}" role="button" class="btn btn-light btn-icon-split">
+                                <a href="/name-works-table/1" role="button" class="btn btn-light btn-icon-split">
                                     <span class="icon text-gray-600">
                                         <i class="fas fa-arrow-right"></i>
                                     </span>
@@ -148,6 +188,7 @@
                             </div>
                         </div>
                     </form>
+
 
                 </div>
 

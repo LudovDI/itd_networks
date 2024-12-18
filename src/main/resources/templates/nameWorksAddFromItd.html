@@ -54,57 +54,101 @@
                     </div>
 
                     <form th:action="'/name-works-add-from-itd/' + ${itdData.id}" method="post">
-                            <div th:each="itd : ${itdList}" class="" th:if="${!itd.nameWorksData.isEmpty() and itd.id != itdData.id}" th:id="'itd' + ${itd.name}">
-                                <h3 th:text="'ИТД ' + ${itd.name}"></h3>
-                                <button type="button" class="btn btn-outline-primary"
-                                        th:data-id="'itd' + ${itd.name}"
-                                        onclick="selectButton(this.getAttribute('data-id'))">Выбрать все
-                                </button>
-                                <div th:each="nameWorks : ${itd.nameWorksData}" class="">
-                                    <div class="">
-                                        <label class="">Наименование работ</label>
-                                    </div>
-                                    <div class="">
-                                        <input type="checkbox" th:name="'nameWorks' + ${nameWorks.id}"
-                                               th:value="${nameWorks.id}" class="form-control">
-                                        <span th:text="${nameWorks.name}"></span>
-                                    </div>
-                                    <div class="">
-                                        <label class="">Нормативка</label>
-                                    </div>
-                                    <div class="" th:each="normative : ${nameWorks.normativeList}">
-                                        <span th:text="${normative.name}" class="form-control"></span>
-                                    </div>
-                                    <div class="">
-                                        <label class="">Наименование последующей работы</label>
-                                    </div>
-                                    <div class="" th:each="nextNameWorks : ${nameWorks.nextNameWorksList}">
-                                        <span th:text="${nextNameWorks.name}" class="form-control"></span>
+                        <div class="card-body">
+                            <div th:each="itd : ${itdList}" class="card mb-3"
+                                 th:if="${!itd.nameWorksData.isEmpty() and itd.id != itdData.id}"
+                                 th:id="'itd' + ${itd.name}">
+                                <a th:href="'#collapseCardITD' + ${itd.name}"
+                                   class="d-block card-header pr-3 pl-3 pt-3 collapsed" data-toggle="collapse"
+                                   role="button" aria-expanded="false" aria-controls="collapseCardActVik">
+                                    <h6 class="m-0" th:text="'ИТД ' + ${itd.name}"></h6>
+                                </a>
+
+                                <div class="collapse" th:id="'collapseCardITD' + ${itd.name}">
+                                    <div class="card-body">
+                                        <div class="row justify-content-left ml-2 mb-3">
+                                            <button type="button" class="btn btn-outline-primary"
+                                                    th:data-id="'itd' + ${itd.name}"
+                                                    onclick="selectButton(this.getAttribute('data-id'))">Выбрать все
+                                            </button>
+                                        </div>
+
+                                        <!-- Карточка работы -->
+                                        <div th:each="nameWorks : ${itd.nameWorksData}" class="card mb-3">
+                                            <div class="card-header">
+                                                <div class="row justify-content-left align-items-center">
+                                                    <input type="checkbox" th:name="'nameWorks' + ${nameWorks.id}"
+                                                           th:value="${nameWorks.id}"
+                                                           th:id="'nameWorks' + ${nameWorks.id}"
+                                                           class="form-check-input m-0 ml-3">
+                                                    <a th:href="'#collapseCardWork' + ${nameWorks.id}"
+                                                       class="d-block collapsed ml-5 w-100" data-toggle="collapse"
+                                                       role="button" aria-expanded="false" aria-controls="collapseCardActVik">
+                                                        <label class="form-check-label form-control-plaintext p-0 w-100"
+                                                               th:text="${nameWorks.name}"></label>
+                                                    </a>
+                                                </div>
+                                            </div>
+
+                                            <!-- Card Content - Collapse -->
+                                            <div class="collapse" th:id="'collapseCardWork' + ${nameWorks.id}" style="">
+                                                <div class="card-body">
+                                                    <div class="d-flex col-lg-12">
+                                                        <div class="col-lg-6">
+                                                            <!-- Нормативка -->
+                                                            <div class="row justify-content-start">
+                                                                <label class="text m-0">Нормативка</label>
+                                                            </div>
+                                                            <div class="row mr-3 mt-3" th:each="normative : ${nameWorks.normativeList}">
+                                                                <div class="card w-100">
+                                                                    <div class="card-body p-2 pl-3 pr-3">
+                                                                        <span th:text="${normative.name}" class="text"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                            <!-- Наименование последующей работы -->
+                                                            <div class="row justify-content-start">
+                                                                <label class="text m-0">Наименование последующей работы</label>
+                                                            </div>
+                                                            <div class="row mt-3" th:each="nextNameWorks : ${nameWorks.nextNameWorksList}">
+                                                                <div class="card w-100">
+                                                                    <div class="card-body p-2 pl-3 pr-3">
+                                                                        <span th:text="${nextNameWorks.name}" class="text"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+
                             </div>
 
                             <!-- Кнопки Отмена и Сохранить -->
-                            <div class="d-flex justify-content-between mt-4 mt-0 mr-5 ml-5">
+                            <div class="d-flex justify-content-between mt-4 mr-5 ml-5">
                                 <a th:href="'/name-works-table/' + ${itdData.id}" role="button"
                                    class="btn btn-light btn-icon-split">
-                                    <span class="icon text-gray-600">
-                                        <i class="fas fa-arrow-right"></i>
-                                    </span>
+                                <span class="icon text-gray-600">
+                                    <i class="fas fa-arrow-right"></i>
+                                </span>
                                     <span class="text">Отмена</span>
                                 </a>
 
                                 <button type="submit" class="btn btn-success btn-icon-split">
-                                    <span class="icon text-white-50">
-                                        <i class="fas fa-check"></i>
-                                    </span>
+                                <span class="icon text-white-50">
+                                    <i class="fas fa-check"></i>
+                                </span>
                                     <span class="text">Добавить</span>
                                 </button>
                             </div>
+                        </div>
                     </form>
-
                 </div>
-
             </div>
             <!-- /.container-fluid -->
 
