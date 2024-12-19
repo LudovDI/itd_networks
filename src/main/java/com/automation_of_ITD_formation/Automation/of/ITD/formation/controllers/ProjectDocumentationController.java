@@ -5,10 +5,7 @@ import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.Dr
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.ItdRepository;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.ProjectDocumentationRepository;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.UserRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -19,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collectors;
+
+import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.ControllersUtils.modelAddUserAndItdData;
 
 @Controller
 public class ProjectDocumentationController {
@@ -35,18 +33,8 @@ public class ProjectDocumentationController {
 
     @GetMapping("/project-documentation-table/{id}")
     public String projectDocumentationTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(id).orElseThrow();
-        model.addAttribute("itdData", itdData);
         Set<ProjectDocumentationData> projectDocumentationList = itdData.getProjectDocumentationData();
         model.addAttribute("projectDocumentationList", projectDocumentationList);
         return "projectDocumentationTable";
@@ -54,18 +42,7 @@ public class ProjectDocumentationController {
 
     @GetMapping("/project-documentation-add/{id}")
     public String projectDocumentationAdd(@PathVariable(value = "id") long id, Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
-        ItdData itdData = itdRepository.findById(id).orElseThrow();
-        model.addAttribute("itdData", itdData);
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         return "projectDocumentationAdd";
     }
 
@@ -95,18 +72,7 @@ public class ProjectDocumentationController {
     public String projectDocumentationEdit(@PathVariable(value = "itdId") long itdId,
                                            @PathVariable(value = "projDocId") long projDocId,
                                            Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
-        ItdData itdData = itdRepository.findById(itdId).orElseThrow();
-        model.addAttribute("itdData", itdData);
+        modelAddUserAndItdData(principal, itdId, model, userRepository, itdRepository);
         if (!projectDocumentationRepository.existsById(projDocId)) {
             return "redirect:/project-documentation-table";
         }

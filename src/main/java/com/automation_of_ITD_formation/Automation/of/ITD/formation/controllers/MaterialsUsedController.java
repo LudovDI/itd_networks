@@ -2,10 +2,7 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.*;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -15,9 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
-import java.util.stream.Collectors;
 
 import java.util.*;
+
+import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.ControllersUtils.modelAddUserAndItdData;
 
 @Controller
 public class MaterialsUsedController {
@@ -33,18 +31,8 @@ public class MaterialsUsedController {
 
     @GetMapping("/materials-used-table/{id}")
     public String materialsUsedTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(id).orElseThrow();
-        model.addAttribute("itdData", itdData);
         Set<MaterialsUsedData> materialsUsedList = itdData.getMaterialsUsedData();
         model.addAttribute("materialsUsedList", materialsUsedList);
         Map<Long, List<AccompanyingDocumentData>> accompanyingDocumentsMap = new HashMap<>();
@@ -58,18 +46,7 @@ public class MaterialsUsedController {
 
     @GetMapping("/materials-used-add/{id}")
     public String materialsUsedAdd(@PathVariable(value = "id") long id, Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
-        ItdData itdData = itdRepository.findById(id).orElseThrow();
-        model.addAttribute("itdData", itdData);
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         return "materialsUsedAdd";
     }
 
@@ -105,18 +82,7 @@ public class MaterialsUsedController {
     public String materialsUsedEdit(@PathVariable(value = "itdId") long itdId,
                                     @PathVariable(value = "materialId") long materialId,
                                     Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
-        ItdData itdData = itdRepository.findById(itdId).orElseThrow();
-        model.addAttribute("itdData", itdData);
+        modelAddUserAndItdData(principal, itdId, model, userRepository, itdRepository);
         if (!materialUsedRepository.existsById(materialId)) {
             return "redirect:/materials-used-table";
         }

@@ -13,7 +13,7 @@ public class AosrData extends Auditable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String number, typeOfWork, permittedFollowingWork, status;
+    private String number, status;
     private LocalDate startDate, endDate;
 
     @Transient
@@ -37,6 +37,10 @@ public class AosrData extends Auditable {
     @ManyToOne
     @JoinColumn(name = "name_works_id")
     private NameWorksData nameWorksToAosr;
+
+    @ManyToOne
+    @JoinColumn(name = "next_name_works_id")
+    private NextNameWorksData nextNameWorksToAosr;
 
     @ManyToOne
     @JoinColumn(name = "another_person_res_id")
@@ -297,29 +301,19 @@ public class AosrData extends Auditable {
         this.nameWorksToAosr = nameWorksToAosr;
     }
 
-    public String getTypeOfWork() {
-        return typeOfWork;
+    public NextNameWorksData getNextNameWorksToAosr() {
+        return nextNameWorksToAosr;
     }
 
-    public void setTypeOfWork(String typeOfWork) {
-        this.typeOfWork = typeOfWork;
-    }
-
-    public String getPermittedFollowingWork() {
-        return permittedFollowingWork;
-    }
-
-    public void setPermittedFollowingWork(String permittedFollowingWork) {
-        this.permittedFollowingWork = permittedFollowingWork;
+    public void setNextNameWorksToAosr(NextNameWorksData nextNameWorksToAosr) {
+        this.nextNameWorksToAosr = nextNameWorksToAosr;
     }
 
     public AosrData() {
     }
 
-    public AosrData(String number, String typeOfWork, String permittedFollowingWork, LocalDate startDate, LocalDate endDate) {
+    public AosrData(String number, LocalDate startDate, LocalDate endDate) {
         this.number = number;
-        this.typeOfWork = typeOfWork;
-        this.permittedFollowingWork = permittedFollowingWork;
         this.startDate = startDate;
         this.endDate = endDate;
     }

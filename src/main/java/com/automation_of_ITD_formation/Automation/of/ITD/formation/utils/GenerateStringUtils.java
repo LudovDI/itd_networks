@@ -2,8 +2,6 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.utils;
 
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class GenerateStringUtils {
@@ -281,10 +279,10 @@ public class GenerateStringUtils {
         return passportObjectData.getNameContractor() != null && !passportObjectData.getNameContractor().isEmpty() ? passportObjectData.getNameContractor() : "";
     }
 
-    public static String generateNameOfHiddenWork(String nameNetwork, String work1, ExecutiveSchemesData executiveSchemesData) {
+    public static String generateNameOfHiddenWork(String nameNetwork, NameWorksData nameWorksData, ExecutiveSchemesData executiveSchemesData) {
         StringBuilder stringBuilder = new StringBuilder();
-        if (work1 != null && work1.isEmpty()) {
-            stringBuilder.append(work1);
+        if (nameWorksData != null) {
+            stringBuilder.append(nameWorksData.getName());
         }
         if (executiveSchemesData.getSection() != null && !executiveSchemesData.getSection().isEmpty()) {
             stringBuilder.append(" на участках ").append(executiveSchemesData.getSection());
@@ -385,15 +383,11 @@ public class GenerateStringUtils {
         return stringBuilder.toString();
     }
 
-    public static String generateSpAndProjectDocumentations(String work, Set<ProjectDocumentationData> projDocs, Map<List<String>, String> spMap) {
+    public static String generateSpAndProjectDocumentations(NameWorksData nameWorksData, Set<ProjectDocumentationData> projDocs) {
         StringBuilder stringBuilder = new StringBuilder();
         if (!projDocs.isEmpty()) {
-            spMap.forEach((key, value) -> {
-                if (key.contains(work)) {
-                    stringBuilder.append(value);
-                }
-            });
-            stringBuilder.append(" проект ");
+            nameWorksData.getNormativeList().forEach(normative -> stringBuilder.append(normative.getName()).append(" "));
+            stringBuilder.append("проект ");
             StringBuilder projects = new StringBuilder();
             for (ProjectDocumentationData projDoc : projDocs) {
                 if (!projects.toString().contains(projDoc.getProjectSection())) {
@@ -408,10 +402,10 @@ public class GenerateStringUtils {
         return stringBuilder.toString();
     }
 
-    public static String generateEngineeringSupportNetworks(String work2, ExecutiveSchemesData executiveSchemesData, String nameNetwork) {
+    public static String generateEngineeringSupportNetworks(NextNameWorksData nextNameWorksData, ExecutiveSchemesData executiveSchemesData, String nameNetwork) {
         StringBuilder stringBuilder = new StringBuilder();
         if (executiveSchemesData != null) {
-            stringBuilder.append(work2).append(" на участке ").append(executiveSchemesData.getSection()).append(", сеть ")
+            stringBuilder.append(nextNameWorksData.getName()).append(" на участке ").append(executiveSchemesData.getSection()).append(", сеть ")
                     .append(nameNetwork);
         } else {
             stringBuilder.append("---");
@@ -473,103 +467,103 @@ public class GenerateStringUtils {
 //        return stringBuilder.toString();
 //    }
   
-    public static String generateBoundaries(AosrData aosrData) {
-        StringBuilder stringBuilder = new StringBuilder();
-        ExecutiveSchemesData executiveSchemesData = aosrData.getExecutiveSchemesData();
-        stringBuilder.append("X=").append(executiveSchemesData.getStartCoordinateX()).append(",\nY=")
-                .append(executiveSchemesData.getStartCoordinateY()).append(" /\nX=")
-                .append(executiveSchemesData.getEndCoordinateX()).append(",\nY=")
-                .append(executiveSchemesData.getEndCoordinateY());
-        return stringBuilder.toString();
-    }
+//    public static String generateBoundaries(AosrData aosrData) {
+//        StringBuilder stringBuilder = new StringBuilder();
+//        ExecutiveSchemesData executiveSchemesData = aosrData.getExecutiveSchemesData();
+//        stringBuilder.append("X=").append(executiveSchemesData.getStartCoordinateX()).append(",\nY=")
+//                .append(executiveSchemesData.getStartCoordinateY()).append(" /\nX=")
+//                .append(executiveSchemesData.getEndCoordinateX()).append(",\nY=")
+//                .append(executiveSchemesData.getEndCoordinateY());
+//        return stringBuilder.toString();
+//    }
 
-    public static String generateSoilType(AosrData aosrData) {
-        return switch (aosrData.getTypeOfWork()) {
-            case "Механизированная разработка грунта и шурфовка на наличие существующих сетей",
-                 "Механизированная разработка грунта", "Обратная засыпка грунтом мест шурфовок",
-                 "Обратная засыпка грунтом" -> "Грунт";
-            case "Устройство песчаного основания под трубопровод", "Устройство песчаного основания под колодец" ->
-                    "Песок";
-            case "Устройство над трубопроводом защитного слоя из песка и обратная засыпка грунтом" -> "Песок\nГрунт";
-            default -> "---";
-        };
-    }
+//    public static String generateSoilType(AosrData aosrData) {
+//        return switch (aosrData.getTypeOfWork()) {
+//            case "Механизированная разработка грунта и шурфовка на наличие существующих сетей",
+//                 "Механизированная разработка грунта", "Обратная засыпка грунтом мест шурфовок",
+//                 "Обратная засыпка грунтом" -> "Грунт";
+//            case "Устройство песчаного основания под трубопровод", "Устройство песчаного основания под колодец" ->
+//                    "Песок";
+//            case "Устройство над трубопроводом защитного слоя из песка и обратная засыпка грунтом" -> "Песок\nГрунт";
+//            default -> "---";
+//        };
+//    }
 
-    public static String generateAosrForGenLogString(ProjectDocumentationData projDoc, String work1, ExecutiveSchemesData execSchemes, PassportObjectData passObj, int index) {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (execSchemes != null) {
-            stringBuilder.append("АОСР № US-").append(passObj.getProjectCode()).append("-");
-            if (index < 10) {
-                stringBuilder.append("0");
-            }
-            stringBuilder.append(index).append("\n").append(work1).append(" на участках ");
-            stringBuilder.append(execSchemes.getSection()).append(" в координатах X=");
-            if (!execSchemes.getStartCoordinateX().isEmpty()) {
-                stringBuilder.append(execSchemes.getStartCoordinateX()).append(", Y=")
-                        .append(execSchemes.getStartCoordinateY()).append(" / X=")
-                        .append(execSchemes.getEndCoordinateX()).append(", Y=")
-                        .append(execSchemes.getEndCoordinateY());
-            } else {
-                stringBuilder.append(execSchemes.getWellCenterX()).append(", Y=")
-                        .append(execSchemes.getWellCenterY());
-            }
-            stringBuilder.append(" в отметках ").append(execSchemes.getStartingPoint()).append(" / ")
-                    .append(execSchemes.getEndingPoint()).append("; сеть ")
-                    .append(projDoc.getNetwork());
-        } else {
-            stringBuilder.append("---");
-        }
-        return stringBuilder.toString();
-    }
+//    public static String generateAosrForGenLogString(ProjectDocumentationData projDoc, String work1, ExecutiveSchemesData execSchemes, PassportObjectData passObj, int index) {
+//        StringBuilder stringBuilder = new StringBuilder();
+//        if (execSchemes != null) {
+//            stringBuilder.append("АОСР № US-").append(passObj.getProjectCode()).append("-");
+//            if (index < 10) {
+//                stringBuilder.append("0");
+//            }
+//            stringBuilder.append(index).append("\n").append(work1).append(" на участках ");
+//            stringBuilder.append(execSchemes.getSection()).append(" в координатах X=");
+//            if (!execSchemes.getStartCoordinateX().isEmpty()) {
+//                stringBuilder.append(execSchemes.getStartCoordinateX()).append(", Y=")
+//                        .append(execSchemes.getStartCoordinateY()).append(" / X=")
+//                        .append(execSchemes.getEndCoordinateX()).append(", Y=")
+//                        .append(execSchemes.getEndCoordinateY());
+//            } else {
+//                stringBuilder.append(execSchemes.getWellCenterX()).append(", Y=")
+//                        .append(execSchemes.getWellCenterY());
+//            }
+//            stringBuilder.append(" в отметках ").append(execSchemes.getStartingPoint()).append(" / ")
+//                    .append(execSchemes.getEndingPoint()).append("; сеть ")
+//                    .append(projDoc.getNetwork());
+//        } else {
+//            stringBuilder.append("---");
+//        }
+//        return stringBuilder.toString();
+//    }
 
-    public static String generateFioPersonsString(String date, PassportObjectData passObj, CustomerResponsibleData customerRes, SubcustomerResponsibleData subcustomerRes, SubcustomerResponsible2Data subcustomer2Res, DesignerResponsibleData designerRes, AnotherPersonResponsibleData anotherPersonRes) {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (passObj != null) {
-            stringBuilder.append(date).append("\n");
-            if (customerRes.getName() != null) {
-                stringBuilder.append(customerRes.getPosition()).append(" ").append(customerRes.getName()).append("\n");
-            }
-            if (subcustomerRes.getName() != null) {
-                stringBuilder.append(subcustomerRes.getPosition()).append(" ").append(subcustomerRes.getName()).append("\n");
-            }
-            if (subcustomer2Res.getName() != null) {
-                stringBuilder.append(subcustomer2Res.getPosition()).append(" ").append(subcustomer2Res.getName()).append("\n");
-            }
-            if (designerRes.getName() != null) {
-                stringBuilder.append(designerRes.getPosition()).append(" ").append(designerRes.getName()).append("\n");
-            }
-            if (anotherPersonRes.getName() != null) {
-                stringBuilder.append(anotherPersonRes.getPosition()).append(" ").append(anotherPersonRes.getName());
-            }
-            stringBuilder.delete(stringBuilder.length() - 3, stringBuilder.length() - 1);
-        } else {
-            stringBuilder.append("---");
-        }
-        return stringBuilder.toString();
-    }
+//    public static String generateFioPersonsString(String date, PassportObjectData passObj, CustomerResponsibleData customerRes, SubcustomerResponsibleData subcustomerRes, SubcustomerResponsible2Data subcustomer2Res, DesignerResponsibleData designerRes, AnotherPersonResponsibleData anotherPersonRes) {
+//        StringBuilder stringBuilder = new StringBuilder();
+//        if (passObj != null) {
+//            stringBuilder.append(date).append("\n");
+//            if (customerRes.getName() != null) {
+//                stringBuilder.append(customerRes.getPosition()).append(" ").append(customerRes.getName()).append("\n");
+//            }
+//            if (subcustomerRes.getName() != null) {
+//                stringBuilder.append(subcustomerRes.getPosition()).append(" ").append(subcustomerRes.getName()).append("\n");
+//            }
+//            if (subcustomer2Res.getName() != null) {
+//                stringBuilder.append(subcustomer2Res.getPosition()).append(" ").append(subcustomer2Res.getName()).append("\n");
+//            }
+//            if (designerRes.getName() != null) {
+//                stringBuilder.append(designerRes.getPosition()).append(" ").append(designerRes.getName()).append("\n");
+//            }
+//            if (anotherPersonRes.getName() != null) {
+//                stringBuilder.append(anotherPersonRes.getPosition()).append(" ").append(anotherPersonRes.getName());
+//            }
+//            stringBuilder.delete(stringBuilder.length() - 3, stringBuilder.length() - 1);
+//        } else {
+//            stringBuilder.append("---");
+//        }
+//        return stringBuilder.toString();
+//    }
 
-    public static String generateAosrForRegistryString(ProjectDocumentationData projDoc, String work1, ExecutiveSchemesData execSchemes) {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (execSchemes != null) {
-            stringBuilder.append("АОСР ").append(work1).append(" на участке ");
-            stringBuilder.append(execSchemes.getSection()).append(" в координатах X=");
-            if (!execSchemes.getStartCoordinateX().isEmpty()) {
-                stringBuilder.append(execSchemes.getStartCoordinateX()).append(", Y=")
-                        .append(execSchemes.getStartCoordinateY()).append(" / X=")
-                        .append(execSchemes.getEndCoordinateX()).append(", Y=")
-                        .append(execSchemes.getEndCoordinateY());
-            } else {
-                stringBuilder.append(execSchemes.getWellCenterX()).append(", Y=")
-                        .append(execSchemes.getWellCenterY());
-            }
-            stringBuilder.append(" в отметках ").append(execSchemes.getStartingPoint()).append(" / ")
-                    .append(execSchemes.getEndingPoint()).append("; сеть ")
-                    .append(projDoc.getNetwork());
-        } else {
-            stringBuilder.append("---");
-        }
-        return stringBuilder.toString();
-    }
+//    public static String generateAosrForRegistryString(ProjectDocumentationData projDoc, String work1, ExecutiveSchemesData execSchemes) {
+//        StringBuilder stringBuilder = new StringBuilder();
+//        if (execSchemes != null) {
+//            stringBuilder.append("АОСР ").append(work1).append(" на участке ");
+//            stringBuilder.append(execSchemes.getSection()).append(" в координатах X=");
+//            if (!execSchemes.getStartCoordinateX().isEmpty()) {
+//                stringBuilder.append(execSchemes.getStartCoordinateX()).append(", Y=")
+//                        .append(execSchemes.getStartCoordinateY()).append(" / X=")
+//                        .append(execSchemes.getEndCoordinateX()).append(", Y=")
+//                        .append(execSchemes.getEndCoordinateY());
+//            } else {
+//                stringBuilder.append(execSchemes.getWellCenterX()).append(", Y=")
+//                        .append(execSchemes.getWellCenterY());
+//            }
+//            stringBuilder.append(" в отметках ").append(execSchemes.getStartingPoint()).append(" / ")
+//                    .append(execSchemes.getEndingPoint()).append("; сеть ")
+//                    .append(projDoc.getNetwork());
+//        } else {
+//            stringBuilder.append("---");
+//        }
+//        return stringBuilder.toString();
+//    }
 
     public static String generateExecutiveSchemesCode(PassportObjectData passObj, int index) {
         StringBuilder stringBuilder = new StringBuilder();

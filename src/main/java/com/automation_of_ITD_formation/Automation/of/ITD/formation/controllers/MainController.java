@@ -5,7 +5,6 @@ import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.UserDat
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.ItdRepository;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,8 +26,7 @@ public class MainController {
     public String index(Model model, Principal principal) {
         String username = principal.getName();
 
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        UserData currentUser = userRepository.findByUsername(username).orElseThrow();
 
         model.addAttribute("userData", currentUser);
 
@@ -50,10 +48,8 @@ public class MainController {
     public String itdInfo(@PathVariable(value = "id") long id, Principal principal, Model model) {
         String username = principal.getName();
 
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        UserData currentUser = userRepository.findByUsername(username).orElseThrow();
         model.addAttribute("userData", currentUser);
-        currentUser.setCurrentItd(id);
         userRepository.save(currentUser);
 
         ItdData itdData = itdRepository.findById(id).orElseThrow();

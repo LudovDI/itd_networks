@@ -2,10 +2,7 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.*;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -14,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.ControllersUtils.modelAddUserAndItdData;
 
 @Controller
 public class ExecutiveSchemesController {
@@ -35,18 +34,8 @@ public class ExecutiveSchemesController {
 
     @GetMapping("/executive-schemes-table/{id}")
     public String executivesSchemesTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(id).orElseThrow();
-        model.addAttribute("itdData", itdData);
         Set<ExecutiveSchemesData> executiveSchemesList = itdData.getExecutiveSchemesData();
         model.addAttribute("executiveSchemesList", executiveSchemesList);
         return "executiveSchemesTable";
@@ -66,18 +55,8 @@ public class ExecutiveSchemesController {
 
     @GetMapping("/executive-schemes-add/{id}")
     public String executivesSchemesAdd(@PathVariable(value = "id") long id, Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(id).orElseThrow();
-        model.addAttribute("itdData", itdData);
         populateModel(model, itdData);
         return "executiveSchemesAdd";
     }
@@ -89,18 +68,8 @@ public class ExecutiveSchemesController {
                                   @RequestParam(name = "id", required = false) Long id,
                                   @RequestParam Map<String, String> formData,
                                   Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
+        modelAddUserAndItdData(principal, itdId, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(itdId).orElseThrow();
-        model.addAttribute("itdData", itdData);
         if (id != null) {
             Optional<ExecutiveSchemesData> executiveSchemesDataOptional = executiveSchemesRepository.findById(id);
             if (executiveSchemesDataOptional.isPresent()) {
@@ -195,18 +164,8 @@ public class ExecutiveSchemesController {
     public String executiveSchemesEdit(@PathVariable(value = "itdId") long itdId,
                                        @PathVariable(value = "execSchemId") long execSchemId,
                                        Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
+        modelAddUserAndItdData(principal, itdId, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(itdId).orElseThrow();
-        model.addAttribute("itdData", itdData);
         if (!executiveSchemesRepository.existsById(execSchemId)) {
             return "redirect:/executive-schemes-table/" + itdId;
         }

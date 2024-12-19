@@ -3,11 +3,10 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.GenerateFileUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
-import org.docx4j.Docx4J;
-import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -21,12 +20,11 @@ import javax.print.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
-import java.text.Collator;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+
+import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.ControllersUtils.modelAddUserAndItdData;
 
 @Controller
 public class AosrController {
@@ -38,105 +36,37 @@ public class AosrController {
     @Autowired
     private AosrRepository aosrRepository;
     @Autowired
-    private final AnotherPersonResponsibleRepository anotherPersonResponsibleRepository;
+    private AnotherPersonResponsibleRepository anotherPersonResponsibleRepository;
     @Autowired
-    private final CustomerResponsibleRepository customerResponsibleRepository;
+    private CustomerResponsibleRepository customerResponsibleRepository;
     @Autowired
-    private final DesignerResponsibleRepository designerResponsibleRepository;
+    private DesignerResponsibleRepository designerResponsibleRepository;
     @Autowired
-    private final SubcustomerResponsibleRepository subcustomerResponsibleRepository;
+    private SubcustomerResponsibleRepository subcustomerResponsibleRepository;
     @Autowired
-    private final SubcustomerResponsible2Repository subcustomerResponsible2Repository;
+    private SubcustomerResponsible2Repository subcustomerResponsible2Repository;
     @Autowired
-    private final PassportObjectRepository passportObjectRepository;
+    private PassportObjectRepository passportObjectRepository;
     @Autowired
-    private final ProjectDocumentationRepository projectDocumentationRepository;
+    private ProjectDocumentationRepository projectDocumentationRepository;
     @Autowired
     private DrawingsRepository drawingsRepository;
     @Autowired
-    private final MaterialsUsedRepository materialsUsedRepository;
+    private MaterialsUsedRepository materialsUsedRepository;
     @Autowired
-    private final ExecutiveSchemesRepository executiveSchemesRepository;
+    private ExecutiveSchemesRepository executiveSchemesRepository;
     @Autowired
-    private final ActsViCRepository actsViCRepository;
+    private ActsViCRepository actsViCRepository;
     @Autowired
-    private final SealingProtocolsRepository sealingProtocolsRepository;
+    private SealingProtocolsRepository sealingProtocolsRepository;
     @Autowired
-    private final ProtocolsGnbRepository protocolsGnbRepository;
+    private ProtocolsGnbRepository protocolsGnbRepository;
+    @Autowired
+    private NameWorksRepository nameWorksRepository;
+    @Autowired
+    private NextNameWorksRepository nextNameWorksRepository;
 
-    private final Map<List<String>, String> spMap = new HashMap<>();
-    private final Map<String, Integer> monthMap = new HashMap<>();
-    Collator collator = Collator.getInstance(new Locale("ru", "RU"));
-    private final Set<String> typeOfWorkSet = new TreeSet<>(collator);
-
-    public AosrController(PassportObjectRepository passportObjectRepository, ProjectDocumentationRepository projectDocumentationRepository,
-                          MaterialsUsedRepository materialsUsedRepository, ExecutiveSchemesRepository executiveSchemesRepository,
-                          ActsViCRepository actsViCRepository, SealingProtocolsRepository sealingProtocolsRepository,
-                          ProtocolsGnbRepository protocolsGnbRepository, AnotherPersonResponsibleRepository anotherPersonResponsibleRepository,
-                          CustomerResponsibleRepository customerResponsibleRepository, DesignerResponsibleRepository designerResponsibleRepository,
-                          SubcustomerResponsibleRepository subcustomerResponsibleRepository, SubcustomerResponsible2Repository subcustomerResponsible2Repository) {
-        this.passportObjectRepository = passportObjectRepository;
-        this.projectDocumentationRepository = projectDocumentationRepository;
-        this.materialsUsedRepository = materialsUsedRepository;
-        this.executiveSchemesRepository = executiveSchemesRepository;
-        this.actsViCRepository = actsViCRepository;
-        this.sealingProtocolsRepository = sealingProtocolsRepository;
-        this.protocolsGnbRepository = protocolsGnbRepository;
-        this.anotherPersonResponsibleRepository = anotherPersonResponsibleRepository;
-        this.customerResponsibleRepository = customerResponsibleRepository;
-        this.designerResponsibleRepository = designerResponsibleRepository;
-        this.subcustomerResponsibleRepository = subcustomerResponsibleRepository;
-        this.subcustomerResponsible2Repository = subcustomerResponsible2Repository;
-        initializeMapSp();
-        initializeMonthMap();
-        initializeTypeOfWorkSet();
-    }
-
-    private void initializeMonthMap() {
-        monthMap.put("января", 1);
-        monthMap.put("февраля", 2);
-        monthMap.put("марта", 3);
-        monthMap.put("апреля", 4);
-        monthMap.put("мая", 5);
-        monthMap.put("июня", 6);
-        monthMap.put("июля", 7);
-        monthMap.put("августа", 8);
-        monthMap.put("сентября", 9);
-        monthMap.put("октября", 10);
-        monthMap.put("ноября", 11);
-        monthMap.put("декабря", 12);
-    }
-
-    private void initializeMapSp() {
-        spMap.put(Arrays.asList("Механизированная разработка грунта и шурфовка на наличие существующих сетей", "Механизированная разработка грунта"), "СП 45.13330.2017 Земляные сооружения, основания и фундаменты, раздел 6;");
-        spMap.put(Arrays.asList("Устройство песчаного основания под трубопровод", "Устройство песчаного основания под колодец", "Обратная засыпка грунтом мест шурфовок", "Обратная засыпка грунтом", "Устройство над трубопроводом защитного слоя из песка и обратная засыпка грунтом"), "СП 45.13330.2017 Земляные сооружения, основания и фундаменты, раздел 7;");
-        spMap.put(Arrays.asList("Сварка полиэтиленового трубопровода в плеть", "Сварка полиэтиленового трубопровода и фасонных частей", "Сварка трубопровода с помощью электромуфты", "Сварка и укладка на песчаное основание полиэтиленового трубопровода с фасонными частями"), "СП 399.1325800.2018 Системы водоснабжения и канализации наружные из полимерных материалов, раздел 6; СП 40-102-2000 Проектирование и монтаж трубопроводов систем водоснабжения и канализации из полимерных материалов, раздел 7;");
-        spMap.put(Arrays.asList("Сварка стального трубопровода в плеть", "Сварка стального трубопровода и фасонных частей", "Сварка и укладка на песчаное основание стального трубопровода с фасонными частями"), "СП 129.13330.2019 Наружные сети и сооружения водоснабжения и канализации, раздел 6;");
-        spMap.put(Arrays.asList("Сварка полиэтиленового трубопровода и фасонных частей, монтаж запорной арматуры в колодце"), "СП 399.1325800.2018 Системы водоснабжения и канализации наружные из полимерных материалов, раздел 6; СП 40-102-2000 Проектирование и монтаж трубопроводов систем водоснабжения и канализации из полимерных материалов, раздел 7; СП 129.13330.2019 Наружные сети и сооружения водоснабжения и канализации, раздел 6;");
-        spMap.put(Arrays.asList("Сварка полиэтиленового трубопровода и фасонных частей, монтаж пожарного гидранта в колодце"), "СП 399.1325800.2018 Системы водоснабжения и канализации наружные из полимерных материалов, раздел 6; СП 40-102-2000 Проектирование и монтаж трубопроводов систем водоснабжения и канализации из полимерных материалов, раздел 7; СП 129.13330.2019 Наружные сети и сооружения водоснабжения и канализации, раздел 6;");
-        spMap.put(Arrays.asList("Сварка стального трубопровода и фасонных частей, монтаж запорной арматуры в колодце"), "СП 129.13330.2019 Наружные сети и сооружения водоснабжения и канализации, раздел 6;");
-        spMap.put(Arrays.asList("Сварка стального трубопровода и фасонных частей, монтаж пожарного гидранта в колодце"), "СП 129.13330.2019 Наружные сети и сооружения водоснабжения и канализации, раздел 6;");
-        spMap.put(Arrays.asList("Устройство врезки в существующий полиэтиленовый трубопровод"), "СП 399.1325800.2018 Системы водоснабжения и канализации наружные из полимерных материалов, раздел 6; СП 40-102-2000 Проектирование и монтаж трубопроводов систем водоснабжения и канализации из полимерных материалов, раздел 7;");
-        spMap.put(Arrays.asList("Устройство врезки в существующий стальной трубопровод"), "СП 129.13330.2019 Наружные сети и сооружения водоснабжения и канализации, раздел 6;");
-        spMap.put(Arrays.asList("Монтаж колонок управления задвижками"), "СП 399.1325800.2018 Системы водоснабжения и канализации наружные из полимерных материалов; СП 129.13330.2019 Наружные сети и сооружения водоснабжения и канализации;");
-        spMap.put(Arrays.asList("Бестраншейная прокладка методом ГНБ полиэтиленового трубопровода", "Бестраншейная прокладка полиэтиленового трубопровода с протаскиванием в футляр методом ГНБ"), "СП 399.1325800.2018 Системы водоснабжения и канализации наружные из полимерных материалов, раздел 6; СП 341.1325800.2017 Подземные инженерные коммуникации. Прокладка горизонтальным направленным бурением, раздел 8;");
-        spMap.put(Arrays.asList("Бестраншейная прокладка методом ГНБ стального трубопровода", "Бестраншейная прокладка стального трубопровода с протаскиванием в футляр методом ГНБ"), "СП 341.1325800.2017 Подземные инженерные коммуникации. Прокладка горизонтальным направленным бурением, раздел 8;");
-        spMap.put(Arrays.asList("Заделка концов футляра"), "СП 399.1325800.2018 Системы водоснабжения и канализации наружные из полимерных материалов, раздел 6; СП 129.13330.2019 Наружные сети и сооружения водоснабжения и канализации, раздел ;");
-        spMap.put(Arrays.asList("Монтаж днища и рабочей части сборного железобетонного колодца", "Монтаж плиты перекрытия и горловины сборного железобетонного колодца"), "СП 70.13330.2012 Несущие и ограждающие конструкции, раздел 6;");
-        spMap.put(Arrays.asList("Монтаж стремянок", "Монтаж опор под пожарные гидранты", "Демонтаж"), "СП 399.1325800.2018 Системы водоснабжения и канализации наружные из полимерных материалов; СП 129.13330.2019 Наружные сети и сооружения водоснабжения и канализации;");
-        spMap.put(Arrays.asList("Устройство оклеечной гидроизоляции стеклоизолом в два слоя по слою праймера битумного наружной поверхности колодца, а также мест стыковок железобетонных элементов колодца"), "СП 72.13330.2016 Защита строительных конструкций и сооружений от коррозии, раздел 9;");
-        spMap.put(Arrays.asList("Герметизация мест прохода полиэтиленового трубопровода через стенки колодца"), "СП 399.1325800.2018 Системы водоснабжения и канализации наружные из полимерных материалов, раздел 4;");
-        spMap.put(Arrays.asList("Герметизация мест прохода стального через стенки колодца"), "СП 129.13330.2019 Наружные сети и сооружения водоснабжения и канализации, раздел ;");
-        spMap.put(Arrays.asList("Подготовка под изоляцию (очистка, обеспыливание, обезжиривание) металлических поверхностей"), "СП 72.13330.2016 Защита строительных конструкций и сооружений от коррозии, раздел 5;");
-        spMap.put(Arrays.asList("Огрунтовка за один раз металлических поверхностей", "Окраска в два слоя металлических огрунтованных поверхностей"), "СП 72.13330.2016 Защита строительных конструкций и сооружений от коррозии, раздел 6;");
-        spMap.put(Arrays.asList("Нанесение антикоррозийной изоляции лентами поливинилхлоридными липкими в три слоя по слою праймера битумного на стальной трубопровод"), "СП 129.13330.2019 Наружные сети и сооружения водоснабжения и канализации; СП 72.13330.2016 Защита строительных конструкций и сооружений от коррозии, раздел 9;");
-    }
-
-    private void initializeTypeOfWorkSet() {
-        spMap.keySet().forEach(typeOfWorkSet::addAll);
-    }
-
-    private void populateModel(Model model, ItdData itdData) {
+    private void modelAdd(Model model, ItdData itdData) {
         Set<ProjectDocumentationData> projectDocumentationList = itdData.getProjectDocumentationData();
         Set<ExecutiveSchemesData> executiveSchemesList = itdData.getExecutiveSchemesData();
         List<ExecutiveSchemesData> sortedExecutiveSchemesList = new ArrayList<>(executiveSchemesList);
@@ -168,7 +98,26 @@ public class AosrController {
         model.addAttribute("designerResponsibleList", designerResponsibleList);
         model.addAttribute("subcustomerResponsibleList", subcustomerResponsibleList);
         model.addAttribute("subcustomerResponsible2List", subcustomerResponsible2List);
-        model.addAttribute("typeOfWorkSet", typeOfWorkSet);
+        Map<String, Set<String>> nameWorksMap = new HashMap<>();
+        Map<String, Set<String>> normativeMap = new HashMap<>();
+        itdData.getNameWorksData().forEach(nameWorksData -> {
+            Set<String> mySet1 = new HashSet<>();
+            nameWorksData.getNextNameWorksList().forEach(nextNameWorksData -> mySet1.add(nextNameWorksData.getId() + "_" + nextNameWorksData.getName()));
+            nameWorksMap.put(nameWorksData.getId().toString(), mySet1);
+            Set<String> mySet2 = new HashSet<>();
+            nameWorksData.getNormativeList().forEach(normativeData -> mySet2.add(normativeData.getName()));
+            normativeMap.put(nameWorksData.getId().toString(), mySet2);
+        });
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonNameWorksMap, jsonNormativeMap;
+        try {
+            jsonNameWorksMap = objectMapper.writeValueAsString(nameWorksMap);
+            jsonNormativeMap = objectMapper.writeValueAsString(normativeMap);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        model.addAttribute("nameWorksMap", jsonNameWorksMap);
+        model.addAttribute("normativeMap", jsonNormativeMap);
     }
 
     private void getAosrEditModel(Model model, Optional<AosrData> aosrDataOptional) {
@@ -213,18 +162,8 @@ public class AosrController {
 
     @GetMapping("/aosr-table/{id}")
     public String aosrTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(id).orElseThrow();
-        model.addAttribute("itdData", itdData);
         List<AosrData> aosrList = new ArrayList<>(itdData.getAosrData());
         for (AosrData aosrData : aosrList) {
             aosrData.setFormattedDates();
@@ -236,19 +175,9 @@ public class AosrController {
 
     @GetMapping("/aosr-add/{id}")
     public String aosrAdd(@PathVariable(value = "id") long id, Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(id).orElseThrow();
-        model.addAttribute("itdData", itdData);
-        populateModel(model, itdData);
+        modelAdd(model, itdData);
         List<String> aosrFormData = new ArrayList<>();
         aosrFormData.add("1");
         model.addAttribute("aosrFormData", aosrFormData);
@@ -262,18 +191,8 @@ public class AosrController {
                                   @RequestParam(name = "id", required = false) Long id,
                                   @RequestParam Map<String, String> formData,
                                   Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
+        modelAddUserAndItdData(principal, itdId, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(itdId).orElseThrow();
-        model.addAttribute("itdData", itdData);
         List<String> aosrFormData = (List<String>) model.asMap().getOrDefault("aosrFormData", new ArrayList<String>());
         formData.forEach((key, value) -> {
             if (key.startsWith("projectSectionHidden") && !aosrFormData.contains(value)) {
@@ -286,7 +205,7 @@ public class AosrController {
                 getAosrEditModel(model, aosrDataOptional);
             }
         }
-        populateModel(model, itdData);
+        modelAdd(model, itdData);
 
         List<MaterialsUsedData> foundMaterials = materialsUsedRepository.findByNameMaterialContainingIgnoreCase(query);
         List<Long> selectedMaterialsIds = new ArrayList<>();
@@ -322,8 +241,8 @@ public class AosrController {
     @PostMapping("/aosr-add/{id}")
     public String postAosrAdd(@PathVariable(value = "id") long id,
                               @RequestParam("number") String number,
-                              @RequestParam("work1") String work1,
-                              @RequestParam("work2") String work2,
+                              @RequestParam("nameWorks") String nameWorks,
+                              @RequestParam("nextNameWorks") String nextNameWorks,
                               @RequestParam("dateStart") String dateStart,
                               @RequestParam("dateEnd") String dateEnd,
                               @RequestParam("execSchemSelect") Long execSchemId,
@@ -343,7 +262,7 @@ public class AosrController {
         LocalDate startDate = LocalDate.of(Integer.parseInt(splitDateStart[2]), Integer.parseInt(splitDateStart[1]), Integer.parseInt(splitDateStart[0]));
         LocalDate endDate = LocalDate.of(Integer.parseInt(splitDateEnd[2]), Integer.parseInt(splitDateEnd[1]), Integer.parseInt(splitDateEnd[0]));
 
-        AosrData aosrData = new AosrData(number, work1, work2, startDate, endDate);
+        AosrData aosrData = new AosrData(number, startDate, endDate);
 
         Set<MaterialsUsedData> materials = new HashSet<>();
         Set<DrawingsData> drawingsSet = new HashSet<>();
@@ -416,6 +335,10 @@ public class AosrController {
 
         PassportObjectData passportObject = itdData.getPassportObjectData();
         aosrData.setPassportObjectData(passportObject);
+        Optional<NameWorksData> nameWorksData = nameWorksRepository.findById(Long.valueOf(nameWorks));
+        nameWorksData.ifPresent(aosrData::setNameWorksToAosr);
+        Optional<NextNameWorksData> nextNameWorksData = nextNameWorksRepository.findById(Long.valueOf(nextNameWorks));
+        nextNameWorksData.ifPresent(aosrData::setNextNameWorksToAosr);
         aosrData.setStatus("Требует создания");
         aosrData.setItdToAosrData(itdData);
         aosrRepository.save(aosrData);
@@ -426,18 +349,8 @@ public class AosrController {
     public String aosrEdit(@PathVariable(value = "itdId") long itdId,
                            @PathVariable(value = "aosrId") long aosrId,
                            Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
+        modelAddUserAndItdData(principal, itdId, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(itdId).orElseThrow();
-        model.addAttribute("itdData", itdData);
         if (!aosrRepository.existsById(aosrId)) {
             return "redirect:/aosr-table/" + itdId;
         }
@@ -445,7 +358,7 @@ public class AosrController {
         if (aosrDataOptional.isPresent()) {
             getAosrEditModel(model, aosrDataOptional);
         }
-        populateModel(model, itdData);
+        modelAdd(model, itdData);
         return "aosrEdit";
     }
 
@@ -454,8 +367,8 @@ public class AosrController {
     public String postAosrUpdate(@PathVariable(value = "itdId") long itdId,
                                  @PathVariable(value = "aosrId") long aosrId,
                                  @RequestParam("number") String number,
-                                 @RequestParam("work1") String work1,
-                                 @RequestParam("work2") String work2,
+                                 @RequestParam("nameWorks") String nameWorks,
+                                 @RequestParam("nextNameWorks") String nextNameWorks,
                                  @RequestParam("dateStart") String dateStart,
                                  @RequestParam("dateEnd") String dateEnd,
                                  @RequestParam("execSchemSelect") Long execSchemId,
@@ -657,8 +570,6 @@ public class AosrController {
         ExecutiveSchemesData executiveSchemesData = executiveSchemesRepository.findById(execSchemId).orElseThrow();
         aosrData.setExecutiveSchemesData(executiveSchemesData);
         aosrData.setNumber(number);
-        aosrData.setTypeOfWork(work1);
-        aosrData.setPermittedFollowingWork(work2);
 
         String[] splitDateStart = dateStart.split("\\.");
         String[] splitDateEnd = dateEnd.split("\\.");
@@ -669,6 +580,10 @@ public class AosrController {
         aosrData.setStartDate(startDate);
         aosrData.setEndDate(endDate);
 
+        Optional<NameWorksData> nameWorksData = nameWorksRepository.findById(Long.valueOf(nameWorks));
+        nameWorksData.ifPresent(aosrData::setNameWorksToAosr);
+        Optional<NextNameWorksData> nextNameWorksData = nextNameWorksRepository.findById(Long.valueOf(nextNameWorks));
+        nextNameWorksData.ifPresent(aosrData::setNextNameWorksToAosr);
         aosrRepository.save(aosrData);
 
         return "redirect:/aosr-table/" + itdId;
@@ -740,51 +655,60 @@ public class AosrController {
     @PostMapping("/aosr-table/{itdId}")
     public void postAosrTable(@PathVariable(value = "itdId") long itdId, HttpServletResponse response) {
         ItdData itdData = itdRepository.findById(itdId).orElseThrow();
-        List<File> tempFiles = new ArrayList<>();
         List<AosrData> aosrList = new ArrayList<>(itdData.getAosrData());
         aosrList.sort(Comparator.comparing(AosrData::getNumber));
+
         try {
+            List<File> pdfFiles = new ArrayList<>();
             for (AosrData aosrData : aosrList) {
-                File tempFile = GenerateFileUtils.generateAosrFile(aosrData, spMap, monthMap);
-                tempFiles.add(tempFile);
+                File tempFile = GenerateFileUtils.generateAosrFile(aosrData);
+                File pdfFile = new File(tempFile.getAbsolutePath().replace(".docx", ".pdf"));
+                ProcessBuilder processBuilder = new ProcessBuilder("soffice", "--headless", "--convert-to", "pdf", tempFile.getAbsolutePath(), "--outdir", tempFile.getParent());
+                Process process = processBuilder.start();
+                process.waitFor();
+                pdfFiles.add(pdfFile);
             }
 
-            File zipFile = File.createTempFile("AosrDocs", ".zip");
-            try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile))) {
-                byte[] buffer = new byte[1024];
-                for (File file : tempFiles) {
-                    try (FileInputStream fis = new FileInputStream(file)) {
-                        ZipEntry zipEntry = new ZipEntry(file.getName());
-                        zos.putNextEntry(zipEntry);
-                        int len;
-                        while ((len = fis.read(buffer)) > 0) {
-                            zos.write(buffer, 0, len);
-                        }
-                        zos.closeEntry();
-                    }
-                }
-            }
+            File mergedPdfFile = File.createTempFile("MergedAOCP", ".pdf");
+            mergePdfFiles(pdfFiles, mergedPdfFile);
 
-            response.setContentType("application/zip");
-            response.setHeader("Content-Disposition", "attachment; filename=AosrDocs.zip");
-            response.setHeader("Content-Length", String.valueOf(zipFile.length()));
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", "attachment; filename=AOCP.pdf");
+            response.setHeader("Content-Length", String.valueOf(mergedPdfFile.length()));
 
-            try (InputStream in = new FileInputStream(zipFile)) {
+            try (InputStream in = new FileInputStream(mergedPdfFile)) {
                 FileCopyUtils.copy(in, response.getOutputStream());
             }
 
             response.flushBuffer();
 
-            for (File file : tempFiles) {
-                if (file.exists()) {
-                    file.delete();
+            for (File pdfFile : pdfFiles) {
+                if (pdfFile.exists()) {
+                    pdfFile.delete();
                 }
             }
-            zipFile.delete();
+            mergedPdfFile.delete();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void mergePdfFiles(List<File> pdfFiles, File mergedPdfFile) throws IOException, InterruptedException {
+        List<String> command = new ArrayList<>();
+        command.add("pdftk");
+
+        for (File pdfFile : pdfFiles) {
+            command.add(pdfFile.getAbsolutePath());
+        }
+
+        command.add("cat");
+        command.add("output");
+        command.add(mergedPdfFile.getAbsolutePath());
+
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        Process process = processBuilder.start();
+        process.waitFor();
     }
 
     @GetMapping("/aosr-table/{itdId}/aosr-preview/{aosrId}")
@@ -794,21 +718,28 @@ public class AosrController {
         AosrData aosrData = aosrRepository.findById(aosrId).orElseThrow();
 
         try {
-            File tempFile = GenerateFileUtils.generateAosrFile(aosrData, spMap, monthMap);
+            File tempFile = GenerateFileUtils.generateAosrFile(aosrData);
+            File pdfFile = new File(tempFile.getAbsolutePath().replace(".docx", ".pdf"));
 
-            try (InputStream docxInputStream = new FileInputStream(tempFile);
+            ProcessBuilder processBuilder = new ProcessBuilder("soffice", "--headless", "--convert-to", "pdf", tempFile.getAbsolutePath(), "--outdir", tempFile.getParent());
+            Process process = processBuilder.start();
+            process.waitFor();
+
+            try (InputStream pdfInputStream = new FileInputStream(pdfFile);
                  OutputStream pdfOutputStream = response.getOutputStream()) {
                 response.setContentType("application/pdf");
                 response.setHeader("Content-Disposition", "inline; filename=preview.pdf");
 
-                WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(docxInputStream);
-
-                Docx4J.toPDF(wordMLPackage, pdfOutputStream);
-
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = pdfInputStream.read(buffer)) != -1) {
+                    pdfOutputStream.write(buffer, 0, bytesRead);
+                }
                 pdfOutputStream.flush();
             }
 
             tempFile.delete();
+            pdfFile.delete();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -823,7 +754,7 @@ public class AosrController {
         AosrData aosrData = aosrRepository.findById(aosrId).orElseThrow();
 
         try {
-            File tempFile = GenerateFileUtils.generateAosrFile(aosrData, spMap, monthMap);
+            File tempFile = GenerateFileUtils.generateAosrFile(aosrData);
 
             PrintService printService = PrintServiceLookup.lookupDefaultPrintService();
             if (printService == null) {

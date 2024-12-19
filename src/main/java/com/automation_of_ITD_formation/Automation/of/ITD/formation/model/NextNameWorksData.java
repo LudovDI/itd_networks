@@ -2,6 +2,8 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class NextNameWorksData {
 
@@ -10,6 +12,9 @@ public class NextNameWorksData {
     private Long id;
 
     private String name;
+
+    @OneToMany(mappedBy = "nextNameWorksToAosr", cascade = CascadeType.ALL)
+    private List<AosrData> aosrList;
 
     @ManyToOne
     @JoinColumn(name = "name_works_id")
@@ -37,6 +42,14 @@ public class NextNameWorksData {
 
     public void setNameWorksNextNameWorks(NameWorksData nameWorksNextNameWorks) {
         this.nameWorksNextNameWorks = nameWorksNextNameWorks;
+    }
+
+    public List<AosrData> getAosrList() {
+        return aosrList;
+    }
+
+    public void setAosrList(List<AosrData> aosrList) {
+        this.aosrList = aosrList;
     }
 
     public NextNameWorksData() {

@@ -12,8 +12,6 @@ public class UserData {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Long currentItd;
-
     private String username, password, fullname;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
@@ -23,6 +21,9 @@ public class UserData {
 
     @OneToMany(mappedBy = "userData", cascade = CascadeType.ALL)
     private List<ItdData> itdData;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private PasswordResetTokenData passwordResetTokenData;
 
     public Long getId() {
         return id;
@@ -64,20 +65,20 @@ public class UserData {
         this.fullname = fullname;
     }
 
-    public Long getCurrentItd() {
-        return currentItd;
-    }
-
-    public void setCurrentItd(Long currentItd) {
-        this.currentItd = currentItd;
-    }
-
     public List<ItdData> getItdData() {
         return itdData;
     }
 
     public void setItdData(List<ItdData> itdData) {
         this.itdData = itdData;
+    }
+
+    public PasswordResetTokenData getPasswordResetTokenData() {
+        return passwordResetTokenData;
+    }
+
+    public void setPasswordResetTokenData(PasswordResetTokenData passwordResetTokenData) {
+        this.passwordResetTokenData = passwordResetTokenData;
     }
 
     public UserData() {

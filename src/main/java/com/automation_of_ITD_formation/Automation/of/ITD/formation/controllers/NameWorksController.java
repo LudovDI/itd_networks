@@ -3,7 +3,6 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -14,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.*;
+
+import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.ControllersUtils.modelAddUserAndItdData;
 
 @Controller
 public class NameWorksController {
@@ -31,18 +32,8 @@ public class NameWorksController {
 
     @GetMapping("/name-works-table/{id}")
     public String nameWorksTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(id).orElseThrow();
-        model.addAttribute("itdData", itdData);
         Set<NameWorksData> nameWorksList = itdData.getNameWorksData();
         model.addAttribute("nameWorksList", nameWorksList);
         return "nameWorksTable";
@@ -50,18 +41,7 @@ public class NameWorksController {
 
     @GetMapping("/name-works-add/{id}")
     public String nameWorksAdd(@PathVariable(value = "id") long id, Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
-        ItdData itdData = itdRepository.findById(id).orElseThrow();
-        model.addAttribute("itdData", itdData);
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         return "nameWorksAdd";
     }
 
@@ -97,18 +77,7 @@ public class NameWorksController {
     public String nameWorksEdit(@PathVariable(value = "itdId") long itdId,
                               @PathVariable(value = "nameWorksId") long nameWorksId,
                               Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
-        ItdData itdData = itdRepository.findById(itdId).orElseThrow();
-        model.addAttribute("itdData", itdData);
+        modelAddUserAndItdData(principal, itdId, model, userRepository, itdRepository);
         if (!nameWorksRepository.existsById(nameWorksId)) {
             return "redirect:/name-works-table/" + itdId;
         }
@@ -198,18 +167,7 @@ public class NameWorksController {
 
     @GetMapping("/name-works-add-from-itd/{id}")
     public String nameWorksAddFromItd(@PathVariable(value = "id") long id, Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
-        ItdData itdData = itdRepository.findById(id).orElseThrow();
-        model.addAttribute("itdData", itdData);
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         return "nameWorksAddFromItd";
     }
 
