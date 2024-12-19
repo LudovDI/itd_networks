@@ -350,4 +350,12 @@ public class PassportObjectData {
         this.ogrnOrganizationDesigner = ogrnOrganizationDesigner;
         this.innOrganizationDesigner = innOrganizationDesigner;
     }
+
+    public ItdData getItdData() {
+        return itdData;
+    }
+
+    public void setItdData(ItdData itdData) {
+        this.itdData = itdData;
+    }
 }

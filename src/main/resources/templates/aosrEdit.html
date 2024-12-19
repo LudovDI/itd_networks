@@ -53,7 +53,7 @@
                         <h6 class="m-0 font-weight-bold text-primary">Редактирование АОСР</h6>
                     </div>
                     <div th:each="el : ${aosrData}">
-                        <form method="post">
+                        <form method="post" th:action="'/aosr-table/' + ${itdData.id} + '/aosr-edit/' + ${el.id}">
                             <div class="card-body">
                                 <div class="row justify-content-between mb-2">
                                     <!-- Левая часть -->
@@ -108,15 +108,16 @@
                                             <div class="card-body">
                                                 <label class="p-0">К освидетельствованию предъявлены следующие
                                                     работы:</label>
-                                                <input type="hidden" id="permittedFollowingWork"
-                                                       th:value="${el.permittedFollowingWork}"/>
-                                                <select id="work1" name="work1" class="form-control"
+                                                <input type="hidden" id="nextNameWorksToAosr"
+                                                       th:value="${el.nextNameWorksToAosr.id} + '_' + ${el.nextNameWorksToAosr.name}"/>
+                                                <select id="nameWorks" name="nameWorks" class="form-control mb-2" th:data-map="${nameWorksMap}"
                                                         onchange="addSelect()">
-                                                    <option th:each="typeOfWork : ${typeOfWorkSet}"
-                                                            th:value="${typeOfWork}"
-                                                            th:text="${typeOfWork}"
-                                                            th:selected="${typeOfWork == el.typeOfWork}"></option>
+                                                    <option th:each="nameWorks : ${itdData.nameWorksData}" th:value="${nameWorks.id}" th:text="${nameWorks.name}"
+                                                            th:selected="${nameWorks.id == el.nameWorksToAosr.id}"></option>
                                                 </select>
+                                                <label class="p-0">Нормативки:</label>
+                                                <div id="normativeContainer" th:data-map="${normativeMap}">
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="card mb-3">
@@ -366,7 +367,7 @@
                                         <div class="card mb-3">
                                             <div class="card-body">
                                                 <label>Разрешается производство последующих работ:</label>
-                                                <select id="work2" name="work2" class="form-control" required></select>
+                                                <select id="nextNameWorks" name="nextNameWorks" class="form-control" required></select>
                                             </div>
                                         </div>
                                         <div class="card mb-3">
@@ -455,7 +456,7 @@
 </div>
 <!-- End of Page Wrapper -->
 
-<script th:src="@{/js/aosrEdit.js}"></script>
+<script th:src="@{/js/aosr.js}"></script>
 
 <!-- Bootstrap core JavaScript-->
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>

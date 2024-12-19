@@ -55,7 +55,7 @@
                                     <span class="icon text-white-50">
                                         <i class="fas fa-book"></i>
                                     </span>
-                                    <span class="text">Создать архив с актами</span>
+                                    <span class="text">Создать документ с актами</span>
                                 </button>
                             </div>
                         </form>
@@ -94,8 +94,8 @@
                                 </form>
                             </td>
                             <td th:text="${doc.number}"></td>
-                            <td th:text="${doc.typeOfWork}"></td>
-                            <td th:text="${doc.permittedFollowingWork}"></td>
+                            <td th:text="${doc.nameWorksToAosr.name}"></td>
+                            <td th:text="${doc.nextNameWorksToAosr.name}"></td>
                             <td th:text="${doc.formattedStartDate}"></td>
                             <td th:text="${doc.formattedEndDate}"></td>
                             <td>

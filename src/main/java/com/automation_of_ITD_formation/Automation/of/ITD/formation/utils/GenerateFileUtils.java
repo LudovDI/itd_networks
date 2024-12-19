@@ -17,7 +17,22 @@ import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.
 
 public class GenerateFileUtils {
 
-    public static File generateAosrFile(AosrData aosrData, Map<List<String>, String> spMap, Map<String, Integer> monthMap) throws IOException {
+    private static void initializeMonthMap(Map<String, Integer> monthMap) {
+        monthMap.put("января", 1);
+        monthMap.put("февраля", 2);
+        monthMap.put("марта", 3);
+        monthMap.put("апреля", 4);
+        monthMap.put("мая", 5);
+        monthMap.put("июня", 6);
+        monthMap.put("июля", 7);
+        monthMap.put("августа", 8);
+        monthMap.put("сентября", 9);
+        monthMap.put("октября", 10);
+        monthMap.put("ноября", 11);
+        monthMap.put("декабря", 12);
+    }
+
+    public static File generateAosrFile(AosrData aosrData) throws IOException {
         FileInputStream inputStream = new FileInputStream("E:\\javaProjects\\itd_networks\\src\\main\\resources\\files\\АОСР.docx");
         XWPFDocument document = new XWPFDocument(inputStream);
         inputStream.close();
@@ -49,8 +64,8 @@ public class GenerateFileUtils {
         String nameNetwork = projectDocumentationSet.stream().toList().getFirst().getNetwork();
 
         ExecutiveSchemesData executiveSchemesData = aosrData.getExecutiveSchemesData();
-        String work1 = aosrData.getTypeOfWork();
-        String work2 = aosrData.getPermittedFollowingWork();
+        NameWorksData nameWorksData = aosrData.getNameWorksToAosr();
+        NextNameWorksData nextNameWorksData = aosrData.getNextNameWorksToAosr();
         Set<DrawingsData> drawingsDataSet = aosrData.getAosrToDrawings();
         Set<MaterialsUsedData> materialsUsedDataSet = aosrData.getAosrToMaterials();
         int aosrNumber = Integer.parseInt(aosrData.getNumber());
@@ -77,7 +92,7 @@ public class GenerateFileUtils {
         replacePlaceholderInTable(document, "InfoResAnotherPerson", anotherPerson, 100, 100);
         String nameOrganization = GenerateStringUtils.generateNameOrganization(passportObjectData);
         replacePlaceholderInTable(document, "NameOrganization", nameOrganization, 80, 80);
-        String nameOfHiddenWork = GenerateStringUtils.generateNameOfHiddenWork(nameNetwork, work1, executiveSchemesData);
+        String nameOfHiddenWork = GenerateStringUtils.generateNameOfHiddenWork(nameNetwork, nameWorksData, executiveSchemesData);
         replacePlaceholderInTable(document, "NameOfHiddenWork", nameOfHiddenWork, 60, 120);
         String drawings = GenerateStringUtils.generateDrawings(projectDocumentationSet, drawingsDataSet, passportObjectData);
         replacePlaceholderInTable(document, "Drawings", drawings, 70, 135);
@@ -85,9 +100,9 @@ public class GenerateFileUtils {
         replacePlaceholderInTable(document, "Materials", materials, 80, 115);
         String executiveSchemes = GenerateStringUtils.generateExecSchemesActsProtocols(aosrData, executiveSchemesData, nameNetwork, passportObjectData, aosrNumber);
         replacePlaceholderInTable(document, "ExecutiveSchemes", executiveSchemes, 120, 120);
-        String spAndProjectDocumentations = GenerateStringUtils.generateSpAndProjectDocumentations(work1, projectDocumentationSet, spMap);
+        String spAndProjectDocumentations = GenerateStringUtils.generateSpAndProjectDocumentations(nameWorksData, projectDocumentationSet);
         replacePlaceholderInTable(document, "ProjectDocumentations", spAndProjectDocumentations, 80, 120);
-        String engineeringSupportNetworks = GenerateStringUtils.generateEngineeringSupportNetworks(work2, executiveSchemesData, nameNetwork);
+        String engineeringSupportNetworks = GenerateStringUtils.generateEngineeringSupportNetworks(nextNameWorksData, executiveSchemesData, nameNetwork);
         replacePlaceholderInTable(document, "EngineeringSupportNetworks", engineeringSupportNetworks, 70, 120);
         String fioCustomer = GenerateStringUtils.generateFioCustomerRes(customerResponsibleData);
         replacePlaceholderInTable(document, "FioCustomer", fioCustomer, 30, 30);
@@ -109,6 +124,8 @@ public class GenerateFileUtils {
         String yearEnd = Integer.toString(dateEnd.getYear()).substring(2, 4);
         StringBuilder monthStart = new StringBuilder();
         StringBuilder monthEnd = new StringBuilder();
+        Map<String, Integer> monthMap = new HashMap<>();
+        initializeMonthMap(monthMap);
         monthMap.forEach((key, value) -> {
             if (value.equals(dateStart.getMonthValue()) && value.equals(dateEnd.getMonthValue())) {
                 monthStart.append(key);
@@ -380,17 +397,17 @@ public class GenerateFileUtils {
 //        return tempXlsxFile;
 //    }
 
-    public static void addFileToZip(ZipOutputStream zos, File file, String zipEntryName, byte[] buffer) throws IOException {
-        try (FileInputStream fis = new FileInputStream(file)) {
-            ZipEntry zipEntry = new ZipEntry(zipEntryName);
-            zos.putNextEntry(zipEntry);
-            int len;
-            while ((len = fis.read(buffer)) > 0) {
-                zos.write(buffer, 0, len);
-            }
-            zos.closeEntry();
-        }
-    }
+//    public static void addFileToZip(ZipOutputStream zos, File file, String zipEntryName, byte[] buffer) throws IOException {
+//        try (FileInputStream fis = new FileInputStream(file)) {
+//            ZipEntry zipEntry = new ZipEntry(zipEntryName);
+//            zos.putNextEntry(zipEntry);
+//            int len;
+//            while ((len = fis.read(buffer)) > 0) {
+//                zos.write(buffer, 0, len);
+//            }
+//            zos.closeEntry();
+//        }
+//    }
 
 //    private static Map<String, String> getPersonMap(PassportObjectData passObj) {
 //        Map<String, String> personMap = new HashMap<>();

@@ -1,10 +1,8 @@
 package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 
-import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.Role;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.UserData;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,8 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
-import java.util.Collections;
-import java.util.Optional;
 
 @Controller
 public class ChangePasswordController {
@@ -35,8 +31,7 @@ public class ChangePasswordController {
                                    @RequestParam("confirmPassword") String confirmPassword,
                                    Principal principal, Model model) {
         String username = principal.getName();
-        UserData user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        UserData user = userRepository.findByUsername(username).orElseThrow();
 
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             model.addAttribute("error", "Пароль некорректный");

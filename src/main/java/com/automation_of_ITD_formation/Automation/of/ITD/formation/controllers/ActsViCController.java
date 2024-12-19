@@ -2,12 +2,10 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.ActsViCData;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.ItdData;
-import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.UserData;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.ActsViCRepository;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.ItdRepository;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.*;
+
+import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.ControllersUtils.modelAddUserAndItdData;
 
 @Controller
 public class ActsViCController {
@@ -30,18 +30,8 @@ public class ActsViCController {
 
     @GetMapping("/acts-vic-table/{id}")
     public String actsVicTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(id).orElseThrow();
-        model.addAttribute("itdData", itdData);
         Set<ActsViCData> actsViCList = itdData.getActsViCData();
         model.addAttribute("actsViCList", actsViCList);
         return "actsVicTable";
@@ -49,18 +39,7 @@ public class ActsViCController {
 
     @GetMapping("/acts-vic-add/{id}")
     public String actsVicAdd(@PathVariable(value = "id") long id, Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
-        ItdData itdData = itdRepository.findById(id).orElseThrow();
-        model.addAttribute("itdData", itdData);
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         return "actsVicAdd";
     }
 
@@ -81,18 +60,7 @@ public class ActsViCController {
     public String actsVicEdit(@PathVariable(value = "itdId") long itdId,
                               @PathVariable(value = "actId") long actId,
                               Model model, Principal principal) {
-        String username = principal.getName();
-        UserData currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        model.addAttribute("userData", currentUser);
-        List<ItdData> itdDataList = currentUser.getItdData();
-        if (!itdDataList.isEmpty()) {
-            model.addAttribute("itdList", itdDataList);
-        } else {
-            model.addAttribute("itdList", List.of());
-        }
-        ItdData itdData = itdRepository.findById(itdId).orElseThrow();
-        model.addAttribute("itdData", itdData);
+        modelAddUserAndItdData(principal, itdId, model, userRepository, itdRepository);
         if (!actsViCRepository.existsById(actId)) {
             return "redirect:/acts-vic-table/" + itdId;
         }

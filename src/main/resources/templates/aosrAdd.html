@@ -99,10 +99,12 @@
                                         <div class="card-body">
                                             <label class="p-0">К освидетельствованию предъявлены следующие
                                                 работы:</label>
-                                            <select id="work1" name="work1" class="form-control" onchange="addSelect()">
-                                                <option th:each="typeOfWork : ${typeOfWorkSet}" th:value="${typeOfWork}"
-                                                        th:text="${typeOfWork}"></option>
+                                            <select id="nameWorks" name="nameWorks" class="form-control mb-2" th:data-map="${nameWorksMap}" onchange="addSelect()">
+                                                <option th:each="nameWorks : ${itdData.nameWorksData}" th:value="${nameWorks.id}" th:text="${nameWorks.name}"></option>
                                             </select>
+                                            <label class="p-0">Нормативки:</label>
+                                            <div id="normativeContainer" th:data-map="${normativeMap}">
+                                            </div>
                                         </div>
                                     </div>
 
@@ -285,7 +287,7 @@
                                     <div class="card mb-3">
                                         <div class="card-body">
                                             <label>Разрешается производство последующих работ:</label>
-                                            <select id="work2" name="work2" class="form-control" required="">
+                                            <select id="nextNameWorks" name="nextNameWorks" class="form-control" required="">
                                             </select>
                                         </div>
                                     </div>
@@ -371,7 +373,7 @@
 </div>
 <!-- End of Page Wrapper -->
 
-<script th:src="@{/js/aosrAdd.js}"></script>
+<script th:src="@{/js/aosr.js}"></script>
 
 <!-- Bootstrap core JavaScript-->
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>

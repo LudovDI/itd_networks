@@ -2,9 +2,7 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.model;
 
 import jakarta.persistence.*;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 public class NameWorksData {
