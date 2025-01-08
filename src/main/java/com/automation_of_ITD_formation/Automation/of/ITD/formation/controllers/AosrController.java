@@ -752,29 +752,21 @@ public class AosrController {
                               @PathVariable(value = "aosrId") long aosrId,
                               HttpServletResponse response) {
         AosrData aosrData = aosrRepository.findById(aosrId).orElseThrow();
-
         try {
             File tempFile = GenerateFileUtils.generateAosrFile(aosrData);
-
-            PrintService printService = PrintServiceLookup.lookupDefaultPrintService();
-            if (printService == null) {
-                throw new IllegalStateException("Принтер по умолчанию не найден");
-            }
-
-            DocPrintJob printJob = printService.createPrintJob();
-            Doc doc = new SimpleDoc(new FileInputStream(tempFile), DocFlavor.INPUT_STREAM.AUTOSENSE, null);
-
-            printJob.print(doc, null);
-
+            int exitCode = printUsingCommandLine(tempFile);
             tempFile.delete();
             response.setContentType("text/html; charset=UTF-8");
             response.setCharacterEncoding("UTF-8");
-
             try (OutputStream outputStream = response.getOutputStream();
                  Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
-                writer.write("<html><body>Документ отправлен на печать.</body></html>");
+                if (exitCode == 0) {
+                    writer.write("<html><body>Документ отправлен на печать.</body></html>");
+                } else {
+                    writer.write("<html><body>Ошибка при отправке на печать. Код ошибки: " + exitCode + "</body></html>");
+                }
             }
-        } catch (PrintException | IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             try {
                 response.setContentType("text/html; charset=UTF-8");
@@ -782,11 +774,69 @@ public class AosrController {
 
                 try (OutputStream outputStream = response.getOutputStream();
                      Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
-                    writer.write("<html><body>Ошибка при отправке на печать: " + e.getMessage() + "</body></html>");
+                    writer.write("<html><body>Ошибка при обработке файла: " + e.getMessage() + "</body></html>");
                 }
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
         }
     }
+
+    private int printUsingCommandLine(File file) throws IOException {
+        String sofficePath = "C:\\Program Files\\LibreOffice\\program\\soffice.exe";
+
+        // Указываем путь для сохранения PDF
+        File pdfFile = new File(file.getParent(), file.getName().replaceFirst("[.][^.]+$", "") + ".pdf");
+
+        // Запускаем команду для конвертации в PDF
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                sofficePath,
+                "--headless",              // Режим без GUI
+                "--convert-to", "pdf",     // Формат вывода PDF
+                "--outdir", file.getParent(),  // Путь для сохранения
+                file.getAbsolutePath()     // Исходный файл
+        );
+
+        Process process = processBuilder.start();
+
+        try {
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                // Конвертация прошла успешно, отправляем PDF на печать
+                return sendToPrinter(pdfFile);
+            } else {
+                throw new IOException("Ошибка при конвертации файла в PDF, код: " + exitCode);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Процесс конвертации был прерван", e);
+        }
+    }
+
+
+    private int sendToPrinter(File file) throws IOException {
+        // Проверяем, существует ли файл
+        if (!file.exists()) {
+            throw new IOException("Файл для печати не существует: " + file.getAbsolutePath());
+        }
+
+        String acroReaderPath = "C:\\Program Files\\Adobe\\Acrobat DC\\Acrobat\\Acrobat.exe";
+
+        // Создаем команду для печати через Adobe Acrobat Reader
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                acroReaderPath,
+                "/t",                               // Печать без интерфейса
+                file.getAbsolutePath()             // Путь к PDF-файлу
+        );
+
+        Process process = processBuilder.start();
+
+        try {
+            return process.waitFor(); // Ожидаем завершения печати
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Процесс отправки на печать был прерван", e);
+        }
+    }
+
 }
