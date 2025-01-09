@@ -69,7 +69,7 @@ function addNextNameWorks() {
 }
 
 function removeDiv(button) {
-    var parentDiv = button.closest('.d-flex');
+    var parentDiv = button.closest('.row.col-lg-12.mb-3');
     if (parentDiv) {
         parentDiv.remove();
     }

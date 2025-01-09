@@ -6,6 +6,9 @@ import com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.Generat
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
+import org.docx4j.wml.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -653,62 +656,72 @@ public class AosrController {
     }
 
     @PostMapping("/aosr-table/{itdId}")
-    public void postAosrTable(@PathVariable(value = "itdId") long itdId, HttpServletResponse response) {
+    public void postAosrMergeFiles(@PathVariable(value = "itdId") long itdId, HttpServletResponse response) {
         ItdData itdData = itdRepository.findById(itdId).orElseThrow();
         List<AosrData> aosrList = new ArrayList<>(itdData.getAosrData());
         aosrList.sort(Comparator.comparing(AosrData::getNumber));
 
         try {
-            List<File> pdfFiles = new ArrayList<>();
+            List<File> tempDocxFiles = new ArrayList<>();
             for (AosrData aosrData : aosrList) {
                 File tempFile = GenerateFileUtils.generateAosrFile(aosrData);
-                File pdfFile = new File(tempFile.getAbsolutePath().replace(".docx", ".pdf"));
-                ProcessBuilder processBuilder = new ProcessBuilder("soffice", "--headless", "--convert-to", "pdf", tempFile.getAbsolutePath(), "--outdir", tempFile.getParent());
-                Process process = processBuilder.start();
-                process.waitFor();
-                pdfFiles.add(pdfFile);
+                tempDocxFiles.add(tempFile);
             }
 
-            File mergedPdfFile = File.createTempFile("MergedAOCP", ".pdf");
-            mergePdfFiles(pdfFiles, mergedPdfFile);
+            File mergedDocxFile = mergeDocxFiles(tempDocxFiles);
 
-            response.setContentType("application/pdf");
-            response.setHeader("Content-Disposition", "attachment; filename=AOCP.pdf");
-            response.setHeader("Content-Length", String.valueOf(mergedPdfFile.length()));
+            response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+            response.setHeader("Content-Disposition", "attachment; filename=AOCP.docx");
+            response.setHeader("Content-Length", String.valueOf(mergedDocxFile.length()));
 
-            try (InputStream in = new FileInputStream(mergedPdfFile)) {
+            try (InputStream in = new FileInputStream(mergedDocxFile)) {
                 FileCopyUtils.copy(in, response.getOutputStream());
             }
 
             response.flushBuffer();
 
-            for (File pdfFile : pdfFiles) {
-                if (pdfFile.exists()) {
-                    pdfFile.delete();
+            for (File tempFile : tempDocxFiles) {
+                if (tempFile.exists()) {
+                    tempFile.delete();
                 }
             }
-            mergedPdfFile.delete();
+            mergedDocxFile.delete();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void mergePdfFiles(List<File> pdfFiles, File mergedPdfFile) throws IOException, InterruptedException {
-        List<String> command = new ArrayList<>();
-        command.add("pdftk");
+    public static File mergeDocxFiles(List<File> docxFiles) throws Exception {
+        WordprocessingMLPackage mainPackage = WordprocessingMLPackage.load(docxFiles.get(0));
+        ObjectFactory factory = new ObjectFactory();
 
-        for (File pdfFile : pdfFiles) {
-            command.add(pdfFile.getAbsolutePath());
+        for (int i = 1; i < docxFiles.size(); i++) {
+            addPageBreak(mainPackage, factory);
+
+            WordprocessingMLPackage currentPackage = WordprocessingMLPackage.load(docxFiles.get(i));
+            MainDocumentPart mainPart = currentPackage.getMainDocumentPart();
+            Body body = mainPart.getContents().getBody();
+
+            mainPackage.getMainDocumentPart().getContent().addAll(body.getContent());
         }
 
-        command.add("cat");
-        command.add("output");
-        command.add(mergedPdfFile.getAbsolutePath());
+        File mergedFile = File.createTempFile("MergedDocument", ".docx");
+        mainPackage.save(mergedFile);
+        return mergedFile;
+    }
 
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
-        Process process = processBuilder.start();
-        process.waitFor();
+    private static void addPageBreak(WordprocessingMLPackage mainPackage, ObjectFactory factory) {
+        P paragraph = factory.createP();
+        R run = factory.createR();
+
+        Br breakObj = factory.createBr();
+        breakObj.setType(STBrType.PAGE);
+
+        run.getContent().add(breakObj);
+        paragraph.getContent().add(run);
+
+        mainPackage.getMainDocumentPart().getContent().add(paragraph);
     }
 
     @GetMapping("/aosr-table/{itdId}/aosr-preview/{aosrId}")
@@ -720,8 +733,8 @@ public class AosrController {
         try {
             File tempFile = GenerateFileUtils.generateAosrFile(aosrData);
             File pdfFile = new File(tempFile.getAbsolutePath().replace(".docx", ".pdf"));
-
-            ProcessBuilder processBuilder = new ProcessBuilder("soffice", "--headless", "--convert-to", "pdf", tempFile.getAbsolutePath(), "--outdir", tempFile.getParent());
+            String sofficePath = "C:\\Program Files\\LibreOffice\\program\\soffice.exe";
+            ProcessBuilder processBuilder = new ProcessBuilder(sofficePath, "--headless", "--convert-to", "pdf", tempFile.getAbsolutePath(), "--outdir", tempFile.getParent());
             Process process = processBuilder.start();
             process.waitFor();
 
@@ -785,16 +798,14 @@ public class AosrController {
     private int printUsingCommandLine(File file) throws IOException {
         String sofficePath = "C:\\Program Files\\LibreOffice\\program\\soffice.exe";
 
-        // Указываем путь для сохранения PDF
         File pdfFile = new File(file.getParent(), file.getName().replaceFirst("[.][^.]+$", "") + ".pdf");
 
-        // Запускаем команду для конвертации в PDF
         ProcessBuilder processBuilder = new ProcessBuilder(
                 sofficePath,
-                "--headless",              // Режим без GUI
-                "--convert-to", "pdf",     // Формат вывода PDF
-                "--outdir", file.getParent(),  // Путь для сохранения
-                file.getAbsolutePath()     // Исходный файл
+                "--headless",
+                "--convert-to", "pdf",
+                "--outdir", file.getParent(),
+                file.getAbsolutePath()
         );
 
         Process process = processBuilder.start();
@@ -802,7 +813,6 @@ public class AosrController {
         try {
             int exitCode = process.waitFor();
             if (exitCode == 0) {
-                // Конвертация прошла успешно, отправляем PDF на печать
                 return sendToPrinter(pdfFile);
             } else {
                 throw new IOException("Ошибка при конвертации файла в PDF, код: " + exitCode);
@@ -815,24 +825,21 @@ public class AosrController {
 
 
     private int sendToPrinter(File file) throws IOException {
-        // Проверяем, существует ли файл
         if (!file.exists()) {
             throw new IOException("Файл для печати не существует: " + file.getAbsolutePath());
         }
 
         String acroReaderPath = "C:\\Program Files\\Adobe\\Acrobat DC\\Acrobat\\Acrobat.exe";
-
-        // Создаем команду для печати через Adobe Acrobat Reader
         ProcessBuilder processBuilder = new ProcessBuilder(
                 acroReaderPath,
-                "/t",                               // Печать без интерфейса
-                file.getAbsolutePath()             // Путь к PDF-файлу
+                "/t",
+                file.getAbsolutePath()
         );
 
         Process process = processBuilder.start();
 
         try {
-            return process.waitFor(); // Ожидаем завершения печати
+            return process.waitFor();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IOException("Процесс отправки на печать был прерван", e);
