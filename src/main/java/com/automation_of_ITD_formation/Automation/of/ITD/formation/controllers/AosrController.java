@@ -830,7 +830,6 @@ public class AosrController {
         }
 
         String acroReaderPath = "C:\\Program Files\\Adobe\\Acrobat DC\\Acrobat\\Acrobat.exe";
-
         ProcessBuilder processBuilder = new ProcessBuilder(
                 acroReaderPath,
                 "/t",
@@ -846,4 +845,5 @@ public class AosrController {
             throw new IOException("Процесс отправки на печать был прерван", e);
         }
     }
+
 }
