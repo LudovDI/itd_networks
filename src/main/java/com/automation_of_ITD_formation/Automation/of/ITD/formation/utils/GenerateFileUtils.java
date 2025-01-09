@@ -2,11 +2,9 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.utils;
 
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.springframework.core.io.ClassPathResource;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.zip.ZipEntry;
@@ -33,123 +31,125 @@ public class GenerateFileUtils {
     }
 
     public static File generateAosrFile(AosrData aosrData) throws IOException {
-        FileInputStream inputStream = new FileInputStream("E:\\javaProjects\\itd_networks\\src\\main\\resources\\files\\АОСР.docx");
-        XWPFDocument document = new XWPFDocument(inputStream);
-        inputStream.close();
+        ClassPathResource resource = new ClassPathResource("files/AOCP.docx");
 
-        PassportObjectData passportObjectData = aosrData.getPassportObjectData();
-        CustomerResponsibleData customerResponsibleData = aosrData.getCustomerResponsibleData();
-        DesignerResponsibleData designerResponsibleData = aosrData.getDesignerResponsibleData();
-        SubcustomerResponsibleData subcustomerResponsibleData = aosrData.getSubcustomerResponsibleData();
-        SubcustomerResponsible2Data subcustomerResponsible2Data = aosrData.getSubcustomerResponsible2Data();
-        AnotherPersonResponsibleData anotherPersonResponsibleData = aosrData.getAnotherPersonResponsibleData();
+        try (InputStream inputStream = resource.getInputStream()) {
+            XWPFDocument document = new XWPFDocument(inputStream);
 
-        if (customerResponsibleData == null) {
-            customerResponsibleData = new CustomerResponsibleData();
-        }
-        if (subcustomerResponsibleData == null) {
-            subcustomerResponsibleData = new SubcustomerResponsibleData();
-        }
-        if (subcustomerResponsible2Data == null) {
-            subcustomerResponsible2Data = new SubcustomerResponsible2Data();
-        }
-        if (designerResponsibleData == null) {
-            designerResponsibleData = new DesignerResponsibleData();
-        }
-        if (anotherPersonResponsibleData == null) {
-            anotherPersonResponsibleData = new AnotherPersonResponsibleData();
-        }
+            PassportObjectData passportObjectData = aosrData.getPassportObjectData();
+            CustomerResponsibleData customerResponsibleData = aosrData.getCustomerResponsibleData();
+            DesignerResponsibleData designerResponsibleData = aosrData.getDesignerResponsibleData();
+            SubcustomerResponsibleData subcustomerResponsibleData = aosrData.getSubcustomerResponsibleData();
+            SubcustomerResponsible2Data subcustomerResponsible2Data = aosrData.getSubcustomerResponsible2Data();
+            AnotherPersonResponsibleData anotherPersonResponsibleData = aosrData.getAnotherPersonResponsibleData();
 
-        Set<ProjectDocumentationData> projectDocumentationSet = aosrData.getAosrToProjDocs();
-        String nameNetwork = projectDocumentationSet.stream().toList().getFirst().getNetwork();
-
-        ExecutiveSchemesData executiveSchemesData = aosrData.getExecutiveSchemesData();
-        NameWorksData nameWorksData = aosrData.getNameWorksToAosr();
-        NextNameWorksData nextNameWorksData = aosrData.getNextNameWorksToAosr();
-        Set<DrawingsData> drawingsDataSet = aosrData.getAosrToDrawings();
-        Set<MaterialsUsedData> materialsUsedDataSet = aosrData.getAosrToMaterials();
-        int aosrNumber = Integer.parseInt(aosrData.getNumber());
-
-        String capitalConstructionProject = GenerateStringUtils.generateCapitalConstructionProject(passportObjectData);
-        replacePlaceholderInTable(document, "CapitalConstructionProject", capitalConstructionProject, 110, 110);
-        String customer = GenerateStringUtils.generateCustomer(passportObjectData);
-        replacePlaceholderInTable(document, "InfoCustomer", customer, 100, 100);
-        String contractor = GenerateStringUtils.generateContractor(passportObjectData);
-        replacePlaceholderInTable(document, "InfoContractor", contractor, 100, 100);
-        String designer = GenerateStringUtils.generateDesigner(passportObjectData);
-        replacePlaceholderInTable(document, "InfoDesigner", designer, 100, 100);
-        String projectCode = GenerateStringUtils.generateProjectCode(passportObjectData, aosrNumber);
-        replacePlaceholderInTable(document, "ProjectCode", projectCode, 30, 30);
-        String customerRes = GenerateStringUtils.generateCustomerResponsible(customerResponsibleData);
-        replacePlaceholderInTable(document, "InfoResCustomer", customerRes, 100, 100);
-        String subcustomer = GenerateStringUtils.generateSubcustomerResponsible(subcustomerResponsibleData);
-        replacePlaceholderInTable(document, "InfoFirstResSubcustomer", subcustomer, 120, 120);
-        String subcustomer2 = GenerateStringUtils.generateSubcustomer2Responsible(subcustomerResponsible2Data);
-        replacePlaceholderInTable(document, "InfoSecondResSubcustomer", subcustomer2, 120, 120);
-        String designerRes = GenerateStringUtils.generateDesignerResponsible(designerResponsibleData);
-        replacePlaceholderInTable(document, "InfoResDesigner", designerRes, 100, 100);
-        String anotherPerson = GenerateStringUtils.generateAnotherPersonResponsible(anotherPersonResponsibleData);
-        replacePlaceholderInTable(document, "InfoResAnotherPerson", anotherPerson, 100, 100);
-        String nameOrganization = GenerateStringUtils.generateNameOrganization(passportObjectData);
-        replacePlaceholderInTable(document, "NameOrganization", nameOrganization, 80, 80);
-        String nameOfHiddenWork = GenerateStringUtils.generateNameOfHiddenWork(nameNetwork, nameWorksData, executiveSchemesData);
-        replacePlaceholderInTable(document, "NameOfHiddenWork", nameOfHiddenWork, 60, 120);
-        String drawings = GenerateStringUtils.generateDrawings(projectDocumentationSet, drawingsDataSet, passportObjectData);
-        replacePlaceholderInTable(document, "Drawings", drawings, 70, 135);
-        String materials = GenerateStringUtils.generateMaterials(materialsUsedDataSet);
-        replacePlaceholderInTable(document, "Materials", materials, 80, 115);
-        String executiveSchemes = GenerateStringUtils.generateExecSchemesActsProtocols(aosrData, executiveSchemesData, nameNetwork, passportObjectData, aosrNumber);
-        replacePlaceholderInTable(document, "ExecutiveSchemes", executiveSchemes, 120, 120);
-        String spAndProjectDocumentations = GenerateStringUtils.generateSpAndProjectDocumentations(nameWorksData, projectDocumentationSet);
-        replacePlaceholderInTable(document, "ProjectDocumentations", spAndProjectDocumentations, 80, 120);
-        String engineeringSupportNetworks = GenerateStringUtils.generateEngineeringSupportNetworks(nextNameWorksData, executiveSchemesData, nameNetwork);
-        replacePlaceholderInTable(document, "EngineeringSupportNetworks", engineeringSupportNetworks, 70, 120);
-        String fioCustomer = GenerateStringUtils.generateFioCustomerRes(customerResponsibleData);
-        replacePlaceholderInTable(document, "FioCustomer", fioCustomer, 30, 30);
-        String fioFirstSubcustomer = GenerateStringUtils.generateFioSubcustomerRes(subcustomerResponsibleData);
-        replacePlaceholderInTable(document, "FioFirstSubcustomer", fioFirstSubcustomer, 30, 30);
-        String fioSecondSubcustomer = GenerateStringUtils.generateFioSubcustomer2Res(subcustomerResponsible2Data);
-        replacePlaceholderInTable(document, "FioSecondSubcustomer", fioSecondSubcustomer, 30, 30);
-        String fioSecondDesigner = GenerateStringUtils.generateFioDesignerRes(designerResponsibleData);
-        replacePlaceholderInTable(document, "FioDesigner", fioSecondDesigner, 30, 30);
-        String fioAnotherPerson = GenerateStringUtils.generateFioAnotherPersonRes(anotherPersonResponsibleData);
-        replacePlaceholderInTable(document, "FioAnotherPerson", fioAnotherPerson, 30, 30);
-
-        LocalDate dateStart = aosrData.getStartDate();
-        LocalDate dateEnd = aosrData.getEndDate();
-
-        String dayStart = Integer.toString(dateStart.getDayOfMonth());
-        String yearStart = Integer.toString(dateStart.getYear()).substring(2, 4);
-        String dayEnd = Integer.toString(dateEnd.getDayOfMonth());
-        String yearEnd = Integer.toString(dateEnd.getYear()).substring(2, 4);
-        StringBuilder monthStart = new StringBuilder();
-        StringBuilder monthEnd = new StringBuilder();
-        Map<String, Integer> monthMap = new HashMap<>();
-        initializeMonthMap(monthMap);
-        monthMap.forEach((key, value) -> {
-            if (value.equals(dateStart.getMonthValue()) && value.equals(dateEnd.getMonthValue())) {
-                monthStart.append(key);
-                monthEnd.append(key);
-            } else if (value.equals(dateStart.getMonthValue())) {
-                monthStart.append(key);
-            } else if (value.equals(dateEnd.getMonthValue())) {
-                monthEnd.append(key);
+            if (customerResponsibleData == null) {
+                customerResponsibleData = new CustomerResponsibleData();
             }
-        });
+            if (subcustomerResponsibleData == null) {
+                subcustomerResponsibleData = new SubcustomerResponsibleData();
+            }
+            if (subcustomerResponsible2Data == null) {
+                subcustomerResponsible2Data = new SubcustomerResponsible2Data();
+            }
+            if (designerResponsibleData == null) {
+                designerResponsibleData = new DesignerResponsibleData();
+            }
+            if (anotherPersonResponsibleData == null) {
+                anotherPersonResponsibleData = new AnotherPersonResponsibleData();
+            }
 
-        replacePlaceholderInTable(document, "daySt", dayStart, 10, 10);
-        replacePlaceholderInTable(document, "monthStart", monthStart.toString(), 10, 10);
-        replacePlaceholderInTable(document, "yearSt", yearStart, 10, 10);
-        replacePlaceholderInTable(document, "dayE", dayEnd, 10, 10);
-        replacePlaceholderInTable(document, "monthEnd", monthEnd.toString(), 10, 10);
-        replacePlaceholderInTable(document, "yearE", yearEnd, 10, 10);
+            Set<ProjectDocumentationData> projectDocumentationSet = aosrData.getAosrToProjDocs();
+            String nameNetwork = projectDocumentationSet.stream().toList().getFirst().getNetwork();
 
-        File tempFile = new File(System.getProperty("java.io.tmpdir"), "Aosr_" + aosrNumber + ".docx");
-        try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
-            document.write(outputStream);
+            ExecutiveSchemesData executiveSchemesData = aosrData.getExecutiveSchemesData();
+            NameWorksData nameWorksData = aosrData.getNameWorksToAosr();
+            NextNameWorksData nextNameWorksData = aosrData.getNextNameWorksToAosr();
+            Set<DrawingsData> drawingsDataSet = aosrData.getAosrToDrawings();
+            Set<MaterialsUsedData> materialsUsedDataSet = aosrData.getAosrToMaterials();
+            int aosrNumber = Integer.parseInt(aosrData.getNumber());
+
+            String capitalConstructionProject = GenerateStringUtils.generateCapitalConstructionProject(passportObjectData);
+            replacePlaceholderInTable(document, "CapitalConstructionProject", capitalConstructionProject, 110, 110);
+            String customer = GenerateStringUtils.generateCustomer(passportObjectData);
+            replacePlaceholderInTable(document, "InfoCustomer", customer, 100, 100);
+            String contractor = GenerateStringUtils.generateContractor(passportObjectData);
+            replacePlaceholderInTable(document, "InfoContractor", contractor, 100, 100);
+            String designer = GenerateStringUtils.generateDesigner(passportObjectData);
+            replacePlaceholderInTable(document, "InfoDesigner", designer, 100, 100);
+            String projectCode = GenerateStringUtils.generateProjectCode(passportObjectData, aosrNumber);
+            replacePlaceholderInTable(document, "ProjectCode", projectCode, 30, 30);
+            String customerRes = GenerateStringUtils.generateCustomerResponsible(customerResponsibleData);
+            replacePlaceholderInTable(document, "InfoResCustomer", customerRes, 100, 100);
+            String subcustomer = GenerateStringUtils.generateSubcustomerResponsible(subcustomerResponsibleData);
+            replacePlaceholderInTable(document, "InfoFirstResSubcustomer", subcustomer, 120, 120);
+            String subcustomer2 = GenerateStringUtils.generateSubcustomer2Responsible(subcustomerResponsible2Data);
+            replacePlaceholderInTable(document, "InfoSecondResSubcustomer", subcustomer2, 120, 120);
+            String designerRes = GenerateStringUtils.generateDesignerResponsible(designerResponsibleData);
+            replacePlaceholderInTable(document, "InfoResDesigner", designerRes, 100, 100);
+            String anotherPerson = GenerateStringUtils.generateAnotherPersonResponsible(anotherPersonResponsibleData);
+            replacePlaceholderInTable(document, "InfoResAnotherPerson", anotherPerson, 100, 100);
+            String nameOrganization = GenerateStringUtils.generateNameOrganization(passportObjectData);
+            replacePlaceholderInTable(document, "NameOrganization", nameOrganization, 80, 80);
+            String nameOfHiddenWork = GenerateStringUtils.generateNameOfHiddenWork(nameNetwork, nameWorksData, executiveSchemesData);
+            replacePlaceholderInTable(document, "NameOfHiddenWork", nameOfHiddenWork, 60, 120);
+            String drawings = GenerateStringUtils.generateDrawings(projectDocumentationSet, drawingsDataSet, passportObjectData);
+            replacePlaceholderInTable(document, "Drawings", drawings, 70, 135);
+            String materials = GenerateStringUtils.generateMaterials(materialsUsedDataSet);
+            replacePlaceholderInTable(document, "Materials", materials, 80, 115);
+            String executiveSchemes = GenerateStringUtils.generateExecSchemesActsProtocols(aosrData, executiveSchemesData, nameNetwork, passportObjectData, aosrNumber);
+            replacePlaceholderInTable(document, "ExecutiveSchemes", executiveSchemes, 120, 120);
+            String spAndProjectDocumentations = GenerateStringUtils.generateSpAndProjectDocumentations(nameWorksData, projectDocumentationSet);
+            replacePlaceholderInTable(document, "ProjectDocumentations", spAndProjectDocumentations, 80, 120);
+            String engineeringSupportNetworks = GenerateStringUtils.generateEngineeringSupportNetworks(nextNameWorksData, executiveSchemesData, nameNetwork);
+            replacePlaceholderInTable(document, "EngineeringSupportNetworks", engineeringSupportNetworks, 70, 120);
+            String fioCustomer = GenerateStringUtils.generateFioCustomerRes(customerResponsibleData);
+            replacePlaceholderInTable(document, "FioCustomer", fioCustomer, 30, 30);
+            String fioFirstSubcustomer = GenerateStringUtils.generateFioSubcustomerRes(subcustomerResponsibleData);
+            replacePlaceholderInTable(document, "FioFirstSubcustomer", fioFirstSubcustomer, 30, 30);
+            String fioSecondSubcustomer = GenerateStringUtils.generateFioSubcustomer2Res(subcustomerResponsible2Data);
+            replacePlaceholderInTable(document, "FioSecondSubcustomer", fioSecondSubcustomer, 30, 30);
+            String fioSecondDesigner = GenerateStringUtils.generateFioDesignerRes(designerResponsibleData);
+            replacePlaceholderInTable(document, "FioDesigner", fioSecondDesigner, 30, 30);
+            String fioAnotherPerson = GenerateStringUtils.generateFioAnotherPersonRes(anotherPersonResponsibleData);
+            replacePlaceholderInTable(document, "FioAnotherPerson", fioAnotherPerson, 30, 30);
+
+            LocalDate dateStart = aosrData.getStartDate();
+            LocalDate dateEnd = aosrData.getEndDate();
+
+            String dayStart = Integer.toString(dateStart.getDayOfMonth());
+            String yearStart = Integer.toString(dateStart.getYear()).substring(2, 4);
+            String dayEnd = Integer.toString(dateEnd.getDayOfMonth());
+            String yearEnd = Integer.toString(dateEnd.getYear()).substring(2, 4);
+            StringBuilder monthStart = new StringBuilder();
+            StringBuilder monthEnd = new StringBuilder();
+            Map<String, Integer> monthMap = new HashMap<>();
+            initializeMonthMap(monthMap);
+            monthMap.forEach((key, value) -> {
+                if (value.equals(dateStart.getMonthValue()) && value.equals(dateEnd.getMonthValue())) {
+                    monthStart.append(key);
+                    monthEnd.append(key);
+                } else if (value.equals(dateStart.getMonthValue())) {
+                    monthStart.append(key);
+                } else if (value.equals(dateEnd.getMonthValue())) {
+                    monthEnd.append(key);
+                }
+            });
+
+            replacePlaceholderInTable(document, "daySt", dayStart, 10, 10);
+            replacePlaceholderInTable(document, "monthStart", monthStart.toString(), 10, 10);
+            replacePlaceholderInTable(document, "yearSt", yearStart, 10, 10);
+            replacePlaceholderInTable(document, "dayE", dayEnd, 10, 10);
+            replacePlaceholderInTable(document, "monthEnd", monthEnd.toString(), 10, 10);
+            replacePlaceholderInTable(document, "yearE", yearEnd, 10, 10);
+
+            File tempFile = new File(System.getProperty("java.io.tmpdir"), "Aosr_" + aosrNumber + ".docx");
+            try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
+                document.write(outputStream);
+            }
+
+            return tempFile;
         }
-
-        return tempFile;
     }
 
 //    public static File generateExcavationLogFile(Map<String, Integer> monthMap, String namePerformanceManager, List<AosrData> aosrToLogList) throws IOException {
