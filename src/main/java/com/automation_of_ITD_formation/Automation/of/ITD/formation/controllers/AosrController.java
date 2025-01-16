@@ -19,12 +19,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.print.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.ControllersUtils.modelAddUserAndItdData;
@@ -257,8 +257,6 @@ public class AosrController {
                               @RequestParam("designerResponsibleSelect") Long designerResId,
                               @RequestParam("anotherPersonResponsibleSelect") Long anotherPersonResId,
                               @RequestParam Map<String, String> formData) {
-        ItdData itdData = itdRepository.findById(id).orElseThrow();
-
         String[] splitDateStart = dateStart.split("\\.");
         String[] splitDateEnd = dateEnd.split("\\.");
 
@@ -335,6 +333,8 @@ public class AosrController {
             AnotherPersonResponsibleData anotherPersonResponsibleData = anotherPersonResponsibleRepository.findById(anotherPersonResId).orElseThrow();
             aosrData.setAnotherPersonResponsibleData(anotherPersonResponsibleData);
         }
+
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
 
         PassportObjectData passportObject = itdData.getPassportObjectData();
         aosrData.setPassportObjectData(passportObject);

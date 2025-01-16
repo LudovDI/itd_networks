@@ -6,9 +6,11 @@ import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.It
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
 import java.util.List;
@@ -57,5 +59,13 @@ public class MainController {
         model.addAttribute("itdData", itdData);
 
         return "itdInfo";
+    }
+
+    @PostMapping("/index/{id}/itd-remove")
+    @Transactional
+    public String postItdDelete(@PathVariable(value = "id") long id) {
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
+        itdRepository.delete(itdData);
+        return "redirect:/index";
     }
 }

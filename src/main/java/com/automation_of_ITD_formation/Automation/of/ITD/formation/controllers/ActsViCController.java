@@ -32,7 +32,8 @@ public class ActsViCController {
     public String actsVicTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
         modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(id).orElseThrow();
-        Set<ActsViCData> actsViCList = itdData.getActsViCData();
+        List<ActsViCData> actsViCList = new ArrayList<>(itdData.getActsViCData());
+        actsViCList.sort(Comparator.comparing(ActsViCData::getCreatedDate));
         model.addAttribute("actsViCList", actsViCList);
         return "actsVicTable";
     }

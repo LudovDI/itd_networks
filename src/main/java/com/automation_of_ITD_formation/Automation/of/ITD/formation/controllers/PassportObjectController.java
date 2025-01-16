@@ -222,6 +222,18 @@ public class PassportObjectController {
             }
         });
 
+        ItdData itdData = new ItdData();
+        if (nameItd != null && !nameItd.isEmpty()) {
+            itdData.setName(nameItd);
+        } else {
+            int randomFourDigitNumber = 1000 + (int) (Math.random() * 9000);
+            itdData.setName(String.valueOf(randomFourDigitNumber));
+        }
+        itdData.setStatus("В работе");
+        itdData.setUserData(currentUser);
+        itdRepository.save(itdData);
+
+        passportObjectData.setItdData(itdData);
         passportObjectRepository.save(passportObjectData);
         customerResponsibleList.forEach(customerResponsibleData -> customerResponsibleData.setPassportObjectData(passportObjectData));
         customerResponsibleRepository.saveAll(customerResponsibleList);
@@ -234,18 +246,6 @@ public class PassportObjectController {
         anotherPersonResponsibleList.forEach(anotherPersonResponsibleData -> anotherPersonResponsibleData.setPassportObjectData(passportObjectData));
         anotherPersonResponsibleRepository.saveAll(anotherPersonResponsibleList);
 
-        ItdData itdData = new ItdData();
-        if (nameItd != null && !nameItd.isEmpty()) {
-            itdData.setName(nameItd);
-        } else {
-            int randomFourDigitNumber = 1000 + (int) (Math.random() * 9000);
-            itdData.setName(String.valueOf(randomFourDigitNumber));
-        }
-        itdData.setStatus("В работе");
-        itdData.setUserData(currentUser);
-        itdData.setPassportObjectData(passportObjectData);
-
-        itdRepository.save(itdData);
         return "redirect:/passport-object-table/" + itdData.getId();
     }
 

@@ -34,7 +34,8 @@ public class NameWorksController {
     public String nameWorksTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
         modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(id).orElseThrow();
-        Set<NameWorksData> nameWorksList = itdData.getNameWorksData();
+        List<NameWorksData> nameWorksList = new ArrayList<>(itdData.getNameWorksData());
+        nameWorksList.sort(Comparator.comparing(NameWorksData::getCreatedDate));
         model.addAttribute("nameWorksList", nameWorksList);
         return "nameWorksTable";
     }

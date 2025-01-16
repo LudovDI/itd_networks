@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-public class MaterialsUsedData {
+public class MaterialsUsedData extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
