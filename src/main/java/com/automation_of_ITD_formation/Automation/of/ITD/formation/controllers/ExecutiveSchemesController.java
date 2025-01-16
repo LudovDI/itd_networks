@@ -36,7 +36,8 @@ public class ExecutiveSchemesController {
     public String executivesSchemesTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
         modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(id).orElseThrow();
-        Set<ExecutiveSchemesData> executiveSchemesList = itdData.getExecutiveSchemesData();
+        List<ExecutiveSchemesData> executiveSchemesList = new ArrayList<>(itdData.getExecutiveSchemesData());
+        executiveSchemesList.sort(Comparator.comparing(ExecutiveSchemesData::getCreatedDate));
         model.addAttribute("executiveSchemesList", executiveSchemesList);
         return "executiveSchemesTable";
     }

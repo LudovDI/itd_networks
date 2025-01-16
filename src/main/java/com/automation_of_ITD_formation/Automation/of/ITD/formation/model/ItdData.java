@@ -20,8 +20,7 @@ public class ItdData extends Auditable {
     @JoinColumn(name = "user_id")
     private UserData userData;
 
-    @OneToOne
-    @JoinColumn(name = "passport_object_id")
+    @OneToOne(mappedBy = "itdData", cascade = CascadeType.ALL)
     private PassportObjectData passportObjectData;
 
     @OneToMany(mappedBy = "itdToProjectDocumentationData", cascade = CascadeType.ALL)

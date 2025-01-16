@@ -47,7 +47,12 @@
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h2 mb-0 text-primary">Применяемые материалы</h1>
-
+                    <a th:href="'/index/' + ${itdData.id} + '/itd-info'" class="btn btn-info btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+                        <span class="text">Перейти к ИТД</span>
+                    </a>
                 </div>
                 <hr>
 

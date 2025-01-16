@@ -35,7 +35,8 @@ public class ProjectDocumentationController {
     public String projectDocumentationTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
         modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(id).orElseThrow();
-        Set<ProjectDocumentationData> projectDocumentationList = itdData.getProjectDocumentationData();
+        List<ProjectDocumentationData> projectDocumentationList = new ArrayList<>(itdData.getProjectDocumentationData());
+        projectDocumentationList.sort(Comparator.comparing(ProjectDocumentationData::getCreatedDate));
         model.addAttribute("projectDocumentationList", projectDocumentationList);
         return "projectDocumentationTable";
     }

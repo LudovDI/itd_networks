@@ -33,7 +33,8 @@ public class MaterialsUsedController {
     public String materialsUsedTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
         modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(id).orElseThrow();
-        Set<MaterialsUsedData> materialsUsedList = itdData.getMaterialsUsedData();
+        List<MaterialsUsedData> materialsUsedList = new ArrayList<>(itdData.getMaterialsUsedData());
+        materialsUsedList.sort(Comparator.comparing(MaterialsUsedData::getCreatedDate));
         model.addAttribute("materialsUsedList", materialsUsedList);
         Map<Long, List<AccompanyingDocumentData>> accompanyingDocumentsMap = new HashMap<>();
         for (MaterialsUsedData material : materialsUsedList) {

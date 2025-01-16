@@ -35,7 +35,8 @@ public class PassportObjectData {
     @OneToMany(mappedBy = "passportObjectData", cascade = CascadeType.ALL)
     private List<SubcustomerResponsible2Data> subcustomerResponsible2Data;
 
-    @OneToOne(mappedBy = "passportObjectData", cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "itd_id")
     private ItdData itdData;
 
     public Long getId() {

@@ -1,5 +1,6 @@
 package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 
+import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.ActsViCData;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.ItdData;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.ProtocolsGnbData;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.ItdRepository;
@@ -14,9 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.ControllersUtils.modelAddUserAndItdData;
 
@@ -34,7 +33,8 @@ public class ProtocolsGnbController {
     public String protocolsGnbTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
         modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         ItdData itdData = itdRepository.findById(id).orElseThrow();
-        Set<ProtocolsGnbData> protocolsGnbList = itdData.getProtocolsGnbData();
+        List<ProtocolsGnbData> protocolsGnbList = new ArrayList<>(itdData.getProtocolsGnbData());
+        protocolsGnbList.sort(Comparator.comparing(ProtocolsGnbData::getCreatedDate));
         model.addAttribute("protocolsGnbList", protocolsGnbList);
         return "protocolsGnbTable";
     }

@@ -3,7 +3,7 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.model;
 import jakarta.persistence.*;
 
 @Entity
-public class ActsViCData {
+public class ActsViCData extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

@@ -45,40 +45,38 @@
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h2 mb-0 text-primary">Редактирование паспорта объекта</h1>
-                    <a th:href="'/passport-object-table/' + ${itdData.id}" role="button" class="btn btn-light btn-icon-split">
-                                    <span class="icon text-gray-600">
-                                        <i class="fas fa-arrow-right"></i>
-                                    </span>
-                        <span class="text">Отмена</span>
-                    </a>
-                    <button type="submit" form="itdForm" class="btn btn-success btn-icon-split">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-check"></i>
-                        </span>
-                        <span class="text">Обновить</span>
-                    </button>
                 </div>
                 <hr>
 
                 <div class="card shadow">
                     <div class="card-header">
                         <!-- Buttons to toggle sections -->
-                        <div>
-                            <button type="button" class="btn btn-outline-primary"
-                                    onclick="toggleSection('section-general')">Общее
-                            </button>
-                            <button type="button" class="btn btn-outline-primary"
-                                    onclick="toggleSection('section-customer')">Заказчик
-                            </button>
-                            <button type="button" class="btn btn-outline-primary"
-                                    onclick="toggleSection('section-contractor')">Подрядчик
-                            </button>
-                            <button type="button" class="btn btn-outline-primary"
-                                    onclick="toggleSection('section-designer')">Проектировщик
-                            </button>
-                            <button type="button" class="btn btn-outline-primary"
-                                    onclick="toggleSection('section-another-person')">Иное лицо
-                            </button>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <button type="button" class="btn btn-outline-primary"
+                                        onclick="toggleSection('section-general')">Общее
+                                </button>
+                                <button type="button" class="btn btn-outline-primary"
+                                        onclick="toggleSection('section-customer')">Заказчик
+                                </button>
+                                <button type="button" class="btn btn-outline-primary"
+                                        onclick="toggleSection('section-contractor')">Подрядчик
+                                </button>
+                                <button type="button" class="btn btn-outline-primary"
+                                        onclick="toggleSection('section-designer')">Проектировщик
+                                </button>
+                                <button type="button" class="btn btn-outline-primary"
+                                        onclick="toggleSection('section-another-person')">Иное лицо
+                                </button>
+                            </div>
+                            <div>
+                                <button type="submit" form="itdForm" class="btn btn-info btn-icon-split">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                    <span class="text">Обновить</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -227,7 +225,8 @@
                                                        th:name="'customerResponsibleAdrCompany_' + ${customerRes.id}"
                                                        th:value="${customerRes.adrCompany}" class="col-sm-8">
                                             </div>
-                                            <button type="button" onclick="removeResponsible(this)" class="btn btn-danger align-self-end">
+                                            <button type="button" onclick="removeResponsible(this)"
+                                                    class="btn btn-danger align-self-end">
                                                 <span class="icon text-white-50">
                                                     <i class="fas fa-trash"></i>
                                                 </span>
@@ -336,7 +335,8 @@
                                                        th:name="'subcustomerResponsibleDateDocument_' + ${subcustomerRes.id}"
                                                        th:value="${subcustomerRes.dateDocument}" class="col-sm-8">
                                             </div>
-                                            <button type="button" onclick="removeResponsible(this)" class="btn btn-danger align-self-end">
+                                            <button type="button" onclick="removeResponsible(this)"
+                                                    class="btn btn-danger align-self-end">
                                                 <span class="icon text-white-50">
                                                     <i class="fas fa-trash"></i>
                                                 </span>
@@ -398,7 +398,8 @@
                                                        th:name="'subcustomerResponsible2DateDocument_' + ${subcustomerRes2.id}"
                                                        th:value="${subcustomerRes2.dateDocument}" class="col-sm-8">
                                             </div>
-                                            <button type="button" onclick="removeResponsible(this)" class="btn btn-danger align-self-end">
+                                            <button type="button" onclick="removeResponsible(this)"
+                                                    class="btn btn-danger align-self-end">
                                                 <span class="icon text-white-50">
                                                     <i class="fas fa-trash"></i>
                                                 </span>
@@ -532,7 +533,8 @@
                                                        th:name="'designerResponsibleAdrCompany_' + ${designerRes.id}"
                                                        th:value="${designerRes.adrCompany}" class="col-sm-8">
                                             </div>
-                                            <button type="button" onclick="removeResponsible(this)" class="btn btn-danger align-self-end">
+                                            <button type="button" onclick="removeResponsible(this)"
+                                                    class="btn btn-danger align-self-end">
                                                 <span class="icon text-white-50">
                                                     <i class="fas fa-trash"></i>
                                                 </span>
@@ -618,7 +620,8 @@
                                                        th:name="'anotherPersonResponsibleAdrCompany_' + ${anotherPersonRes.id}"
                                                        th:value="${anotherPersonRes.adrCompany}" class="col-sm-8">
                                             </div>
-                                            <button type="button" onclick="removeResponsible(this)" class="btn btn-danger align-self-end">
+                                            <button type="button" onclick="removeResponsible(this)"
+                                                    class="btn btn-danger align-self-end">
                                                 <span class="icon text-white-50">
                                                     <i class="fas fa-trash"></i>
                                                 </span>
@@ -635,8 +638,35 @@
                                         <span class="text">Добавить ответственное лицо</span>
                                     </button>
                                 </div>
-
                             </form>
+                            <hr>
+                            <!-- Navigation Panel -->
+                            <div class="d-sm-flex align-items-center justify-content-between mt-4">
+                                <div class="d-sm-flex align-items-center justify-content-end">
+                                    <button class="btn btn-primary btn-icon-split" onclick="prevSection()">
+                                        <span class="icon text-white-600">
+                                            <i class="fas fa-arrow-left"></i>
+                                        </span>
+                                        <span class="text">Назад</span>
+                                    </button>
+                                </div>
+                                <div class="d-sm-flex align-items-center justify-content-end">
+                                    <button class="btn btn-primary btn-icon-split" onclick="nextSection()">
+                                        <span class="text">Вперед</span>
+                                        <span class="icon text-white-600">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="d-sm-flex align-items-center justify-content-between mt-4">
+                                <a th:href="'/passport-object-table/' + ${itdData.id}" role="button" class="btn btn-light btn-icon-split">
+                                    <span class="icon text-gray-600">
+                                        <i class="fas fa-arrow-left"></i>
+                                    </span>
+                                    <span class="text">Отмена</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

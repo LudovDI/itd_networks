@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-public class NameWorksData {
+public class NameWorksData extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
