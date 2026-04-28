@@ -3,11 +3,10 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.model;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
-public class ExecutiveSchemesData {
+public class ExecutiveSchemesData extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -33,7 +32,11 @@ public class ExecutiveSchemesData {
     private Set<MaterialsUsedData> execSchemesToMaterials = new HashSet<>();
 
     @OneToMany(mappedBy = "executiveSchemesData", cascade = CascadeType.ALL)
-    private Set<AosrData> aosrs;
+    private Set<AosrData> aosrs = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "itd_id")
+    private ItdData itdToExecutiveSchemesData;
 
     public Long getId() {
         return id;
@@ -229,6 +232,14 @@ public class ExecutiveSchemesData {
 
     public void setEndingPoint(String endingPoint) {
         this.endingPoint = endingPoint;
+    }
+
+    public ItdData getItdToExecutiveSchemesData() {
+        return itdToExecutiveSchemesData;
+    }
+
+    public void setItdToExecutiveSchemesData(ItdData itdToExecutiveSchemesData) {
+        this.itdToExecutiveSchemesData = itdToExecutiveSchemesData;
     }
 
     public ExecutiveSchemesData() {

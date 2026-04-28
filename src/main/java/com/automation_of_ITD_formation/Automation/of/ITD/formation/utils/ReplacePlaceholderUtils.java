@@ -1,10 +1,6 @@
 package com.automation_of_ITD_formation.Automation.of.ITD.formation.utils;
 
-import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.AosrData;
 import org.apache.poi.xwpf.usermodel.*;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcBorders;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +24,37 @@ public class ReplacePlaceholderUtils {
         for (XWPFRun run : runs) {
             String text = run.getText(0);
             if (text != null && text.contains(placeholder)) {
-                String[] parts = replacement.split(" ");
-                StringBuilder newText = new StringBuilder();
+                String[] lines = replacement.split("\n");
                 XWPFRun currentRun = run;
                 int lineLengthLimit = startLineLengthLimit;
-                for (String part : parts) {
-                    if (newText.length() + part.length() > lineLengthLimit) {
-                        currentRun.setText(newText.toString(), 0);
-                        newText = new StringBuilder(part).append(" ");
+
+                for (String line : lines) {
+                    String[] parts = line.split(" ");
+                    StringBuilder newText = new StringBuilder();
+
+                    for (String part : parts) {
+                        if (newText.length() + part.length() > lineLengthLimit) {
+                            currentRun.setText(newText.toString().trim(), 0);
+                            newText = new StringBuilder(part).append(" ");
+
+                            startRowIndex++;
+                            if (startRowIndex < table.getRows().size()) {
+                                XWPFTableRow nextRow = table.getRow(startRowIndex);
+                                XWPFTableCell nextCell = nextRow.getCell(0);
+                                nextCell.setText("");
+                                paragraph = nextCell.getParagraphArray(0);
+                                runs = paragraph.getRuns();
+                                currentRun = runs.isEmpty() ? paragraph.createRun() : runs.get(0);
+                                copyRunFormat(run, currentRun, 9, false);
+                                lineLengthLimit = nextLineLengthLimit;
+                            }
+                        } else {
+                            newText.append(part).append(" ");
+                        }
+                    }
+                    currentRun.setText(newText.toString().trim(), 0);
+
+                    if (!line.equals(lines[lines.length - 1])) {
                         startRowIndex++;
                         if (startRowIndex < table.getRows().size()) {
                             XWPFTableRow nextRow = table.getRow(startRowIndex);
@@ -43,19 +62,12 @@ public class ReplacePlaceholderUtils {
                             nextCell.setText("");
                             paragraph = nextCell.getParagraphArray(0);
                             runs = paragraph.getRuns();
-                            if (runs.isEmpty()) {
-                                currentRun = paragraph.createRun();
-                            } else {
-                                currentRun = runs.get(0);
-                            }
+                            currentRun = runs.isEmpty() ? paragraph.createRun() : runs.get(0);
                             copyRunFormat(run, currentRun, 9, false);
                             lineLengthLimit = nextLineLengthLimit;
                         }
-                    } else {
-                        newText.append(part).append(" ");
                     }
                 }
-                currentRun.setText(newText.toString().trim(), 0);
             }
         }
     }
@@ -122,72 +134,73 @@ public class ReplacePlaceholderUtils {
         return false;
     }
 
-    public static void duplicateRowWithPlaceholders(XWPFDocument document, List<AosrData> aosrToLogList) {
-        XWPFTable table = document.getTables().getLast();
+//    public static void duplicateRowWithPlaceholders(XWPFDocument document, List<AosrData> aosrToLogList) {
+//        XWPFTable table = document.getTables().getLast();
+//
+//        XWPFTableRow templateRow = null;
+//        for (XWPFTableRow row : table.getRows()) {
+//            for (XWPFTableCell cell : row.getTableCells()) {
+//                if (cell.getText().contains("Num")) {
+//                    templateRow = row;
+//                    break;
+//                }
+//            }
+//            if (templateRow != null) {
+//                break;
+//            }
+//        }
+//
+//        if (templateRow == null) {
+//            throw new RuntimeException("Template row not found in the table.");
+//        }
+//
+//        int templateRowIndex = table.getRows().indexOf(templateRow);
+//
+//        int rowsToAdd = aosrToLogList.size() - 1;
+//
+//        for (int i = 0; i < rowsToAdd; i++) {
+//            XWPFTableRow newRow = table.insertNewTableRow(templateRowIndex + 1);
+//            for (int j = 0; j < templateRow.getTableCells().size(); j++) {
+//                XWPFTableCell newCell = newRow.addNewTableCell();
+//                copyCell(templateRow.getCell(j), newCell);
+//            }
+//        }
+//    }
 
-        XWPFTableRow templateRow = null;
-        for (XWPFTableRow row : table.getRows()) {
-            for (XWPFTableCell cell : row.getTableCells()) {
-                if (cell.getText().contains("Num")) {
-                    templateRow = row;
-                    break;
-                }
-            }
-            if (templateRow != null) {
-                break;
-            }
-        }
+//    public static void copyCell(XWPFTableCell sourceCell, XWPFTableCell targetCell) {
+//        targetCell.getCTTc().setTcPr(sourceCell.getCTTc().getTcPr());
+//
+//        targetCell.removeParagraph(0);
+//        for (int i = targetCell.getParagraphs().size() - 1; i >= 0; i--) {
+//            targetCell.removeParagraph(i);
+//        }
+//
+//        for (XWPFParagraph sourceParagraph : sourceCell.getParagraphs()) {
+//            XWPFParagraph targetParagraph = targetCell.addParagraph();
+//            copyParagraph(sourceParagraph, targetParagraph);
+//        }
+//
+//        setCellBorders(targetCell);
+//    }
 
-        if (templateRow == null) {
-            throw new RuntimeException("Template row not found in the table.");
-        }
+//    public static void copyParagraph(XWPFParagraph sourceParagraph, XWPFParagraph targetParagraph) {
+//        targetParagraph.getCTP().setPPr(sourceParagraph.getCTP().getPPr());
+//
+//        for (XWPFRun sourceRun : sourceParagraph.getRuns()) {
+//            XWPFRun targetRun = targetParagraph.createRun();
+//            copyRunFormat(sourceRun, targetRun, 12, true);
+//        }
+//    }
 
-        int templateRowIndex = table.getRows().indexOf(templateRow);
-
-        int rowsToAdd = aosrToLogList.size() - 1;
-
-        for (int i = 0; i < rowsToAdd; i++) {
-            XWPFTableRow newRow = table.insertNewTableRow(templateRowIndex + 1);
-            for (int j = 0; j < templateRow.getTableCells().size(); j++) {
-                XWPFTableCell newCell = newRow.addNewTableCell();
-                copyCell(templateRow.getCell(j), newCell);
-            }
-        }
-    }
-
-    public static void copyCell(XWPFTableCell sourceCell, XWPFTableCell targetCell) {
-        targetCell.getCTTc().setTcPr(sourceCell.getCTTc().getTcPr());
-
-        targetCell.removeParagraph(0);
-        for (int i = targetCell.getParagraphs().size() - 1; i >= 0; i--) {
-            targetCell.removeParagraph(i);
-        }
-
-        for (XWPFParagraph sourceParagraph : sourceCell.getParagraphs()) {
-            XWPFParagraph targetParagraph = targetCell.addParagraph();
-            copyParagraph(sourceParagraph, targetParagraph);
-        }
-
-        setCellBorders(targetCell);
-    }
-
-    public static void copyParagraph(XWPFParagraph sourceParagraph, XWPFParagraph targetParagraph) {
-        targetParagraph.getCTP().setPPr(sourceParagraph.getCTP().getPPr());
-
-        for (XWPFRun sourceRun : sourceParagraph.getRuns()) {
-            XWPFRun targetRun = targetParagraph.createRun();
-            copyRunFormat(sourceRun, targetRun, 12, true);
-        }
-    }
-    public static void setCellBorders(XWPFTableCell cell) {
-        CTTcPr tcPr = cell.getCTTc().addNewTcPr();
-        CTTcBorders borders = tcPr.addNewTcBorders();
-
-        borders.addNewTop().setVal(STBorder.SINGLE);
-        borders.addNewBottom().setVal(STBorder.SINGLE);
-        borders.addNewLeft().setVal(STBorder.SINGLE);
-        borders.addNewRight().setVal(STBorder.SINGLE);
-    }
+//    public static void setCellBorders(XWPFTableCell cell) {
+//        CTTcPr tcPr = cell.getCTTc().addNewTcPr();
+//        CTTcBorders borders = tcPr.addNewTcBorders();
+//
+//        borders.addNewTop().setVal(STBorder.SINGLE);
+//        borders.addNewBottom().setVal(STBorder.SINGLE);
+//        borders.addNewLeft().setVal(STBorder.SINGLE);
+//        borders.addNewRight().setVal(STBorder.SINGLE);
+//    }
 
     public static void replacePlaceholder(XWPFDocument document, String placeholder, String replacement, int startLineLengthLimit, int nextLineLengthLimit) {
         for (XWPFTable table : document.getTables()) {

@@ -1,64 +1,71 @@
 package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 
+import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.ItdData;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.UserData;
-import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.UserDocumentsData;
-import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.UserDocumentsRepository;
+import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.ItdRepository;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.HashSet;
+import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Controller
 public class MainController {
-    @Autowired
-    private UserDocumentsRepository userDocumentsRepository;
 
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ItdRepository itdRepository;
+
     @GetMapping("/index")
-    public String index() {
+    public String index(Model model, Principal principal) {
+        String username = principal.getName();
+
+        UserData currentUser = userRepository.findByUsername(username).orElseThrow();
+
+        model.addAttribute("userData", currentUser);
+
+        List<ItdData> itdDataList = currentUser.getItdData();
+
+        if (!itdDataList.isEmpty()) {
+            for (ItdData itd : itdDataList) {
+                itd.setFormattedDateTime(Integer.toString(itd.getCreatedDate().getYear()));
+            }
+            model.addAttribute("itdList", itdDataList);
+        } else {
+            model.addAttribute("itdList", List.of());
+        }
+
         return "index";
     }
 
-    @GetMapping("/logs")
-    public String logs() {
-        return "logs";
+    @GetMapping("/index/{id}/itd-info")
+    public String itdInfo(@PathVariable(value = "id") long id, Principal principal, Model model) {
+        String username = principal.getName();
+
+        UserData currentUser = userRepository.findByUsername(username).orElseThrow();
+        model.addAttribute("userData", currentUser);
+        userRepository.save(currentUser);
+
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
+
+        model.addAttribute("itdData", itdData);
+
+        return "itdInfo";
     }
 
-    @PostMapping("/index")
+    @PostMapping("/index/{id}/itd-remove")
     @Transactional
-    public String postIndex(@RequestParam(value = "itdCheckbox", required = false) List<String> itdCheckboxes,
-                                  @AuthenticationPrincipal UserDetails userDetails) {
-        UserData user = userRepository.findByUsername(userDetails.getUsername());
-        Optional<UserDocumentsData> optionalDocuments = userDocumentsRepository.findByUserData(user);
-
-        UserDocumentsData userDocumentsData;
-        if (optionalDocuments.isPresent()) {
-            userDocumentsData = optionalDocuments.get();
-        } else {
-            userDocumentsData = new UserDocumentsData();
-            userDocumentsData.setUserData(user);
-        }
-
-        Set<String> documents = new HashSet<>();
-        if (itdCheckboxes != null) {
-            documents.addAll(itdCheckboxes);
-        }
-        userDocumentsData.setDocuments(documents);
-
-        userDocumentsRepository.save(userDocumentsData);
+    public String postItdDelete(@PathVariable(value = "id") long id) {
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
+        itdRepository.delete(itdData);
         return "redirect:/index";
     }
 }

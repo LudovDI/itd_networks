@@ -2,55 +2,109 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.*;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.ControllersUtils.modelAddUserAndItdData;
 
 @Controller
 public class ExecutiveSchemesController {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ItdRepository itdRepository;
     @Autowired
     private ProjectDocumentationRepository projectDocumentationRepository;
-
+    @Autowired
+    private AosrRepository aosrRepository;
     @Autowired
     private DrawingsRepository drawingsRepository;
-
     @Autowired
     private MaterialsUsedRepository materialsUsedRepository;
-
     @Autowired
     private ExecutiveSchemesRepository executiveSchemesRepository;
 
-    @GetMapping("/executive-schemes-table")
-    public String executivesSchemesTable(Model model) {
-        Iterable<ExecutiveSchemesData> executiveSchemesList = executiveSchemesRepository.findAll();
+    @GetMapping("/executive-schemes-table/{id}")
+    public String executivesSchemesTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
+        List<ExecutiveSchemesData> executiveSchemesList = new ArrayList<>(itdData.getExecutiveSchemesData());
+        executiveSchemesList.sort(Comparator.comparing(ExecutiveSchemesData::getCreatedDate));
         model.addAttribute("executiveSchemesList", executiveSchemesList);
         return "executiveSchemesTable";
     }
 
-    @GetMapping("/executive-schemes-add")
-    public String executivesSchemesAdd(Model model) {
-        Iterable<ProjectDocumentationData> projectDocumentationList = projectDocumentationRepository.findAll();
-        Iterable<DrawingsData> drawingsList = drawingsRepository.findAll();
-        Iterable<MaterialsUsedData> materialsUsedList = materialsUsedRepository.findAll();
+    private void populateModel(Model model, ItdData itdData) {
+        Set<ProjectDocumentationData> projectDocumentationList = itdData.getProjectDocumentationData();
+        List<DrawingsData> drawingsList = new ArrayList<>();
+        for (ProjectDocumentationData projectDocumentationData : projectDocumentationList) {
+            drawingsList.addAll(projectDocumentationData.getDrawingsList());
+        }
+        Set<MaterialsUsedData> materialsUsedList = itdData.getMaterialsUsedData();
         model.addAttribute("projectDocumentationList", projectDocumentationList);
         model.addAttribute("drawingsList", drawingsList);
         model.addAttribute("materialsUsedList", materialsUsedList);
+    }
+
+    @GetMapping("/executive-schemes-add/{id}")
+    public String executivesSchemesAdd(@PathVariable(value = "id") long id, Model model, Principal principal) {
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
+        populateModel(model, itdData);
         return "executiveSchemesAdd";
     }
 
-    @PostMapping("/executive-schemes-add")
-    public String postExecutiveSchemesAdd(@RequestParam("nameScheme") String nameScheme,
+    @GetMapping("/exec-search-materials/{itdId}")
+    public String searchMaterials(@PathVariable(value = "itdId") long itdId,
+                                  @RequestParam("query") String query,
+                                  @RequestParam(name = "sourcePage", required = false, defaultValue = "executiveSchemesAdd") String sourcePage,
+                                  @RequestParam(name = "id", required = false) Long id,
+                                  @RequestParam Map<String, String> formData,
+                                  Model model, Principal principal) {
+        modelAddUserAndItdData(principal, itdId, model, userRepository, itdRepository);
+        ItdData itdData = itdRepository.findById(itdId).orElseThrow();
+        if (id != null) {
+            Optional<ExecutiveSchemesData> executiveSchemesDataOptional = executiveSchemesRepository.findById(id);
+            if (executiveSchemesDataOptional.isPresent()) {
+                ExecutiveSchemesData executiveSchemesData = executiveSchemesDataOptional.get();
+                model.addAttribute("executiveSchemesData", executiveSchemesData);
+                Set<Long> drawingIds = executiveSchemesData.getExecSchemesToDrawings().stream().map(DrawingsData::getId).collect(Collectors.toSet());
+                model.addAttribute("drawingIds", drawingIds);
+            }
+        }
+        populateModel(model, itdData);
+
+        List<MaterialsUsedData> foundMaterials = materialsUsedRepository.findByNameMaterialContainingIgnoreCase(query);
+        List<Long> selectedMaterialsIds = new ArrayList<>();
+        formData.forEach((key, value) -> {
+            if (key.startsWith("selectedMaterials")) {
+                Long selectedMaterialId = Long.parseLong(key.substring("selectedMaterials".length()));
+                Optional<MaterialsUsedData> selectedMaterial = materialsUsedRepository.findById(selectedMaterialId);
+                if (selectedMaterial.isPresent()) {
+                    selectedMaterialsIds.add(selectedMaterialId);
+                }
+            }
+        });
+        Iterable<MaterialsUsedData> selectedMaterials = materialsUsedRepository.findAllById(selectedMaterialsIds);
+        foundMaterials = foundMaterials.stream()
+                .filter(material -> !selectedMaterialsIds.contains(material.getId()))
+                .collect(Collectors.toList());
+        model.addAttribute("foundMaterialsList", foundMaterials);
+        model.addAttribute("selectedMaterialsList", selectedMaterials);
+        return sourcePage;
+    }
+
+    @PostMapping("/executive-schemes-add/{id}")
+    public String postExecutiveSchemesAdd(@PathVariable(value = "id") long id,
+                                          @RequestParam("nameScheme") String nameScheme,
                                           @RequestParam("section") String section,
                                           @RequestParam("startCoordinateX") String startCoordinateX,
                                           @RequestParam("startCoordinateY") String startCoordinateY,
@@ -69,66 +123,70 @@ public class ExecutiveSchemesController {
                                           @RequestParam("projectSectionSelect") String projectSection,
                                           @RequestParam("startingPoint") String startingPoint,
                                           @RequestParam("endingPoint") String endingPoint,
-                                          @RequestParam(value = "drawingCheckbox", required = false) List<Long> drawingIds,
-                                          @RequestParam(value = "material", required = false) List<Long> materialIds) {
+                                          @RequestParam Map<String, String> formData) {
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
         ExecutiveSchemesData executiveSchemesData = new ExecutiveSchemesData(nameScheme, section, startCoordinateX, startCoordinateY, endCoordinateX, endCoordinateY, wellCenterX, wellCenterY, soilDevelopment, sandyBase, shoofing, backfillingShoofing, sand, priming, layingPipeline, layingPipelineGNB, projectSection, startingPoint, endingPoint);
-        if (drawingIds != null) {
-            Set<DrawingsData> drawings = new HashSet<>();
-            for (Long drawingId : drawingIds) {
+
+        Set<DrawingsData> drawings = new HashSet<>();
+        Set<MaterialsUsedData> materialsUsed = new HashSet<>();
+        formData.forEach((key, value) -> {
+            if (key.startsWith("drawingCheckbox")) {
+                Long drawingId = Long.parseLong(key.substring("drawingCheckbox".length()));
                 Optional<DrawingsData> drawingOptional = drawingsRepository.findById(drawingId);
-                if (drawingOptional.get().getProjectSection().equals(projectSection)) {
+                if (drawingOptional.get().getProjDocToDrawings().getProjectSection().equals(projectSection)) {
                     drawingOptional.ifPresent(drawings::add);
                 }
             }
-            executiveSchemesData.setExecSchemesToDrawings(drawings);
-            for (DrawingsData drawing : drawings) {
-                Set<ExecutiveSchemesData> execSchemes = drawing.getDrawingsToExecSchemes();
-                execSchemes.add(executiveSchemesData);
-                drawing.setDrawingsToExecSchemes(execSchemes);
-            }
-        }
-        if (materialIds != null) {
-            Set<MaterialsUsedData> materialsUsed = new HashSet<>();
-            for (Long materialId : materialIds) {
-                Optional<MaterialsUsedData> materialOptional = materialsUsedRepository.findById(materialId);
+            if (key.startsWith("selectedMaterials")) {
+                Long selectedMaterialId = Long.parseLong(key.substring("selectedMaterials".length()));
+                Optional<MaterialsUsedData> materialOptional = materialsUsedRepository.findById(selectedMaterialId);
                 materialOptional.ifPresent(materialsUsed::add);
             }
-            executiveSchemesData.setExecSchemesToMaterials(materialsUsed);
-            for (MaterialsUsedData material : materialsUsed) {
-                Set<ExecutiveSchemesData> execSchemes = material.getMaterialsToExecSchemes();
-                execSchemes.add(executiveSchemesData);
-                material.setMaterialsToExecSchemes(execSchemes);
-            }
+        });
+        executiveSchemesData.setExecSchemesToDrawings(drawings);
+        for (DrawingsData drawing : drawings) {
+            Set<ExecutiveSchemesData> execSchemes = drawing.getDrawingsToExecSchemes();
+            execSchemes.add(executiveSchemesData);
+            drawing.setDrawingsToExecSchemes(execSchemes);
         }
+        executiveSchemesData.setExecSchemesToMaterials(materialsUsed);
+        for (MaterialsUsedData material : materialsUsed) {
+            Set<ExecutiveSchemesData> execSchemes = material.getMaterialsToExecSchemes();
+            execSchemes.add(executiveSchemesData);
+            material.setMaterialsToExecSchemes(execSchemes);
+        }
+        executiveSchemesData.setItdToExecutiveSchemesData(itdData);
+        executiveSchemesData.setStatus("Требует создания");
         executiveSchemesRepository.save(executiveSchemesData);
-
-        return "redirect:/executive-schemes-table";
+        return "redirect:/executive-schemes-table/" + id;
     }
 
-    @GetMapping("/executive-schemes-table/{id}/executive-schemes-edit")
-    public String executiveSchemesEdit(@PathVariable(value = "id") long id, Model model) {
-        if (!executiveSchemesRepository.existsById(id)) {
-            return "redirect:/executive-schemes-table";
+    @GetMapping("/executive-schemes-table/{itdId}/executive-schemes-edit/{execSchemId}")
+    public String executiveSchemesEdit(@PathVariable(value = "itdId") long itdId,
+                                       @PathVariable(value = "execSchemId") long execSchemId,
+                                       Model model, Principal principal) {
+        modelAddUserAndItdData(principal, itdId, model, userRepository, itdRepository);
+        ItdData itdData = itdRepository.findById(itdId).orElseThrow();
+        if (!executiveSchemesRepository.existsById(execSchemId)) {
+            return "redirect:/executive-schemes-table/" + itdId;
         }
-        Optional<ExecutiveSchemesData> executiveSchemesDataOptional = executiveSchemesRepository.findById(id);
+        Optional<ExecutiveSchemesData> executiveSchemesDataOptional = executiveSchemesRepository.findById(execSchemId);
         if (executiveSchemesDataOptional.isPresent()) {
             ExecutiveSchemesData executiveSchemesData = executiveSchemesDataOptional.get();
             Set<Long> drawingIds = executiveSchemesData.getExecSchemesToDrawings().stream().map(DrawingsData::getId).collect(Collectors.toSet());
             model.addAttribute("drawingIds", drawingIds);
             model.addAttribute("executiveSchemesData", executiveSchemesData);
+            List<MaterialsUsedData> selectedMaterials = executiveSchemesData.getExecSchemesToMaterials().stream().toList();
+            model.addAttribute("selectedMaterialsList", selectedMaterials);
         }
-        Iterable<ProjectDocumentationData> projectDocumentationList = projectDocumentationRepository.findAll();
-        Iterable<MaterialsUsedData> materialsUsedList = materialsUsedRepository.findAll();
-        Iterable<DrawingsData> drawingsList = drawingsRepository.findAll();
-        model.addAttribute("projectDocumentationList", projectDocumentationList);
-        model.addAttribute("materialsUsedList", materialsUsedList);
-        model.addAttribute("drawingsList", drawingsList);
+        populateModel(model, itdData);
         return "executiveSchemesEdit";
     }
 
-    @PostMapping("/executive-schemes-table/{id}/executive-schemes-edit")
+    @PostMapping("/executive-schemes-table/{itdId}/executive-schemes-edit/{execSchemId}")
     @Transactional
-    public String postExecutiveSchemesUpdate(@PathVariable(value = "id") long id,
+    public String postExecutiveSchemesUpdate(@PathVariable(value = "itdId") long itdId,
+                                             @PathVariable(value = "execSchemId") long execSchemId,
                                              @RequestParam("nameScheme") String nameScheme,
                                              @RequestParam("section") String section,
                                              @RequestParam("startCoordinateX") String startCoordinateX,
@@ -148,43 +206,38 @@ public class ExecutiveSchemesController {
                                              @RequestParam("projectSectionSelect") String projectSection,
                                              @RequestParam("startingPoint") String startingPoint,
                                              @RequestParam("endingPoint") String endingPoint,
-                                             @RequestParam(value = "drawingCheckbox", required = false) List<Long> drawingIds,
-                                             @RequestParam(value = "material", required = false) List<Long> materialIds) {
-        ExecutiveSchemesData executiveSchemesData = executiveSchemesRepository.findById(id).orElseThrow();
+                                             @RequestParam Map<String, String> formData) {
+        ExecutiveSchemesData executiveSchemesData = executiveSchemesRepository.findById(execSchemId).orElseThrow();
 
         for (DrawingsData drawing : executiveSchemesData.getExecSchemesToDrawings()) {
             drawing.getDrawingsToExecSchemes().remove(executiveSchemesData);
             drawingsRepository.save(drawing);
         }
         executiveSchemesData.getExecSchemesToDrawings().clear();
-
-        if (drawingIds != null) {
-            for (Long drawingId : drawingIds) {
-                DrawingsData drawing = drawingsRepository.findById(drawingId).orElseThrow();
-                if (drawing.getProjectSection().equals(projectSection)) {
-                    drawing.getDrawingsToExecSchemes().add(executiveSchemesData);
-                    executiveSchemesData.getExecSchemesToDrawings().add(drawing);
-                    drawingsRepository.save(drawing);
-                }
-            }
-        }
-
         for (MaterialsUsedData material : executiveSchemesData.getExecSchemesToMaterials()) {
             material.getMaterialsToExecSchemes().remove(executiveSchemesData);
             materialsUsedRepository.save(material);
         }
         executiveSchemesData.getExecSchemesToMaterials().clear();
 
-        if (materialIds != null) {
-            for (Long materialId : materialIds) {
-                if (materialId != -1) {
-                    MaterialsUsedData material = materialsUsedRepository.findById(materialId).orElseThrow();
-                    material.getMaterialsToExecSchemes().add(executiveSchemesData);
-                    executiveSchemesData.getExecSchemesToMaterials().add(material);
-                    materialsUsedRepository.save(material);
+        formData.forEach((key, value) -> {
+            if (key.startsWith("drawingCheckbox")) {
+                Long drawingId = Long.parseLong(key.substring("drawingCheckbox".length()));
+                DrawingsData drawing = drawingsRepository.findById(drawingId).orElseThrow();
+                if (drawing.getProjDocToDrawings().getProjectSection().equals(projectSection)) {
+                    drawing.getDrawingsToExecSchemes().add(executiveSchemesData);
+                    executiveSchemesData.getExecSchemesToDrawings().add(drawing);
+                    drawingsRepository.save(drawing);
                 }
             }
-        }
+            if (key.startsWith("selectedMaterials")) {
+                Long materialId = Long.parseLong(key.substring("selectedMaterials".length()));
+                MaterialsUsedData material = materialsUsedRepository.findById(materialId).orElseThrow();
+                material.getMaterialsToExecSchemes().add(executiveSchemesData);
+                executiveSchemesData.getExecSchemesToMaterials().add(material);
+                materialsUsedRepository.save(material);
+            }
+        });
 
         executiveSchemesData.setNameScheme(nameScheme);
         executiveSchemesData.setSection(section);
@@ -207,20 +260,20 @@ public class ExecutiveSchemesController {
         executiveSchemesData.setEndingPoint(endingPoint);
 
         executiveSchemesRepository.save(executiveSchemesData);
-
-        return "redirect:/executive-schemes-table";
+        return "redirect:/executive-schemes-table/" + itdId;
     }
 
 
-    @PostMapping("/executive-schemes-table/{id}/executive-schemes-remove")
+    @PostMapping("/executive-schemes-table/{itdId}/executive-schemes-remove/{execSchemId}")
     @Transactional
-    public String postExecutiveSchemesDelete(@PathVariable(value = "id") long id, Model model) {
-        ExecutiveSchemesData executiveSchemesData = executiveSchemesRepository.findById(id).orElseThrow();
+    public String postExecutiveSchemesDelete(@PathVariable(value = "itdId") long itdId,
+                                             @PathVariable(value = "execSchemId") long execSchemId,
+                                             Model model) {
+        ExecutiveSchemesData executiveSchemesData = executiveSchemesRepository.findById(execSchemId).orElseThrow();
 
         Set<DrawingsData> drawings = executiveSchemesData.getExecSchemesToDrawings();
         Set<MaterialsUsedData> materialsUsedData = executiveSchemesData.getExecSchemesToMaterials();
-
-        executiveSchemesRepository.delete(executiveSchemesData);
+        Set<AosrData> aosrData = executiveSchemesData.getAosrs();
 
         if (!drawings.isEmpty()) {
             drawings.forEach(drawing -> {
@@ -240,14 +293,26 @@ public class ExecutiveSchemesController {
             });
         }
 
-        return "redirect:/executive-schemes-table";
+        if (!aosrData.isEmpty()) {
+            aosrData.forEach(aosr -> {
+                aosr.setExecutiveSchemesData(null);
+                aosrRepository.save(aosr);
+            });
+            executiveSchemesData.getAosrs().clear();
+        }
+
+        executiveSchemesRepository.delete(executiveSchemesData);
+
+        return "redirect:/executive-schemes-table/" + itdId;
     }
 
-    @PostMapping("/executive-schemes-table/{id}/update-status")
-    public String updateStatus(@PathVariable("id") Long id, @RequestParam("status") String status) {
-        ExecutiveSchemesData execSchem = executiveSchemesRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid act Id:" + id));
+    @PostMapping("/executive-schemes-table/{itdId}/update-status/{execSchemId}")
+    public String updateStatus(@PathVariable(value = "itdId") long itdId,
+                               @PathVariable(value = "execSchemId") long execSchemId,
+                               @RequestParam("status") String status) {
+        ExecutiveSchemesData execSchem = executiveSchemesRepository.findById(execSchemId).orElseThrow(() -> new IllegalArgumentException("Invalid act Id:" + execSchemId));
         execSchem.setStatus(status);
         executiveSchemesRepository.save(execSchem);
-        return "redirect:/executive-schemes-table";
+        return "redirect:/executive-schemes-table/" + itdId;
     }
 }

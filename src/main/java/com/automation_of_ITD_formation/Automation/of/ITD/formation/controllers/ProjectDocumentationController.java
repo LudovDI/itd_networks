@@ -2,10 +2,9 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.DrawingsRepository;
+import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.ItdRepository;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.ProjectDocumentationRepository;
-import com.google.common.collect.Lists;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,181 +14,145 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collectors;
+
+import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.ControllersUtils.modelAddUserAndItdData;
 
 @Controller
 public class ProjectDocumentationController {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ItdRepository itdRepository;
     @Autowired
     private ProjectDocumentationRepository projectDocumentationRepository;
-
     @Autowired
     private DrawingsRepository drawingsRepository;
 
-    @GetMapping("/project-documentation-table")
-    public String projectDocumentationTable(Model model) {
-        Iterable<ProjectDocumentationData> projectDocumentationList = projectDocumentationRepository.findAll();
-        Iterable<DrawingsData> drawingsList = drawingsRepository.findAll();
+    @GetMapping("/project-documentation-table/{id}")
+    public String projectDocumentationTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
+        List<ProjectDocumentationData> projectDocumentationList = new ArrayList<>(itdData.getProjectDocumentationData());
+        projectDocumentationList.sort(Comparator.comparing(ProjectDocumentationData::getCreatedDate));
         model.addAttribute("projectDocumentationList", projectDocumentationList);
-        model.addAttribute("drawingsList", drawingsList);
         return "projectDocumentationTable";
     }
 
-    @GetMapping("/project-documentation-add")
-    public String projectDocumentationAdd(Model model) {
+    @GetMapping("/project-documentation-add/{id}")
+    public String projectDocumentationAdd(@PathVariable(value = "id") long id, Model model, Principal principal) {
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         return "projectDocumentationAdd";
     }
 
-    @PostMapping("/project-documentation-add")
-    public String postProjectDocumentationAdd(@RequestParam("projectSection1") String projectSection1,
-                                              @RequestParam("projectSection2") String projectSection2,
+    @PostMapping("/project-documentation-add/{itdId}")
+    public String postProjectDocumentationAdd(@PathVariable(value = "itdId") long itdId,
+                                              @RequestParam("projectSection") String projectSection,
                                               @RequestParam("network") String network,
                                               @RequestParam Map<String, String> formData) {
-        ProjectDocumentationData projectDocumentationData = new ProjectDocumentationData(projectSection1, projectSection2, network);
-        List<DrawingsData> drawingsForSection1 = new ArrayList<>();
-        List<DrawingsData> drawingsForSection2 = new ArrayList<>();
+        ItdData itdData = itdRepository.findById(itdId).orElseThrow();
+        ProjectDocumentationData projectDocumentationData = new ProjectDocumentationData(projectSection, network);
+        List<DrawingsData> drawingsForSection = new ArrayList<>();
         formData.forEach((key, value) -> {
-            if (key.startsWith("drawing1_")) {
-                DrawingsData drawings1 = new DrawingsData(value);
-                drawings1.setProjectSection(projectSection1);
-                drawingsForSection1.add(drawings1);
-            }
-            if (key.startsWith("drawing2_")) {
-                DrawingsData drawings2 = new DrawingsData(value);
-                drawings2.setProjectSection(projectSection2);
-                drawingsForSection2.add(drawings2);
+            if (key.startsWith("drawing")) {
+                DrawingsData drawings = new DrawingsData(value);
+                drawings.setProjDocToDrawings(projectDocumentationData);
+                drawingsForSection.add(drawings);
             }
         });
+        projectDocumentationData.setStatus("Требует создания");
+        projectDocumentationData.setItdToProjectDocumentationData(itdData);
         projectDocumentationRepository.save(projectDocumentationData);
-        drawingsForSection1.forEach(drawingsData -> drawingsData.setProjectSection1(projectDocumentationData));
-        drawingsRepository.saveAll(drawingsForSection1);
-        drawingsForSection2.forEach(drawingsData -> drawingsData.setProjectSection2(projectDocumentationData));
-        drawingsRepository.saveAll(drawingsForSection2);
-        return "redirect:/project-documentation-table";
+        drawingsRepository.saveAll(drawingsForSection);
+        return "redirect:/project-documentation-table/" + itdId;
     }
 
-    @GetMapping("/project-documentation-table/{id}/project-documentation-edit")
-    public String projectDocumentationEdit(@PathVariable(value = "id") long id, Model model) {
-        if (!projectDocumentationRepository.existsById(id)) {
+    @GetMapping("/project-documentation-table/{itdId}/project-documentation-edit/{projDocId}")
+    public String projectDocumentationEdit(@PathVariable(value = "itdId") long itdId,
+                                           @PathVariable(value = "projDocId") long projDocId,
+                                           Model model, Principal principal) {
+        modelAddUserAndItdData(principal, itdId, model, userRepository, itdRepository);
+        if (!projectDocumentationRepository.existsById(projDocId)) {
             return "redirect:/project-documentation-table";
         }
-        Optional<ProjectDocumentationData> projectDocumentationDataOptional = projectDocumentationRepository.findById(id);
+        Optional<ProjectDocumentationData> projectDocumentationDataOptional = projectDocumentationRepository.findById(projDocId);
         ArrayList<ProjectDocumentationData> res = new ArrayList<>();
         projectDocumentationDataOptional.ifPresent(res::add);
-        Iterable<DrawingsData> drawingsList = drawingsRepository.findAll();
+        Iterable<DrawingsData> drawingsList = res.getFirst().getDrawingsList();
         model.addAttribute("drawingsList", drawingsList);
         model.addAttribute("projectDocumentationDataOptional", res);
         return "projectDocumentationEdit";
     }
 
-    @PostMapping("/project-documentation-table/{id}/project-documentation-edit")
+    @PostMapping("/project-documentation-table/{itdId}/project-documentation-edit/{projDocId}")
     @Transactional
-    public String postProjectDocumentationUpdate(@PathVariable(value = "id") long id,
-                                                 @RequestParam("projectSection1") String projectSection1,
-                                                 @RequestParam("projectSection2") String projectSection2,
+    public String postProjectDocumentationUpdate(@PathVariable(value = "itdId") long itdId,
+                                                 @PathVariable(value = "projDocId") long projDocId,
+                                                 @RequestParam("projectSection") String projectSection,
                                                  @RequestParam("network") String network,
                                                  @RequestParam Map<String, String> formData) {
-        ProjectDocumentationData projectDocumentationData = projectDocumentationRepository.findById(id).orElseThrow();
+        ProjectDocumentationData projectDocumentationData = projectDocumentationRepository.findById(projDocId).orElseThrow();
 
-        List<DrawingsData> drawingsForSection1 = projectDocumentationData.getDrawingsForSection1();
-        List<DrawingsData> drawingsForSection2 = projectDocumentationData.getDrawingsForSection2();
+        Set<Long> drawingIdsFromForm = new HashSet<>();
 
         formData.forEach((key, value) -> {
-            if (key.startsWith("drawing1_")) {
-                Long drawingId = Long.parseLong(key.substring("drawing1_".length()));
-                DrawingsData drawing = drawingsRepository.findById(drawingId).orElse(null);
-                if (drawing != null) {
-                    drawing.setDrawing(value);
-                    drawing.setProjectSection(projectSection1);
+            if (key.startsWith("drawing")) {
+                String drawingIdStr = key.substring("drawing".length());
+
+                DrawingsData drawing;
+                if (!drawingIdStr.isEmpty()) {
+                    Long drawingId = Long.parseLong(drawingIdStr);
+                    drawingIdsFromForm.add(drawingId);
+
+                    drawing = drawingsRepository.findById(drawingId).orElse(null);
+                    if (drawing == null) {
+                        drawing = new DrawingsData();
+                    }
                 } else {
                     drawing = new DrawingsData();
-                    drawing.setId(drawingId);
-                    drawing.setDrawing(value);
-                    drawing.setProjectSection(projectSection1);
-                    drawingsForSection1.add(drawing);
                 }
-            } else if (key.startsWith("drawing2_")) {
-                Long drawingId = Long.parseLong(key.substring("drawing2_".length()));
-                DrawingsData drawing = drawingsRepository.findById(drawingId).orElse(null);
-                if (drawing != null) {
-                    drawing.setDrawing(value);
-                    drawing.setProjectSection(projectSection2);
-                } else {
-                    drawing = new DrawingsData();
-                    drawing.setId(drawingId);
-                    drawing.setDrawing(value);
-                    drawing.setProjectSection(projectSection2);
-                    drawingsForSection2.add(drawing);
-                }
+
+                drawing.setDrawing(value);
+                drawing.setProjDocToDrawings(projectDocumentationData);
+                projectDocumentationData.getDrawingsList().add(drawing);
             }
         });
 
-        List<DrawingsData> newDocuments1 = drawingsForSection1.stream()
-                .filter(doc -> doc.getId() == null)
-                .collect(Collectors.toList());
+        List<DrawingsData> drawingsToRemove = projectDocumentationData.getDrawingsList().stream()
+                .filter(drawing -> drawing.getId() != null && !drawingIdsFromForm.contains(drawing.getId()))
+                .toList();
 
-        newDocuments1.forEach(doc -> entityManager.persist(doc));
-
-        List<DrawingsData> newDocuments2 = drawingsForSection2.stream()
-                .filter(doc -> doc.getId() == null)
-                .collect(Collectors.toList());
-
-        newDocuments2.forEach(doc -> entityManager.persist(doc));
-
-        drawingsRepository.saveAll(newDocuments1);
-
-        List<DrawingsData> documents1ToRemove = new ArrayList<>();
-        drawingsForSection1.forEach(doc -> {
-            if (!formData.containsKey("drawing1_" + doc.getId())) {
-                documents1ToRemove.add(doc);
-            }
+        drawingsToRemove.forEach(drawing -> {
+            projectDocumentationData.getDrawingsList().remove(drawing);
+            drawingsRepository.delete(drawing);
         });
-        drawingsForSection1.removeAll(documents1ToRemove);
-        drawingsRepository.deleteAll(documents1ToRemove);
 
-        drawingsRepository.saveAll(newDocuments2);
 
-        List<DrawingsData> documents2ToRemove = new ArrayList<>();
-        drawingsForSection2.forEach(doc -> {
-            if (!formData.containsKey("drawing2_" + doc.getId())) {
-                documents2ToRemove.add(doc);
-            }
-        });
-        drawingsForSection2.removeAll(documents2ToRemove);
-        drawingsRepository.deleteAll(documents2ToRemove);
-
-        projectDocumentationData.setProjectSection1(projectSection1);
-        projectDocumentationData.setProjectSection2(projectSection2);
+        projectDocumentationData.setProjectSection(projectSection);
         projectDocumentationData.setNetwork(network);
         projectDocumentationRepository.save(projectDocumentationData);
 
-        return "redirect:/project-documentation-table";
+        return "redirect:/project-documentation-table/" + itdId;
     }
 
-    @PostMapping("/project-documentation-table/{id}/project-documentation-remove")
-    public String postProjectDocumentationDelete(@PathVariable(value = "id") long id, Model model) {
-        ProjectDocumentationData projectDocumentationData = projectDocumentationRepository.findById(id).orElseThrow();
-        List<DrawingsData> drawings1ToDelete = projectDocumentationData.getDrawingsForSection1();
-        if (!drawings1ToDelete.isEmpty()) {
-            drawingsRepository.deleteAll(drawings1ToDelete);
-        }
-        List<DrawingsData> drawings2ToDelete = projectDocumentationData.getDrawingsForSection2();
-        if (!drawings2ToDelete.isEmpty()) {
-            drawingsRepository.deleteAll(drawings2ToDelete);
+    @PostMapping("/project-documentation-table/{itdId}/project-documentation-remove/{projDocId}")
+    public String postProjectDocumentationDelete(@PathVariable(value = "itdId") long itdId, @PathVariable(value = "projDocId") long projDocId, Model model) {
+        ProjectDocumentationData projectDocumentationData = projectDocumentationRepository.findById(projDocId).orElseThrow();
+        List<DrawingsData> drawingsToDelete = projectDocumentationData.getDrawingsList();
+        if (!drawingsToDelete.isEmpty()) {
+            drawingsRepository.deleteAll(drawingsToDelete);
         }
         projectDocumentationRepository.delete(projectDocumentationData);;
-        return "redirect:/project-documentation-table";
+        return "redirect:/project-documentation-table/" + itdId;
     }
 
-    @PostMapping("/project-documentation-table/{id}/update-status")
-    public String updateStatus(@PathVariable("id") Long id, @RequestParam("status") String status) {
-        ProjectDocumentationData projDoc = projectDocumentationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid act Id:" + id));
+    @PostMapping("/project-documentation-table/{itdId}/update-status/{projDocId}")
+    public String updateStatus(@PathVariable("itdId") Long itdId, @PathVariable("projDocId") Long projDocId, @RequestParam("status") String status) {
+        ProjectDocumentationData projDoc = projectDocumentationRepository.findById(projDocId).orElseThrow(() -> new IllegalArgumentException("Invalid act Id:" + projDocId));
         projDoc.setStatus(status);
         projectDocumentationRepository.save(projDoc);
-        return "redirect:/project-documentation-table";
+        return "redirect:/project-documentation-table/" + itdId;
     }
 }

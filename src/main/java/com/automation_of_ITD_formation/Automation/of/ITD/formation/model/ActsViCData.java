@@ -3,7 +3,7 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.model;
 import jakarta.persistence.*;
 
 @Entity
-public class ActsViCData {
+public class ActsViCData extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -13,6 +13,10 @@ public class ActsViCData {
     @ManyToOne
     @JoinColumn(name = "aosr_data_id")
     private AosrData actsToAosrData;
+
+    @ManyToOne
+    @JoinColumn(name = "itd_id")
+    private ItdData itdToActsViCData;
 
     public Long getId() {
         return id;
@@ -60,6 +64,14 @@ public class ActsViCData {
 
     public void setActsToAosrData(AosrData actsToAosrData) {
         this.actsToAosrData = actsToAosrData;
+    }
+
+    public ItdData getItdToActsViCData() {
+        return itdToActsViCData;
+    }
+
+    public void setItdToActsViCData(ItdData itdToActsViCData) {
+        this.itdToActsViCData = itdToActsViCData;
     }
 
     public ActsViCData() {

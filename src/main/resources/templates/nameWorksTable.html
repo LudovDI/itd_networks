@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Наименование работ</title>
+
+    <!-- Custom fonts for this template-->
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/status.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i}"
+          rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css}" rel="stylesheet" />
+
+</head>
+
+<body id="page-top" class="vsc-initialized">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h2 mb-0 text-primary">Наименования работ</h1>
+                    <a th:href="'/index/' + ${itdData.id} + '/itd-info'" class="btn btn-info btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+                        <span class="text">Перейти к ИТД</span>
+                    </a>
+                </div>
+                <hr>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="bg-gray-300">
+                        <tr>
+                            <th>Статус</th>
+                            <th>Наименование работ</th>
+                            <th>Нормативка</th>
+                            <th>Следующие работы</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="el : ${nameWorksList}">
+                            <td>
+                                <form th:action="'/name-works-table/' + ${itdData.id} + '/update-status/' + ${el.id}" method="post">
+                                    <select name="status" class="status-select" onchange="updateStatus(this.form)">
+                                        <option value="Готов" th:selected="${el.status == 'Готов'}"
+                                                data-image-url="/images/green.png"></option>
+                                        <option value="В процессе" th:selected="${el.status == 'В процессе'}"
+                                                data-image-url="/images/yellow.png"></option>
+                                        <option value="Требует создания" th:selected="${el.status == 'Требует создания'}"
+                                                data-image-url="/images/red.png"></option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td th:text="${el.name}"></td>
+                            <td>
+                                <span th:each="normative : ${el.normativeList}">
+                                    <span th:text="${normative.name}"></span>
+                                    <br>
+                                </span>
+                            </td>
+                            <td>
+                                <span th:each="nextNameWorks : ${el.nextNameWorksList}">
+                                    <span th:text="${nextNameWorks.name}"></span>
+                                    <br>
+                                </span>
+                            </td>
+                            <td>
+                                <a th:href="'/name-works-table/' + ${itdData.id} + '/name-works-edit/' + ${el.id}" class="btn btn-circle btn-sm btn-primary mr-2"><i class="fas fa-pencil-alt fa-sm text-white-50"></i></a>
+                                <form th:action="'/name-works-table/' + ${itdData.id} + '/name-works-remove/' + ${el.id}" method="post">
+                                    <button type="submit" class="btn btn-circle btn-sm btn-danger"><i class="fas fa-trash fa-sm text-white-50"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <a th:href="'/name-works-add/' + ${itdData.id}" class="btn btn-primary btn-icon-split mt-3">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-plus fa-md text-white-50"></i>
+                    </span>
+                    <span class="text">Добавить наименование работ</span>
+                </a>
+
+                <a th:href="'/name-works-add-from-itd/' + ${itdData.id}" class="btn btn-primary btn-icon-split mt-3">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-plus fa-md text-white-50"></i>
+                    </span>
+                    <span class="text">Скопировать наименования работ из других ИТД</span>
+                </a>
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <div th:replace="~{fragments/footer :: footer}"></div>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+
+<!-- Bootstrap core JavaScript-->
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Core plugin JavaScript-->
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+<!-- Custom scripts for all pages-->
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+<script th:src="@{https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js}"></script>
+<script th:src="@{/js/updateStatus.js}"></script>
+</body>
+
+</html>

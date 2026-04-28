@@ -3,7 +3,7 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.model;
 import jakarta.persistence.*;
 
 @Entity
-public class SealingProtocolsData {
+public class SealingProtocolsData extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -13,6 +13,10 @@ public class SealingProtocolsData {
     @OneToOne
     @JoinColumn(name = "aosr_data_id")
     private AosrData sealingToAosrData;
+
+    @ManyToOne
+    @JoinColumn(name = "itd_id")
+    private ItdData itdToSealingProtocolsData;
 
     public Long getId() {
         return id;
@@ -60,6 +64,14 @@ public class SealingProtocolsData {
 
     public void setSealingToAosrData(AosrData sealingToAosrData) {
         this.sealingToAosrData = sealingToAosrData;
+    }
+
+    public ItdData getItdToSealingProtocolsData() {
+        return itdToSealingProtocolsData;
+    }
+
+    public void setItdToSealingProtocolsData(ItdData itdToSealingProtocolsData) {
+        this.itdToSealingProtocolsData = itdToSealingProtocolsData;
     }
 
     public SealingProtocolsData() {

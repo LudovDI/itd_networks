@@ -3,7 +3,7 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.model;
 import jakarta.persistence.*;
 
 @Entity
-public class ProtocolsGnbData {
+public class ProtocolsGnbData extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -13,6 +13,10 @@ public class ProtocolsGnbData {
     @OneToOne
     @JoinColumn(name = "aosr_data_id")
     private AosrData gnbToAosrData;
+
+    @ManyToOne
+    @JoinColumn(name = "itd_id")
+    private ItdData itdToProtocolsGnbData;
 
     public Long getId() {
         return id;
@@ -52,6 +56,14 @@ public class ProtocolsGnbData {
 
     public void setGnbToAosrData(AosrData gnbToAosrData) {
         this.gnbToAosrData = gnbToAosrData;
+    }
+
+    public ItdData getItdToProtocolsGnbData() {
+        return itdToProtocolsGnbData;
+    }
+
+    public void setItdToProtocolsGnbData(ItdData itdToProtocolsGnbData) {
+        this.itdToProtocolsGnbData = itdToProtocolsGnbData;
     }
 
     public ProtocolsGnbData() {

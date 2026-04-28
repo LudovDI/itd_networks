@@ -12,15 +12,11 @@ public class DrawingsData {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String drawing, projectSection;
+    private String drawing;
 
     @ManyToOne
-    @JoinColumn(name = "project_section1_id")
-    private ProjectDocumentationData projectSection1;
-
-    @ManyToOne
-    @JoinColumn(name = "project_section2_id")
-    private ProjectDocumentationData projectSection2;
+    @JoinColumn(name = "project_documentation_id")
+    private ProjectDocumentationData projDocToDrawings;
 
     @ManyToMany(mappedBy = "execSchemesToDrawings")
     private Set<ExecutiveSchemesData> drawingsToExecSchemes = new HashSet<>();
@@ -36,20 +32,12 @@ public class DrawingsData {
         this.id = id;
     }
 
-    public ProjectDocumentationData getProjectSection1() {
-        return projectSection1;
+    public ProjectDocumentationData getProjDocToDrawings() {
+        return projDocToDrawings;
     }
 
-    public void setProjectSection1(ProjectDocumentationData projectSection1) {
-        this.projectSection1 = projectSection1;
-    }
-
-    public ProjectDocumentationData getProjectSection2() {
-        return projectSection2;
-    }
-
-    public void setProjectSection2(ProjectDocumentationData projectSection2) {
-        this.projectSection2 = projectSection2;
+    public void setProjDocToDrawings(ProjectDocumentationData projDocToDrawings) {
+        this.projDocToDrawings = projDocToDrawings;
     }
 
     public Set<AosrData> getDrawingsToAosr() {
@@ -74,14 +62,6 @@ public class DrawingsData {
 
     public void setDrawing(String drawing) {
         this.drawing = drawing;
-    }
-
-    public String getProjectSection() {
-        return projectSection;
-    }
-
-    public void setProjectSection(String projectSection) {
-        this.projectSection = projectSection;
     }
 
     public DrawingsData() {

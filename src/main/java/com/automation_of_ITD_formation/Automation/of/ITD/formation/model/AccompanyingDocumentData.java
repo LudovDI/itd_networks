@@ -9,7 +9,7 @@ public class AccompanyingDocumentData {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String name, number, date;
+    private String name, number, date, org;
 
     @ManyToOne
     @JoinColumn(name = "materials_used_id")
@@ -47,6 +47,14 @@ public class AccompanyingDocumentData {
         this.date = date;
     }
 
+    public String getOrg() {
+        return org;
+    }
+
+    public void setOrg(String org) {
+        this.org = org;
+    }
+
     public MaterialsUsedData getMaterialsUsedData() {
         return materialsUsedData;
     }
@@ -58,9 +66,10 @@ public class AccompanyingDocumentData {
     public AccompanyingDocumentData() {
     }
 
-    public AccompanyingDocumentData(String name, String number, String date) {
+    public AccompanyingDocumentData(String name, String number, String date, String org) {
         this.name = name;
         this.number = number;
         this.date = date;
+        this.org = org;
     }
 }

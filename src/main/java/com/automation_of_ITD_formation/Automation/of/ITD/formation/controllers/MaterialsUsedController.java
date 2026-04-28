@@ -2,8 +2,6 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.controllers;
 
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.model.*;
 import com.automation_of_ITD_formation.Automation.of.ITD.formation.repository.*;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,27 +10,32 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import java.util.stream.Collectors;
+
+import java.security.Principal;
 
 import java.util.*;
+
+import static com.automation_of_ITD_formation.Automation.of.ITD.formation.utils.ControllersUtils.modelAddUserAndItdData;
 
 @Controller
 public class MaterialsUsedController {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ItdRepository itdRepository;
     @Autowired
     private MaterialsUsedRepository materialUsedRepository;
-
     @Autowired
     private AccompanyingDocumentRepository accompanyingDocumentRepository;
 
-    @GetMapping("/materials-used-table")
-    public String materialsUsedTable(Model model) {
-        Iterable<MaterialsUsedData> materialsUsedList = materialUsedRepository.findAll();
+    @GetMapping("/materials-used-table/{id}")
+    public String materialsUsedTable(@PathVariable(value = "id") long id, Model model, Principal principal) {
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
+        List<MaterialsUsedData> materialsUsedList = new ArrayList<>(itdData.getMaterialsUsedData());
+        materialsUsedList.sort(Comparator.comparing(MaterialsUsedData::getCreatedDate));
         model.addAttribute("materialsUsedList", materialsUsedList);
-
         Map<Long, List<AccompanyingDocumentData>> accompanyingDocumentsMap = new HashMap<>();
         for (MaterialsUsedData material : materialsUsedList) {
             List<AccompanyingDocumentData> accompanyingDocumentList = accompanyingDocumentRepository.findByMaterialsUsedData(material);
@@ -42,120 +45,126 @@ public class MaterialsUsedController {
         return "materialsUsedTable";
     }
 
-    @GetMapping("/materials-used-add")
-    public String materialsUsedAdd(Model model) {
+    @GetMapping("/materials-used-add/{id}")
+    public String materialsUsedAdd(@PathVariable(value = "id") long id, Model model, Principal principal) {
+        modelAddUserAndItdData(principal, id, model, userRepository, itdRepository);
         return "materialsUsedAdd";
     }
 
-    @PostMapping("/materials-used-add")
-    public String postMaterialsUsedAdd(@RequestParam("material") String nameMaterial,
+    @PostMapping("/materials-used-add/{id}")
+    public String postMaterialsUsedAdd(@PathVariable(value = "id") long id,
+                                       @RequestParam("material") String nameMaterial,
                                        @RequestParam Map<String, String> formData) {
+        ItdData itdData = itdRepository.findById(id).orElseThrow();
         List<AccompanyingDocumentData> accompanyingDocumentList = new ArrayList<>();
         formData.forEach((key, value) -> {
             if (key.startsWith("name")) {
                 int index = Integer.parseInt(key.substring(4));
                 String numberKey = "number" + index;
                 String dataKey = "date" + index;
+                String orgKey = "org" + index;
                 String number = formData.getOrDefault(numberKey, "");
                 String data = formData.getOrDefault(dataKey, "");
-                AccompanyingDocumentData accompanyingDocument = new AccompanyingDocumentData(value, number, data);
+                String org = formData.getOrDefault(orgKey, "");
+                AccompanyingDocumentData accompanyingDocument = new AccompanyingDocumentData(value, number, data, org);
                 accompanyingDocumentList.add(accompanyingDocument);
             }
         });
         MaterialsUsedData materialUsedData = new MaterialsUsedData(nameMaterial);
+        materialUsedData.setStatus("Требует создания");
+        materialUsedData.setItdToMaterialsUsedData(itdData);
         materialUsedRepository.save(materialUsedData);
         accompanyingDocumentList.forEach(accompanyingDocument -> accompanyingDocument.setMaterialsUsedData(materialUsedData));
         accompanyingDocumentRepository.saveAll(accompanyingDocumentList);
-        return "redirect:/materials-used-table";
+        return "redirect:/materials-used-table/" + id;
     }
 
-    @GetMapping("/materials-used-table/{id}/materials-used-edit")
-    public String materialsUsedEdit(@PathVariable(value = "id") long id, Model model) {
-        Optional<MaterialsUsedData> materialsUsedDataOptional = materialUsedRepository.findById(id);
-        if (!materialsUsedDataOptional.isPresent()) {
+    @GetMapping("/materials-used-table/{itdId}/materials-used-edit/{materialId}")
+    public String materialsUsedEdit(@PathVariable(value = "itdId") long itdId,
+                                    @PathVariable(value = "materialId") long materialId,
+                                    Model model, Principal principal) {
+        modelAddUserAndItdData(principal, itdId, model, userRepository, itdRepository);
+        if (!materialUsedRepository.existsById(materialId)) {
             return "redirect:/materials-used-table";
         }
+        Optional<MaterialsUsedData> materialsUsedDataOptional = materialUsedRepository.findById(materialId);
         MaterialsUsedData materialsUsedData = materialsUsedDataOptional.get();
-        model.addAttribute("materialsUsedData", materialsUsedData); // Добавляем materialsUsedData в модель
+        model.addAttribute("materialsUsedData", materialsUsedData);
         return "materialsUsedEdit";
     }
 
-    @PostMapping("/materials-used-table/{id}/materials-used-edit")
+    @PostMapping("/materials-used-table/{itdId}/materials-used-edit/{materialId}")
     @Transactional
-    public String postMaterialsUsedUpdate(@PathVariable(value = "id") long id,
+    public String postMaterialsUsedUpdate(@PathVariable(value = "itdId") long itdId,
+                                          @PathVariable(value = "materialId") long materialId,
                                           @RequestParam("material") String nameMaterial,
                                           @RequestParam Map<String, String> formData) {
-        MaterialsUsedData materialsUsedData = materialUsedRepository.findById(id).orElseThrow();
+        MaterialsUsedData materialsUsedData = materialUsedRepository.findById(materialId).orElseThrow();
 
-        List<AccompanyingDocumentData> accompanyingDocumentList = materialsUsedData.getAccompanyingDocuments();
+        Set<Long> accDocIdsFromForm = new HashSet<>();
+        Map<Long, AccompanyingDocumentData> accompanyingDocumentsMap = new HashMap<>();
 
         formData.forEach((key, value) -> {
-            if (key.startsWith("name_")) {
-                Long accDocId = Long.parseLong(key.substring("name_".length()));
-                AccompanyingDocumentData accompanyingDocument = accompanyingDocumentRepository.findById(accDocId).orElse(null);
-                if (accompanyingDocument != null) {
-                    accompanyingDocument.setName(value);
-                } else {
-                    accompanyingDocument = new AccompanyingDocumentData();
-                    accompanyingDocument.setId(accDocId);
-                    accompanyingDocument.setName(value);
-                    accompanyingDocument.setMaterialsUsedData(materialsUsedData);
-                    accompanyingDocument.setNumber(formData.get("number_" + accDocId));
-                    accompanyingDocument.setDate(formData.get("date_" + accDocId));
-                    accompanyingDocumentList.add(accompanyingDocument);
+            Long accDocId = null;
+            if (key.startsWith("name") || key.startsWith("number") || key.startsWith("date") || key.startsWith("org")) {
+                String accDocIdStr = key.replaceAll("[^0-9]", "");
+                if (!accDocIdStr.isEmpty()) {
+                    accDocId = Long.parseLong(accDocIdStr);
                 }
-            } else if (key.startsWith("number_")) {
-                Long accDocId = Long.parseLong(key.substring("number_".length()));
-                accompanyingDocumentRepository.findById(accDocId).ifPresent(accompanyingDocument -> {
-                    accompanyingDocument.setNumber(value);
-                    accompanyingDocumentList.add(accompanyingDocument);
-
-                });
-            } else if (key.startsWith("date_")) {
-                Long accDocId = Long.parseLong(key.substring("date_".length()));
-                accompanyingDocumentRepository.findById(accDocId).ifPresent(accompanyingDocument -> {
-                    accompanyingDocument.setDate(value);
-                    accompanyingDocumentList.add(accompanyingDocument);
-                });
             }
+
+            if (accDocId == null) {
+                return;
+            }
+
+            AccompanyingDocumentData accompanyingDocument = accompanyingDocumentsMap.getOrDefault(accDocId,
+                    accompanyingDocumentRepository.findById(accDocId).orElse(new AccompanyingDocumentData()));
+
+            accDocIdsFromForm.add(accDocId);
+
+            if (key.startsWith("name")) {
+                accompanyingDocument.setName(value);
+            } else if (key.startsWith("number")) {
+                accompanyingDocument.setNumber(value);
+            } else if (key.startsWith("date")) {
+                accompanyingDocument.setDate(value);
+            } else if (key.startsWith("org")) {
+                accompanyingDocument.setOrg(value);
+            }
+
+            accompanyingDocument.setMaterialsUsedData(materialsUsedData);
+            accompanyingDocumentsMap.put(accDocId, accompanyingDocument);
+            materialsUsedData.getAccompanyingDocuments().add(accompanyingDocument);
         });
 
-        List<AccompanyingDocumentData> newDocuments = accompanyingDocumentList.stream()
-                .filter(doc -> doc.getId() == null)
-                .collect(Collectors.toList());
+        List<AccompanyingDocumentData> accDocsToRemove = materialsUsedData.getAccompanyingDocuments().stream()
+                .filter(accDoc -> accDoc.getId() != null && !accDocIdsFromForm.contains(accDoc.getId()))
+                .toList();
 
-        newDocuments.forEach(doc -> entityManager.persist(doc));
-
-        accompanyingDocumentRepository.saveAll(newDocuments);
-
-        List<AccompanyingDocumentData> documentsToRemove = new ArrayList<>();
-        accompanyingDocumentList.forEach(doc -> {
-            if (!formData.containsKey("name_" + doc.getId())) {
-                documentsToRemove.add(doc);
-            }
+        accDocsToRemove.forEach(accDoc -> {
+            materialsUsedData.getAccompanyingDocuments().remove(accDoc);
+            accompanyingDocumentRepository.delete(accDoc);
         });
-        accompanyingDocumentList.removeAll(documentsToRemove);
-        accompanyingDocumentRepository.deleteAll(documentsToRemove);
 
         materialsUsedData.setNameMaterial(nameMaterial);
         materialUsedRepository.save(materialsUsedData);
-        return "redirect:/materials-used-table";
+        return "redirect:/materials-used-table/" + itdId;
     }
 
-    @PostMapping("/materials-used-table/{id}/materials-used-remove")
-    public String postMaterialsUsedDelete(@PathVariable(value = "id") long id, Model model) {
-        MaterialsUsedData materialsUsedData = materialUsedRepository.findById(id).orElseThrow();
+    @PostMapping("/materials-used-table/{itdId}/materials-used-remove/{materialId}")
+    public String postMaterialsUsedDelete(@PathVariable(value = "itdId") long itdId, @PathVariable(value = "materialId") long materialId, Model model) {
+        MaterialsUsedData materialsUsedData = materialUsedRepository.findById(materialId).orElseThrow();
         List<AccompanyingDocumentData> accompanyingDocumentDataList = accompanyingDocumentRepository.findByMaterialsUsedData(materialsUsedData);
         accompanyingDocumentRepository.deleteAll(accompanyingDocumentDataList);
         materialUsedRepository.delete(materialsUsedData);
-        return "redirect:/materials-used-table";
+        return "redirect:/materials-used-table/" + itdId;
     }
 
-    @PostMapping("/materials-used-table/{id}/update-status")
-    public String updateStatus(@PathVariable("id") Long id, @RequestParam("status") String status) {
-        MaterialsUsedData material = materialUsedRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid act Id:" + id));
+    @PostMapping("/materials-used-table/{itdId}/update-status/{materialId}")
+    public String updateStatus(@PathVariable("itdId") Long itdId, @PathVariable("materialId") Long materialId, @RequestParam("status") String status) {
+        MaterialsUsedData material = materialUsedRepository.findById(materialId).orElseThrow(() -> new IllegalArgumentException("Invalid act Id:" + materialId));
         material.setStatus(status);
         materialUsedRepository.save(material);
-        return "redirect:/materials-used-table";
+        return "redirect:/materials-used-table/" + itdId;
     }
 }

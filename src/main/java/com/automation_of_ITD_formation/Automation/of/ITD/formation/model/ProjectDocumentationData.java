@@ -3,25 +3,27 @@ package com.automation_of_ITD_formation.Automation.of.ITD.formation.model;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Entity
-public class ProjectDocumentationData {
+public class ProjectDocumentationData extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String projectSection1, projectSection2, network, status;
+    private String projectSection, network, status;
 
-    @OneToMany(mappedBy = "projectSection1", cascade = CascadeType.ALL)
-    private List<DrawingsData> drawingsForSection1;
+    @OneToMany(mappedBy = "projDocToDrawings", cascade = CascadeType.ALL)
+    private List<DrawingsData> drawingsList;
 
-    @OneToMany(mappedBy = "projectSection2", cascade = CascadeType.ALL)
-    private List<DrawingsData> drawingsForSection2;
+    @ManyToMany(mappedBy = "aosrToProjDocs", cascade = CascadeType.ALL)
+    private Set<AosrData> aosrs = new HashSet<>();
 
-    @OneToMany(mappedBy = "projectDocumentationData", cascade = CascadeType.ALL)
-    private Set<AosrData> aosrs;
+    @ManyToOne
+    @JoinColumn(name = "itd_id")
+    private ItdData itdToProjectDocumentationData;
 
     public Long getId() {
         return id;
@@ -47,20 +49,12 @@ public class ProjectDocumentationData {
         this.aosrs = aosrs;
     }
 
-    public String getProjectSection1() {
-        return projectSection1;
+    public String getProjectSection() {
+        return projectSection;
     }
 
-    public void setProjectSection1(String projectSection1) {
-        this.projectSection1 = projectSection1;
-    }
-
-    public String getProjectSection2() {
-        return projectSection2;
-    }
-
-    public void setProjectSection2(String projectSection2) {
-        this.projectSection2 = projectSection2;
+    public void setProjectSection(String projectSection) {
+        this.projectSection = projectSection;
     }
 
     public String getNetwork() {
@@ -71,30 +65,28 @@ public class ProjectDocumentationData {
         this.network = network;
     }
 
-    public List<DrawingsData> getDrawingsForSection1() {
-        return drawingsForSection1;
+    public List<DrawingsData> getDrawingsList() {
+        return drawingsList;
     }
 
-    public void setDrawingsForSection1(List<DrawingsData> drawingsForSection1) {
-        this.drawingsForSection1 = drawingsForSection1;
+    public void setDrawingsList(List<DrawingsData> drawingsList) {
+        this.drawingsList = drawingsList;
     }
 
-    public List<DrawingsData> getDrawingsForSection2() {
-        return drawingsForSection2;
+    public ItdData getItdToProjectDocumentationData() {
+        return itdToProjectDocumentationData;
     }
 
-    public void setDrawingsForSection2(List<DrawingsData> drawingsForSection2) {
-        this.drawingsForSection2 = drawingsForSection2;
+    public void setItdToProjectDocumentationData(ItdData itdToProjectDocumentationData) {
+        this.itdToProjectDocumentationData = itdToProjectDocumentationData;
     }
 
     public ProjectDocumentationData() {
-        this.drawingsForSection1 = new ArrayList<>();
-        this.drawingsForSection2 = new ArrayList<>();
+        this.drawingsList = new ArrayList<>();
     }
 
-    public ProjectDocumentationData(String projectSection1, String projectSection2, String network) {
-        this.projectSection1 = projectSection1;
-        this.projectSection2 = projectSection2;
+    public ProjectDocumentationData(String projectSection, String network) {
+        this.projectSection = projectSection;
         this.network = network;
     }
 }
