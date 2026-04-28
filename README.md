@@ -16,17 +16,19 @@ No local Java or MySQL installation is required for containerized run.
 2. Start services:
    - `docker compose up --build`
 3. Open the app:
-   - [http://localhost:8080](http://localhost:8080)
+   - [http://localhost](http://localhost)
 
 The stack starts:
 - `db`: MySQL 8.3 with persistent volume `mysql_data`
 - `app`: Spring Boot application built from `Dockerfile`
+- `nginx`: reverse proxy that exposes the app on port `80` by default
 
 ## Default Environment Variables
 
 Defined in `.env.example`:
 
 - `APP_PORT=8080`
+- `NGINX_PORT=80`
 - `SPRING_PROFILES_ACTIVE=docker`
 - `MYSQL_PORT=3306`
 - `MYSQL_DATABASE=ITD_db`
@@ -35,6 +37,7 @@ Defined in `.env.example`:
 - `MYSQL_ROOT_PASSWORD=root`
 
 `app` connects to DB via service hostname `db` inside Compose network.
+`nginx` proxies incoming HTTP requests to `app:8080`.
 
 ## Database Initialization
 
@@ -60,6 +63,7 @@ Important: change credentials immediately for non-local environments.
 - View logs:
   - `docker compose logs -f app`
   - `docker compose logs -f db`
+  - `docker compose logs -f nginx`
 - Stop services:
   - `docker compose down`
 - Stop and remove DB data (full reset):
@@ -70,7 +74,7 @@ Important: change credentials immediately for non-local environments.
 ## Troubleshooting
 
 - Port already in use:
-  - Change `APP_PORT` or `MYSQL_PORT` in `.env`, then restart.
+  - Change `NGINX_PORT` or `MYSQL_PORT` in `.env`, then restart.
 - App cannot connect to DB:
   - Check `db` health: `docker compose ps`
   - Inspect DB logs: `docker compose logs db`
